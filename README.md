@@ -41,6 +41,3 @@ A simple quiz app that focuses on Criminal Law Topics
 ## Author
 Doctor, Amherstia S.
 
-Current state of app:
-https://github.com/amherstiadoctor/spcode/assets/30710851/5272e5e1-f4bd-4ccd-81b2-5cde009b463f
-
