@@ -1,16 +1,46 @@
-# sp_code
+ eLaw
 
-criminal law quiz app
+A simple quiz app that focuses on Criminal Law Topics
 
-## Getting Started
+## To run
+1: clone this repository
+<br>
+2: `cd sp_code`
+<br>
+3: `flutter pub get`
+<br>
+4: `flutter run`
 
-This project is a starting point for a Flutter application.
 
-A few resources to get you started if this is your first Flutter project:
+## Tasks/Features
+- [ ] Front End
+  - [ ] Splash when opening app
+  - [ ] Login Page
+  - [ ] Sign up Page
+  - [ ] Home Page
+    - [ ] Normal User
+    - [ ] Admin User
+  - [ ] Profile Page
+  - [ ] Friends Page
+    - [ ] Leaderboard
+  - [ ] Quizzes Page
+    - [ ] Quiz Interface
+  - [ ] Flashcards Page
+    - [ ] Flashcard Interface
+- [ ] Firebase
+  - [ ] Email Password Login
+  - [ ] Google Login
+- [ ] Features
+  - [ ] Multiplayer (2 users head-to-head quiz)
+  - [ ] Flashcards
+  - [ ] Quizzes
+    - [ ] Easy
+    - [ ] Medium
+    - [ ] Hard
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## Author
+Doctor, Amherstia S.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Current state of app:
+https://github.com/amherstiadoctor/spcode/assets/30710851/5272e5e1-f4bd-4ccd-81b2-5cde009b463f
+
