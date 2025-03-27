@@ -179,7 +179,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                     style: TextStyle(fontSize: 16, color: AppTheme.text2),
                   ),
                   SizedBox(height: 24),
-                  Container(height: 200, child:Row(
+                  SizedBox(height: 200, child:Row(
                     children: [
                       Expanded(
                         child: _buildStatCard(
