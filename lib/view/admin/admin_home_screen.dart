@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:sp_code/theme/theme.dart';
+import 'package:sp_code/view/admin/manage_categories_screen.dart';
+import 'package:sp_code/view/admin/manage_quizzes_screen.dart';
 
 class AdminHomeScreen extends StatefulWidget {
   const AdminHomeScreen({super.key});
@@ -102,7 +104,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
         onTap: ontap,
         borderRadius: BorderRadius.circular(16),
         child: Padding(
-          padding: EdgeInsets.all(29),
+          padding: EdgeInsets.all(20),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -119,7 +121,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
               Text(
                 title,
                 style: TextStyle(
-                  fontSize: 1168,
+                  fontSize: 16,
                   fontWeight: FontWeight.bold,
                   color: AppTheme.text,
                 ),
@@ -179,27 +181,257 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                     style: TextStyle(fontSize: 16, color: AppTheme.text2),
                   ),
                   SizedBox(height: 24),
-                  SizedBox(height: 200, child:Row(
-                    children: [
-                      Expanded(
-                        child: _buildStatCard(
-                          'Total Categories',
-                          stats['totalCategories'].toString(),
-                          Icons.category_rounded,
-                          AppTheme.primary,
+                  SizedBox(
+                    height: 200,
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: _buildStatCard(
+                            'Total Categories',
+                            stats['totalCategories'].toString(),
+                            Icons.category_rounded,
+                            AppTheme.primary,
+                          ),
                         ),
-                      ),
-                      SizedBox(width: 6),
-                      Expanded(
-                        child: _buildStatCard(
-                          'Total Quizzes',
-                          stats['totalQuizzes'].toString(),
-                          Icons.quiz_rounded,
-                          AppTheme.primary,
+                        SizedBox(width: 6),
+                        Expanded(
+                          child: _buildStatCard(
+                            'Total Quizzes',
+                            stats['totalQuizzes'].toString(),
+                            Icons.quiz_rounded,
+                            AppTheme.primary,
+                          ),
                         ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 24),
+                  Card(
+                    child: Padding(
+                      padding: EdgeInsets.all(20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.pie_chart_rounded,
+                                color: AppTheme.primary,
+                                size: 24,
+                              ),
+                              SizedBox(width: 12),
+                              Text(
+                                'Category Statistics',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppTheme.text,
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 20),
+                          ListView.builder(
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            itemCount: categoryData.length,
+                            itemBuilder: (context, index) {
+                              final category = categoryData[index];
+                              final totalQuizzes = categoryData.fold<int>(
+                                0,
+                                (sum, item) => sum + (item['count'] as int),
+                              );
+
+                              final percentage =
+                                  totalQuizzes > 0
+                                      ? (category['count'] as int) /
+                                          totalQuizzes *
+                                          100
+                                      : 0.0;
+                              return Padding(
+                                padding: EdgeInsets.only(bottom: 16),
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            category['name'] as String,
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w500,
+                                              color: AppTheme.text,
+                                            ),
+                                          ),
+                                          SizedBox(height: 5),
+                                          Text(
+                                            "${category['count']} ${(category['count'] as int) == 1 ? 'quiz' : 'quizzes'}}",
+                                            style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w500,
+                                              color: AppTheme.text2,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Container(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 12,
+                                        vertical: 6,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: AppTheme.primary,
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
+                                      child: Text(
+                                        '${percentage.toStringAsFixed(1)}%',
+                                        style: TextStyle(
+                                          color: AppTheme.primary,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
+                        ],
                       ),
-                    ],
-                  ),),
+                    ),
+                  ),
+                  SizedBox(height: 24),
+                  Card(
+                    child: Padding(
+                      padding: EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.history_rounded,
+                                color: AppTheme.primary,
+                                size: 24,
+                              ),
+                              SizedBox(width: 12),
+                              Text(
+                                'Recent Activity',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppTheme.text,
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 20),
+                          ListView.builder(
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            itemCount: latestQuizzes.length,
+                            itemBuilder: (context, index) {
+                              final quiz =
+                                  latestQuizzes[index].data()
+                                      as Map<String, dynamic>;
+
+                              return Padding(
+                                padding: EdgeInsets.only(bottom: 16),
+                                child: Row(
+                                  children: [
+                                    Container(
+                                      padding: EdgeInsets.all(8),
+                                      decoration: BoxDecoration(
+                                        color: AppTheme.primary.withOpacity(
+                                          0.1,
+                                        ),
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: Icon(
+                                        Icons.quiz_rounded,
+                                        color: AppTheme.primary,
+                                        size: 20,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 24),
+                  Card(
+                    child: Padding(
+                      padding: EdgeInsets.all(20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.speed_rounded,
+                                color: AppTheme.primary,
+                                size: 24,
+                              ),
+                              SizedBox(width: 12),
+                              Text(
+                                'Quiz Actions',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppTheme.text,
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 20),
+                          GridView.count(
+                            crossAxisCount: 2,
+                            shrinkWrap: true,
+                            mainAxisSpacing: 16,
+                            childAspectRatio: 0.9,
+                            crossAxisSpacing: 16,
+                            children: [
+                              _buildDashboardCard(
+                                context,
+                                'Quizzes',
+                                Icons.quiz_rounded,
+                                () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder:
+                                          (context) => ManageQuizzesScreen(),
+                                    ),
+                                  );
+                                },
+                              ),
+                              _buildDashboardCard(
+                                context,
+                                'Categories',
+                                Icons.category_rounded,
+                                () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder:
+                                          (context) => ManageCategoriesScreen(),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
