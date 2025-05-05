@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:sp_code/model/category.dart';
 import 'package:sp_code/theme/theme.dart';
+import 'package:sp_code/view/admin/add_category_screen.dart';
 import 'package:sp_code/view/admin/manage_quizzes_screen.dart';
 
 class ManageCategoriesScreen extends StatefulWidget {
@@ -17,6 +18,7 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: AppTheme.white,
         title: Text(
           'Manage Categories',
           style: TextStyle(fontWeight: FontWeight.bold),
@@ -24,7 +26,10 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
         actions: [
           IconButton(
             onPressed: () {
-              // Navigator.push(context, MaterialPageRoute(builder: builder) => AddCategoryScreen())
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => AddCategoryScreen()),
+              );
             },
             icon: Icon(Icons.add_circle_outline),
             color: AppTheme.primary,
@@ -70,7 +75,17 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
                     style: TextStyle(color: AppTheme.text2, fontSize: 18),
                   ),
                   SizedBox(height: 8),
-                  ElevatedButton(onPressed: () {}, child: Text("Add Category")),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => AddCategoryScreen(),
+                        ),
+                      );
+                    },
+                    child: Text("Add Category"),
+                  ),
                 ],
               ),
             );
@@ -131,8 +146,10 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
                       context,
                       MaterialPageRoute(
                         builder:
-                            (context) =>
-                                ManageQuizzesScreen(categoryId: category.id),
+                            (context) => ManageQuizzesScreen(
+                              categoryId: category.id,
+                              categoryName: category.name,
+                            ),
                       ),
                     );
                   },
@@ -151,7 +168,12 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
     Category category,
   ) async {
     if (action == "edit") {
-      // Navigator.push(context, MaterialPageRoute(builder: builder) => EditCategoryScreen())
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => AddCategoryScreen(category: category),
+        ),
+      );
     } else if (action == "delete") {
       final confirm = await showDialog<bool>(
         context: context,

@@ -38,7 +38,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                 .get();
         return {
           'name': category.data()['name'] as String,
-          'quizzes': quizCount.count,
+          'count': quizCount.count,
         };
       }),
     );
@@ -117,11 +117,11 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                 child: Icon(icon, color: AppTheme.primary, size: 32),
               ),
 
-              SizedBox(height: 16),
+              SizedBox(height: 12),
               Text(
                 title,
                 style: TextStyle(
-                  fontSize: 16,
+                  fontSize: 12,
                   fontWeight: FontWeight.bold,
                   color: AppTheme.text,
                 ),
@@ -267,7 +267,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                                           ),
                                           SizedBox(height: 5),
                                           Text(
-                                            "${category['count']} ${(category['count'] as int) == 1 ? 'quiz' : 'quizzes'}}",
+                                            "${category['count']} ${(category['count'] as int) == 1 ? 'quiz' : 'quizzes'}",
                                             style: TextStyle(
                                               fontSize: 16,
                                               fontWeight: FontWeight.w500,
@@ -283,7 +283,9 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                                         vertical: 6,
                                       ),
                                       decoration: BoxDecoration(
-                                        color: AppTheme.primary,
+                                        color: AppTheme.primary.withOpacity(
+                                          0.1,
+                                        ),
                                         borderRadius: BorderRadius.circular(20),
                                       ),
                                       child: Text(
@@ -390,13 +392,13 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                               ),
                             ],
                           ),
-                          SizedBox(height: 20),
+                          SizedBox(height: 15),
                           GridView.count(
                             crossAxisCount: 2,
                             shrinkWrap: true,
-                            mainAxisSpacing: 16,
+                            mainAxisSpacing: 12,
                             childAspectRatio: 0.9,
-                            crossAxisSpacing: 16,
+                            crossAxisSpacing: 12,
                             children: [
                               _buildDashboardCard(
                                 context,
