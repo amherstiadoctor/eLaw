@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:sp_code/model/category.dart';
 import 'package:sp_code/theme/theme.dart';
+import 'package:sp_code/view/admin/manage_quizzes_screen.dart';
 
 class ManageCategoriesScreen extends StatefulWidget {
   const ManageCategoriesScreen({super.key});
@@ -125,7 +126,16 @@ class _ManageCategoriesScreenState extends State<ManageCategoriesScreen> {
                       _handleCategoryAction(context, value, category);
                     },
                   ),
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder:
+                            (context) =>
+                                ManageQuizzesScreen(categoryId: category.id),
+                      ),
+                    );
+                  },
                 ),
               );
             },
