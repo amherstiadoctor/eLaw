@@ -7,6 +7,7 @@ import 'package:sp_code/model/category.dart';
 import 'package:sp_code/model/quiz.dart';
 import 'package:sp_code/theme/theme.dart';
 import 'package:sp_code/view/admin/add_quiz_screen.dart';
+import 'package:sp_code/view/admin/edit_quiz_screen.dart';
 
 class ManageQuizzesScreen extends StatefulWidget {
   final String? categoryId;
@@ -285,7 +286,7 @@ class _ManageQuizzesScreenState extends State<ManageQuizzesScreen> {
                                       : "${quiz.questions.length} Question",
                                   style: TextStyle(fontSize: 12),
                                 ),
-                                SizedBox(width: 16),
+                                SizedBox(width: 12),
                                 Icon(Icons.timer_outlined, size: 16),
                                 SizedBox(width: 4),
                                 Text(
@@ -345,6 +346,10 @@ class _ManageQuizzesScreenState extends State<ManageQuizzesScreen> {
     Quiz quiz,
   ) async {
     if (value == "edit") {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => EditQuizScreen(quiz: quiz)),
+      );
     } else if (value == "delete") {
       final confirm = await showDialog<bool>(
         context: context,
