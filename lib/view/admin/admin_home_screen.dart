@@ -1,8 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:sp_code/config/theme.dart';
 import 'package:sp_code/model/user_entity.dart';
-import 'package:sp_code/view/admin/manage_categories_screen.dart';
+import 'package:sp_code/view/admin/manage_difficulties_screen.dart';
 import 'package:sp_code/view/admin/manage_quizzes_screen.dart';
 
 class AdminHomeScreen extends StatefulWidget {
@@ -17,8 +18,8 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   Future<Map<String, dynamic>> _fetchStatistics() async {
-    final categoriesCount =
-        await _firestore.collection('categories').count().get();
+    final difficultiesCount =
+        await _firestore.collection('difficulties').count().get();
 
     final quizzesCount = await _firestore.collection('quizzes').count().get();
 
@@ -29,27 +30,27 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
             .limit(5)
             .get();
 
-    final categories = await _firestore.collection('categories').get();
-    final categoryData = await Future.wait(
-      categories.docs.map((category) async {
+    final difficulties = await _firestore.collection('difficulties').get();
+    final difficultyData = await Future.wait(
+      difficulties.docs.map((difficulty) async {
         final quizCount =
             await _firestore
                 .collection('quizzes')
-                .where('categoryId', isEqualTo: category.id)
+                .where('difficultyId', isEqualTo: difficulty.id)
                 .count()
                 .get();
         return {
-          'name': category.data()['name'] as String,
+          'name': difficulty.data()['name'] as String,
           'count': quizCount.count,
         };
       }),
     );
 
     return {
-      'totalCategories': categoriesCount.count,
+      'totalDifficulties': difficultiesCount.count,
       'totalQuizzes': quizzesCount.count,
       'latestQuizzes': latestQuizzes.docs,
-      'categoryData': categoryData,
+      'difficultyData': difficultyData,
     };
   }
 
@@ -159,7 +160,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
           }
 
           final Map<String, dynamic> stats = snapshot.data!;
-          final List<dynamic> categoryData = stats['categoryData'];
+          final List<dynamic> difficultyData = stats['difficultyData'];
           final List<QueryDocumentSnapshot> latestQuizzes =
               stats['latestQuizzes'];
 
@@ -189,8 +190,10 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                       children: [
                         Expanded(
                           child: _buildStatCard(
-                            'Total Categories',
-                            stats['totalCategories'].toString(),
+                            'Total Difficulties',
+                            stats['totalDifficulties'] == null
+                                ? "0"
+                                : stats['totalDifficulties'].toString(),
                             Icons.category_rounded,
                             AppTheme.primary,
                           ),
@@ -223,7 +226,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                               ),
                               SizedBox(width: 12),
                               Text(
-                                'Category Statistics',
+                                'Difficulty Statistics',
                                 style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
@@ -236,17 +239,17 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                           ListView.builder(
                             shrinkWrap: true,
                             physics: NeverScrollableScrollPhysics(),
-                            itemCount: categoryData.length,
+                            itemCount: difficultyData.length,
                             itemBuilder: (context, index) {
-                              final category = categoryData[index];
-                              final totalQuizzes = categoryData.fold<int>(
+                              final difficulty = difficultyData[index];
+                              final totalQuizzes = difficultyData.fold<int>(
                                 0,
                                 (sum, item) => sum + (item['count'] as int),
                               );
 
                               final percentage =
                                   totalQuizzes > 0
-                                      ? (category['count'] as int) /
+                                      ? (difficulty['count'] as int) /
                                           totalQuizzes *
                                           100
                                       : 0.0;
@@ -260,7 +263,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                                             CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            category['name'] as String,
+                                            difficulty['name'] as String,
                                             style: TextStyle(
                                               fontSize: 16,
                                               fontWeight: FontWeight.w500,
@@ -269,7 +272,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                                           ),
                                           SizedBox(height: 5),
                                           Text(
-                                            "${category['count']} ${(category['count'] as int) == 1 ? 'quiz' : 'quizzes'}",
+                                            "${difficulty['count']} ${(difficulty['count'] as int) == 1 ? 'quiz' : 'quizzes'}",
                                             style: TextStyle(
                                               fontSize: 16,
                                               fontWeight: FontWeight.w500,
@@ -440,14 +443,15 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                               ),
                               _buildDashboardCard(
                                 context,
-                                'Categories',
+                                'Difficulties',
                                 Icons.category_rounded,
                                 () {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
                                       builder:
-                                          (context) => ManageCategoriesScreen(),
+                                          (context) =>
+                                              ManageDifficultiesScreen(),
                                     ),
                                   );
                                 },

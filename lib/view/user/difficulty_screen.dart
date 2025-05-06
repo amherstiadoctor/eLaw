@@ -1,20 +1,20 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:sp_code/model/category.dart';
+import 'package:sp_code/model/difficulty.dart';
 import 'package:sp_code/model/quiz.dart';
 import 'package:sp_code/config/theme.dart';
 import 'package:sp_code/view/user/quiz_play_screen.dart';
 
-class CategoryScreen extends StatefulWidget {
-  final Category category;
-  const CategoryScreen({super.key, required this.category});
+class DifficultyScreen extends StatefulWidget {
+  final Difficulty difficulty;
+  const DifficultyScreen({super.key, required this.difficulty});
 
   @override
-  State<CategoryScreen> createState() => _CategoryScreenState();
+  State<DifficultyScreen> createState() => _DifficultyScreenState();
 }
 
-class _CategoryScreenState extends State<CategoryScreen> {
+class _DifficultyScreenState extends State<DifficultyScreen> {
   List<Quiz> _quizzes = [];
   bool _isLoading = true;
 
@@ -30,7 +30,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
       final snapshot =
           await FirebaseFirestore.instance
               .collection('quizzes')
-              .where('categoryId', isEqualTo: widget.category.id)
+              .where('difficultyId', isEqualTo: widget.difficulty.id)
               .get();
 
       setState(() {
@@ -66,7 +66,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                     Icon(Icons.quiz_outlined, size: 64, color: AppTheme.text2),
                     SizedBox(height: 16),
                     Text(
-                      "No quizzes available for this category",
+                      "No quizzes available for this difficulty",
                       style: TextStyle(fontSize: 16, color: AppTheme.text2),
                     ),
                     SizedBox(height: 16),
@@ -98,7 +98,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                       title: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
-                          widget.category.description,
+                          widget.difficulty.description,
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             color: AppTheme.white.withOpacity(0.8),
@@ -117,7 +117,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
                             ),
                             SizedBox(height: 16),
                             Text(
-                              widget.category.name,
+                              widget.difficulty.name,
                               style: TextStyle(
                                 fontSize: 24,
                                 fontWeight: FontWeight.bold,

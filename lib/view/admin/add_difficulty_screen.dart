@@ -1,17 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:sp_code/model/category.dart';
+import 'package:sp_code/model/difficulty.dart';
 import 'package:sp_code/config/theme.dart';
 
-class AddCategoryScreen extends StatefulWidget {
-  final Category? category;
-  const AddCategoryScreen({super.key, this.category});
+class AddDifficultyScreen extends StatefulWidget {
+  final Difficulty? difficulty;
+  const AddDifficultyScreen({super.key, this.difficulty});
 
   @override
-  State<AddCategoryScreen> createState() => _AddCategoryScreenState();
+  State<AddDifficultyScreen> createState() => _AddDifficultyScreenState();
 }
 
-class _AddCategoryScreenState extends State<AddCategoryScreen> {
+class _AddDifficultyScreenState extends State<AddDifficultyScreen> {
   final _formKey = GlobalKey<FormState>();
   late TextEditingController _nameController;
   late TextEditingController _descriptionController;
@@ -22,9 +22,9 @@ class _AddCategoryScreenState extends State<AddCategoryScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    _nameController = TextEditingController(text: widget.category?.name);
+    _nameController = TextEditingController(text: widget.difficulty?.name);
     _descriptionController = TextEditingController(
-      text: widget.category?.description,
+      text: widget.difficulty?.description,
     );
   }
 
@@ -36,7 +36,7 @@ class _AddCategoryScreenState extends State<AddCategoryScreen> {
     super.dispose();
   }
 
-  Future<void> _saveCategory() async {
+  Future<void> _saveDifficulty() async {
     if (!_formKey.currentState!.validate()) {
       return;
     }
@@ -46,35 +46,35 @@ class _AddCategoryScreenState extends State<AddCategoryScreen> {
     });
 
     try {
-      if (widget.category != null) {
-        final updatedCategory = widget.category!.copyWith(
+      if (widget.difficulty != null) {
+        final updatedDifficulty = widget.difficulty!.copyWith(
           name: _nameController.text.trim(),
           description: _descriptionController.text.trim(),
         );
 
         await _firestore
-            .collection("categories")
-            .doc(widget.category!.id)
-            .update(updatedCategory.toMap());
+            .collection("difficulties")
+            .doc(widget.difficulty!.id)
+            .update(updatedDifficulty.toMap());
 
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Category updated successfully")),
+          SnackBar(content: Text("Difficulty updated successfully")),
         );
       } else {
         await _firestore
-            .collection("categories")
+            .collection("difficulties")
             .add(
-              Category(
-                id: _firestore.collection("categories").doc().id,
+              Difficulty(
+                id: _firestore.collection("difficulties").doc().id,
                 name: _nameController.text.trim(),
                 description: _descriptionController.text.trim(),
                 createdAt: DateTime.now(),
               ).toMap(),
             );
 
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text("Category added successfully")));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Difficulty added successfully")),
+        );
       }
       Navigator.pop(context);
     } catch (e) {
@@ -129,7 +129,7 @@ class _AddCategoryScreenState extends State<AddCategoryScreen> {
         appBar: AppBar(
           backgroundColor: AppTheme.white,
           title: Text(
-            widget.category != null ? "Edit Category" : "Add Category",
+            widget.difficulty != null ? "Edit Difficulty" : "Add Difficulty",
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
         ),
@@ -142,7 +142,7 @@ class _AddCategoryScreenState extends State<AddCategoryScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Category Details",
+                    "Difficulty Details",
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -151,7 +151,7 @@ class _AddCategoryScreenState extends State<AddCategoryScreen> {
                   ),
                   SizedBox(height: 8),
                   Text(
-                    "Create a new category for organizing your quizzes",
+                    "Create a new difficulty for organizing your quizzes",
                     style: TextStyle(fontSize: 14, color: AppTheme.text2),
                   ),
                   SizedBox(height: 24),
@@ -166,8 +166,8 @@ class _AddCategoryScreenState extends State<AddCategoryScreen> {
                         ),
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      labelText: "Category Name",
-                      hintText: "Enter category name",
+                      labelText: "Difficulty Name",
+                      hintText: "Enter difficulty name",
                       prefixIcon: Icon(
                         Icons.category_rounded,
                         color: AppTheme.primary,
@@ -175,7 +175,7 @@ class _AddCategoryScreenState extends State<AddCategoryScreen> {
                     ),
                     validator:
                         (value) =>
-                            value!.isEmpty ? "Enter category name" : null,
+                            value!.isEmpty ? "Enter difficulty name" : null,
                     textInputAction: TextInputAction.next,
                   ),
                   SizedBox(height: 20),
@@ -207,7 +207,7 @@ class _AddCategoryScreenState extends State<AddCategoryScreen> {
                     width: double.infinity,
                     height: 50,
                     child: ElevatedButton(
-                      onPressed: _isLoading ? null : _saveCategory,
+                      onPressed: _isLoading ? null : _saveDifficulty,
                       child:
                           _isLoading
                               ? SizedBox(
@@ -221,9 +221,9 @@ class _AddCategoryScreenState extends State<AddCategoryScreen> {
                                 ),
                               )
                               : Text(
-                                widget.category != null
-                                    ? "Update Category"
-                                    : "Add Category",
+                                widget.difficulty != null
+                                    ? "Update Difficulty"
+                                    : "Add Difficulty",
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,

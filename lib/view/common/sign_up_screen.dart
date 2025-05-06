@@ -56,16 +56,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
             .then((result) {
               UserEntity loggedInUser = getUser.getLoggedInUser(result);
               if (result.role == 'user') {
-                Navigator.of(context).pushReplacement(
+                Navigator.of(context).pushAndRemoveUntil(
                   MaterialPageRoute(
                     builder: (context) => Dashboard(loggedInUser: loggedInUser),
                   ),
+                  (Route<dynamic> route) => false,
                 );
               } else {
-                Navigator.of(context).pushReplacement(
+                Navigator.of(context).pushAndRemoveUntil(
                   MaterialPageRoute(
                     builder: (context) => Dashboard(loggedInUser: loggedInUser),
                   ),
+                  (Route<dynamic> route) => false,
                 );
               }
             });
@@ -85,16 +87,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
             .then((result) {
               UserEntity loggedInUser = getUser.getLoggedInUser(result);
               if (result.role == 'user') {
-                Navigator.of(context).pushReplacement(
+                Navigator.of(context).pushAndRemoveUntil(
                   MaterialPageRoute(
                     builder: (context) => Dashboard(loggedInUser: loggedInUser),
                   ),
+                  (Route<dynamic> route) => false,
                 );
               } else {
-                Navigator.of(context).pushReplacement(
+                Navigator.of(context).pushAndRemoveUntil(
                   MaterialPageRoute(
                     builder: (context) => Dashboard(loggedInUser: loggedInUser),
                   ),
+                  (Route<dynamic> route) => false,
                 );
               }
             });

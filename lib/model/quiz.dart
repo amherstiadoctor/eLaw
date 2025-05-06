@@ -3,7 +3,7 @@ import 'package:sp_code/model/question.dart';
 class Quiz {
   final String id;
   final String title;
-  final String categoryId;
+  final String difficultyId;
   final int timeLimit;
   final List<Question> questions;
   final DateTime? createdAt;
@@ -12,7 +12,7 @@ class Quiz {
   Quiz({
     required this.id,
     required this.title,
-    required this.categoryId,
+    required this.difficultyId,
     required this.timeLimit,
     required this.questions,
     this.createdAt,
@@ -23,7 +23,7 @@ class Quiz {
     return Quiz(
       id: id,
       title: map['title'] ?? "",
-      categoryId: map['categoryId'] ?? "",
+      difficultyId: map['difficultyId'] ?? "",
       timeLimit: map['timeLimit'] ?? 0,
       questions:
           ((map['questions'] ?? []) as List)
@@ -37,7 +37,7 @@ class Quiz {
   Map<String, dynamic> toMap({bool isUpdate = false}) {
     return {
       'title': title,
-      'categoryId': categoryId,
+      'difficultyId': difficultyId,
       'timeLimit': timeLimit,
       'questions': questions.map((e) => e.toMap()).toList(),
       if (isUpdate) 'updatedAt': DateTime.now(),
@@ -47,7 +47,7 @@ class Quiz {
 
   Quiz copyWith({
     String? title,
-    String? categoryId,
+    String? difficultyId,
     int? timeLimit,
     List<Question>? questions,
     DateTime? createdAt,
@@ -55,7 +55,7 @@ class Quiz {
     return Quiz(
       id: id,
       title: title ?? this.title,
-      categoryId: categoryId ?? this.categoryId,
+      difficultyId: difficultyId ?? this.difficultyId,
       timeLimit: timeLimit ?? this.timeLimit,
       questions: questions ?? this.questions,
       createdAt: createdAt,

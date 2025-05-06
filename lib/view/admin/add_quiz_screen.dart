@@ -1,14 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:sp_code/model/category.dart';
+import 'package:sp_code/model/difficulty.dart';
 import 'package:sp_code/model/question.dart';
 import 'package:sp_code/model/quiz.dart';
 import 'package:sp_code/config/theme.dart';
 
 class AddQuizScreen extends StatefulWidget {
-  final String? categoryId;
-  final String? categoryName;
-  const AddQuizScreen({super.key, this.categoryId, this.categoryName});
+  final String? difficultyId;
+  final String? difficultyName;
+  const AddQuizScreen({super.key, this.difficultyId, this.difficultyName});
 
   @override
   State<AddQuizScreen> createState() => _AddQuizScreenState();
@@ -39,14 +39,14 @@ class _AddQuizScreenState extends State<AddQuizScreen> {
   final _timeLimitController = TextEditingController();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   bool _isLoading = false;
-  String? _selectedCategoryId;
+  String? _selectedDifficultyId;
   List<QuestionFromItem> _questionsItems = [];
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    _selectedCategoryId = widget.categoryId;
+    _selectedDifficultyId = widget.difficultyId;
     _addQuestion();
   }
 
@@ -85,10 +85,10 @@ class _AddQuizScreenState extends State<AddQuizScreen> {
       return;
     }
 
-    if (_selectedCategoryId == null) {
+    if (_selectedDifficultyId == null) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text("Please select a category")));
+      ).showSnackBar(SnackBar(content: Text("Please select a difficulty")));
       return;
     }
 
@@ -116,7 +116,7 @@ class _AddQuizScreenState extends State<AddQuizScreen> {
             Quiz(
               id: _firestore.collection("quizzes").doc().id,
               title: _titleController.text.trim(),
-              categoryId: _selectedCategoryId!,
+              difficultyId: _selectedDifficultyId!,
               timeLimit: int.parse(_timeLimitController.text),
               questions: questions,
               createdAt: DateTime.now(),
@@ -157,8 +157,8 @@ class _AddQuizScreenState extends State<AddQuizScreen> {
       appBar: AppBar(
         backgroundColor: AppTheme.white,
         title: Text(
-          widget.categoryName != null
-              ? "Add ${widget.categoryName} Quiz"
+          widget.difficultyName != null
+              ? "Add ${widget.difficultyName} Quiz"
               : "Add Quiz",
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
@@ -208,11 +208,11 @@ class _AddQuizScreenState extends State<AddQuizScreen> {
                   },
                 ),
                 SizedBox(height: 16),
-                if (widget.categoryId == null)
+                if (widget.difficultyId == null)
                   StreamBuilder<QuerySnapshot>(
                     stream:
                         _firestore
-                            .collection("categories")
+                            .collection("difficulties")
                             .orderBy("name")
                             .snapshots(),
                     builder: (context, snapshot) {
@@ -227,10 +227,10 @@ class _AddQuizScreenState extends State<AddQuizScreen> {
                         );
                       }
 
-                      final categories =
+                      final difficulties =
                           snapshot.data!.docs
                               .map(
-                                (doc) => Category.fromMap(
+                                (doc) => Difficulty.fromMap(
                                   doc.id,
                                   doc.data() as Map<String, dynamic>,
                                 ),
@@ -238,7 +238,7 @@ class _AddQuizScreenState extends State<AddQuizScreen> {
                               .toList();
 
                       return DropdownButtonFormField<String>(
-                        value: _selectedCategoryId,
+                        value: _selectedDifficultyId,
                         decoration: InputDecoration(
                           enabledBorder: OutlineInputBorder(
                             borderSide: BorderSide(
@@ -247,30 +247,30 @@ class _AddQuizScreenState extends State<AddQuizScreen> {
                             ),
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          labelText: "Category",
-                          hintText: "Select category",
+                          labelText: "Difficulty",
+                          hintText: "Select difficulty",
                           prefixIcon: Icon(
                             Icons.category,
                             color: AppTheme.primary,
                           ),
                         ),
                         items:
-                            categories
+                            difficulties
                                 .map(
-                                  (category) => DropdownMenuItem(
-                                    value: category.id,
-                                    child: Text(category.name),
+                                  (difficulty) => DropdownMenuItem(
+                                    value: difficulty.id,
+                                    child: Text(difficulty.name),
                                   ),
                                 )
                                 .toList(),
                         onChanged: (value) {
                           setState(() {
-                            _selectedCategoryId = value;
+                            _selectedDifficultyId = value;
                           });
                         },
                         validator: (value) {
                           return value == null
-                              ? "Please select a category"
+                              ? "Please select a difficulty"
                               : null;
                         },
                       );

@@ -1,18 +1,18 @@
-class Category {
+class Difficulty {
   final String id;
   final String name;
   final String description;
   final DateTime? createdAt;
 
-  Category({
+  Difficulty({
     required this.id,
     required this.name,
     required this.description,
     this.createdAt,
   });
 
-  factory Category.fromMap(String id, Map<String, dynamic> map) {
-    return Category(
+  factory Difficulty.fromMap(String id, Map<String, dynamic> map) {
+    return Difficulty(
       id: id,
       name: map['name'],
       description: map['description'],
@@ -28,8 +28,8 @@ class Category {
     };
   }
 
-  Category copyWith({String? name, String? description}) {
-    return Category(
+  Difficulty copyWith({String? name, String? description}) {
+    return Difficulty(
       id: id,
       name: name ?? this.name,
       description: description ?? this.description,

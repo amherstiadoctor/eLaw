@@ -1,15 +1,19 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:sp_code/model/category.dart';
+import 'package:sp_code/model/difficulty.dart';
 import 'package:sp_code/model/quiz.dart';
 import 'package:sp_code/config/theme.dart';
 import 'package:sp_code/view/admin/add_quiz_screen.dart';
 import 'package:sp_code/view/admin/edit_quiz_screen.dart';
 
 class ManageQuizzesScreen extends StatefulWidget {
-  final String? categoryId;
-  final String? categoryName;
-  const ManageQuizzesScreen({super.key, this.categoryId, this.categoryName});
+  final String? difficultyId;
+  final String? difficultyName;
+  const ManageQuizzesScreen({
+    super.key,
+    this.difficultyId,
+    this.difficultyName,
+  });
 
   @override
   State<ManageQuizzesScreen> createState() => _ManageQuizzesScreenState();
@@ -20,65 +24,66 @@ class _ManageQuizzesScreenState extends State<ManageQuizzesScreen> {
   final TextEditingController _searchController = TextEditingController();
 
   String _searchQuery = "";
-  String? _selectedCategoryId;
-  List<Category> _categories = [];
-  Category? _initialCategory;
+  String? _selectedDifficultyId;
+  List<Difficulty> _difficulties = [];
+  Difficulty? _initialDifficulty;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    _fetchCategories();
+    _fetchDifficulties();
   }
 
-  Future<void> _fetchCategories() async {
+  Future<void> _fetchDifficulties() async {
     try {
-      final querySnapshot = await _firestore.collection("categories").get();
-      final categories =
+      final querySnapshot = await _firestore.collection("difficulties").get();
+      final difficulties =
           querySnapshot.docs
-              .map((doc) => Category.fromMap(doc.id, doc.data()))
+              .map((doc) => Difficulty.fromMap(doc.id, doc.data()))
               .toList();
       setState(() {
-        _categories = categories;
-        if (widget.categoryId != null) {
-          _initialCategory = _categories.firstWhere(
-            (element) => element.id == widget.categoryId,
+        _difficulties = difficulties;
+        if (widget.difficultyId != null) {
+          _initialDifficulty = _difficulties.firstWhere(
+            (element) => element.id == widget.difficultyId,
             orElse:
-                () => Category(
-                  id: widget.categoryId!,
+                () => Difficulty(
+                  id: widget.difficultyId!,
                   name: "Unknown",
                   description: '',
                 ),
           );
 
-          _selectedCategoryId = _initialCategory!.id;
+          _selectedDifficultyId = _initialDifficulty!.id;
         }
       });
     } catch (e) {
-      print("Error Fetching Categories: $e");
+      print("Error Fetching Difficulties: $e");
     }
   }
 
   Stream<QuerySnapshot> _getQuizzesStream() {
     Query query = _firestore.collection("quizzes");
 
-    String? filterCategoryId = _selectedCategoryId ?? widget.categoryId;
+    String? filterDifficultyId = _selectedDifficultyId ?? widget.difficultyId;
 
-    if (_selectedCategoryId != null) {
-      query = query.where("categoryId", isEqualTo: filterCategoryId);
+    if (_selectedDifficultyId != null) {
+      query = query.where("difficultyId", isEqualTo: filterDifficultyId);
     }
 
     return query.snapshots();
   }
 
   Widget _buildTitle() {
-    String? categoryId = _selectedCategoryId ?? widget.categoryId;
-    if (categoryId == null) {
+    String? difficultyId = _selectedDifficultyId ?? widget.difficultyId;
+    if (difficultyId == null) {
       return Text("All Quizzes", style: TextStyle(fontWeight: FontWeight.bold));
     }
 
     return StreamBuilder<DocumentSnapshot>(
-      stream: _firestore.collection('categories').doc(categoryId).snapshots(),
+      stream:
+          _firestore.collection('difficulties').doc(difficultyId).snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
           return Text(
@@ -86,13 +91,13 @@ class _ManageQuizzesScreenState extends State<ManageQuizzesScreen> {
             style: TextStyle(fontWeight: FontWeight.bold),
           );
         }
-        final category = Category.fromMap(
-          categoryId,
+        final difficulty = Difficulty.fromMap(
+          difficultyId,
           snapshot.data!.data() as Map<String, dynamic>,
         );
 
         return Text(
-          category.name,
+          difficulty.name,
           style: TextStyle(fontWeight: FontWeight.bold),
         );
       },
@@ -112,7 +117,8 @@ class _ManageQuizzesScreenState extends State<ManageQuizzesScreen> {
                 context,
                 MaterialPageRoute(
                   builder:
-                      (context) => AddQuizScreen(categoryId: widget.categoryId),
+                      (context) =>
+                          AddQuizScreen(difficultyId: widget.difficultyId),
                 ),
               );
             },
@@ -154,25 +160,25 @@ class _ManageQuizzesScreenState extends State<ManageQuizzesScreen> {
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              value: _selectedCategoryId,
+              value: _selectedDifficultyId,
               items: [
-                DropdownMenuItem(value: null, child: Text("All Categories")),
-                if (_initialCategory != null &&
-                    _categories.every((c) => c.id != _initialCategory!.id))
+                DropdownMenuItem(value: null, child: Text("All Difficulties")),
+                if (_initialDifficulty != null &&
+                    _difficulties.every((c) => c.id != _initialDifficulty!.id))
                   DropdownMenuItem(
-                    value: _initialCategory!.id,
-                    child: Text(_initialCategory!.name),
+                    value: _initialDifficulty!.id,
+                    child: Text(_initialDifficulty!.name),
                   ),
-                ..._categories.map(
-                  (category) => DropdownMenuItem(
-                    value: category.id,
-                    child: Text(category.name),
+                ..._difficulties.map(
+                  (difficulty) => DropdownMenuItem(
+                    value: difficulty.id,
+                    child: Text(difficulty.name),
                   ),
                 ),
               ],
               onChanged: (value) {
                 setState(() {
-                  _selectedCategoryId = value;
+                  _selectedDifficultyId = value;
                 });
               },
             ),
@@ -229,8 +235,8 @@ class _ManageQuizzesScreenState extends State<ManageQuizzesScreen> {
                               MaterialPageRoute(
                                 builder:
                                     (context) => AddQuizScreen(
-                                      categoryId: widget.categoryId,
-                                      categoryName: widget.categoryName,
+                                      difficultyId: widget.difficultyId,
+                                      difficultyName: widget.difficultyName,
                                     ),
                               ),
                             );

@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:sp_code/auth-service/auth.dart';
 import 'package:sp_code/auth-service/firebase_auth_service.dart';
-import 'package:sp_code/model/category.dart';
+import 'package:sp_code/model/difficulty.dart';
 import 'package:sp_code/config/theme.dart';
 import 'package:sp_code/model/user_entity.dart';
 import 'package:sp_code/view/common/splash_screen.dart';
-import 'package:sp_code/view/user/category_screen.dart';
+import 'package:sp_code/view/user/difficulty_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   final UserEntity loggedInUser;
@@ -23,8 +23,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  List<Category> _allCategories = [];
-  List<Category> _filteredCategories = [];
+  List<Difficulty> _allDifficulties = [];
+  List<Difficulty> _filteredDifficulties = [];
 
   handleSignOut() async {
     await widget._authService.onSignOut();
@@ -34,23 +34,23 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    _fetchCategories();
+    _fetchDifficulties();
   }
 
-  Future<void> _fetchCategories() async {
+  Future<void> _fetchDifficulties() async {
     final snapshot =
         await FirebaseFirestore.instance
-            .collection('categories')
+            .collection('difficulties')
             .orderBy('createdAt', descending: true)
             .get();
 
     setState(() {
-      _allCategories =
+      _allDifficulties =
           snapshot.docs
-              .map((doc) => Category.fromMap(doc.id, doc.data()))
+              .map((doc) => Difficulty.fromMap(doc.id, doc.data()))
               .toList();
 
-      _filteredCategories = _allCategories;
+      _filteredDifficulties = _allDifficulties;
     });
   }
 
@@ -133,11 +133,11 @@ class _HomeScreenState extends State<HomeScreen> {
           SliverPadding(
             padding: EdgeInsets.all(16),
             sliver:
-                _filteredCategories.isEmpty
+                _filteredDifficulties.isEmpty
                     ? SliverToBoxAdapter(
                       child: Center(
                         child: Text(
-                          "No categories found",
+                          "No difficulties found",
                           style: TextStyle(color: AppTheme.text2),
                         ),
                       ),
@@ -145,8 +145,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     : SliverGrid(
                       delegate: SliverChildBuilderDelegate(
                         childCount: 3,
-                        (context, index) => _buildCategoryCard(
-                          _filteredCategories[index],
+                        (context, index) => _buildDifficultyCard(
+                          _filteredDifficulties[index],
                           index,
                         ),
                       ),
@@ -163,7 +163,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildCategoryCard(Category category, int index) {
+  Widget _buildDifficultyCard(Difficulty difficulty, int index) {
     return Card(
           elevation: 0,
           shape: RoundedRectangleBorder(
@@ -175,7 +175,8 @@ class _HomeScreenState extends State<HomeScreen> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => CategoryScreen(category: category),
+                  builder:
+                      (context) => DifficultyScreen(difficulty: difficulty),
                 ),
               );
             },
@@ -198,7 +199,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   SizedBox(height: 10),
                   Text(
-                    category.name,
+                    difficulty.name,
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -207,7 +208,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   SizedBox(height: 5),
                   Text(
-                    category.description,
+                    difficulty.description,
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
