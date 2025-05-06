@@ -4,6 +4,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:sp_code/model/category.dart';
 import 'package:sp_code/model/quiz.dart';
 import 'package:sp_code/theme/theme.dart';
+import 'package:sp_code/view/user/quiz_play_screen.dart';
 
 class CategoryScreen extends StatefulWidget {
   final Category category;
@@ -158,7 +159,12 @@ class _CategoryScreenState extends State<CategoryScreen> {
           child: InkWell(
             borderRadius: BorderRadius.circular(16),
             onTap: () {
-              // Navigator.push(context, MaterialPageRoute(builder: (context) => QuizPlayScreen(quiz: quiz)));
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => QuizPlayScreen(quiz: quiz),
+                ),
+              );
             },
             child: Padding(
               padding: EdgeInsets.all(16),
