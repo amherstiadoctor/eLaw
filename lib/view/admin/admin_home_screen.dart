@@ -135,6 +135,17 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
     );
   }
 
+  String greeting() {
+    var hour = DateTime.now().hour;
+    if (hour < 12) {
+      return 'Morning';
+    }
+    if (hour < 17) {
+      return 'Afternoon';
+    }
+    return 'Evening';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -170,7 +181,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Welcome Admin",
+                    "Good ${greeting()}, ${widget.loggedInUser.firstName}",
                     style: TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
