@@ -51,7 +51,11 @@ class _DashboardState extends State<Dashboard> {
         onPressed: () {
           _onItemTapped(1);
         },
-        child: Icon(Icons.home_rounded, size: 28),
+        child: Icon(
+          Icons.home_rounded,
+          size: 28,
+          color: _selectedIndex == 1 ? AppTheme.white : AppTheme.black,
+        ),
       ),
       bottomNavigationBar: BottomAppBar(
         height: 85,
