@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:sp_code/model/category.dart';
 import 'package:sp_code/model/question.dart';
@@ -270,7 +269,9 @@ class _AddQuizScreenState extends State<AddQuizScreen> {
                           });
                         },
                         validator: (value) {
-                          value == null ? "Please select a category" : null;
+                          return value == null
+                              ? "Please select a category"
+                              : null;
                         },
                       );
                     },

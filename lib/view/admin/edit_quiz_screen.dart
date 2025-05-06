@@ -37,7 +37,6 @@ class _EditQuizScreenState extends State<EditQuizScreen> {
   late TextEditingController _timeLimitController;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   bool _isLoading = false;
-  String? _selectedCategoryId;
   late List<QuestionFromItem> _questionsItems;
 
   @override

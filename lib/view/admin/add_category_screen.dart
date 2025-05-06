@@ -105,7 +105,7 @@ class _AddCategoryScreenState extends State<AddCategoryScreen> {
                     ),
                     TextButton(
                       onPressed: () {
-                        Navigator.pop(context, false);
+                        Navigator.pop(context, true);
                       },
                       child: Text(
                         "Discard",
@@ -116,6 +116,7 @@ class _AddCategoryScreenState extends State<AddCategoryScreen> {
                 ),
           ) ??
           false;
+      return confirm;
     }
     return true;
   }

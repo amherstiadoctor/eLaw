@@ -344,19 +344,41 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                                 padding: EdgeInsets.only(bottom: 16),
                                 child: Row(
                                   children: [
-                                    Container(
-                                      padding: EdgeInsets.all(8),
-                                      decoration: BoxDecoration(
-                                        color: AppTheme.primary.withOpacity(
-                                          0.1,
+                                    Icon(
+                                      Icons.quiz_rounded,
+                                      color: AppTheme.primary,
+                                      size: 20,
+                                    ),
+                                    SizedBox(width: 10),
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          quiz["title"],
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                            color: AppTheme.text,
+                                          ),
                                         ),
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                      child: Icon(
-                                        Icons.quiz_rounded,
-                                        color: AppTheme.primary,
-                                        size: 20,
-                                      ),
+                                        SizedBox(height: 5),
+                                        quiz["updatedAt"] != null
+                                            ? Text(
+                                              "Updated on ${_formatDate(quiz["updatedAt"].toDate())}",
+                                              style: TextStyle(
+                                                fontSize: 12,
+                                                color: AppTheme.text2,
+                                              ),
+                                            )
+                                            : Text(
+                                              "Created on ${_formatDate(quiz["createdAt"].toDate())}",
+                                              style: TextStyle(
+                                                fontSize: 12,
+                                                color: AppTheme.text2,
+                                              ),
+                                            ),
+                                      ],
                                     ),
                                   ],
                                 ),
@@ -383,7 +405,7 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                               ),
                               SizedBox(width: 12),
                               Text(
-                                'Quiz Actions',
+                                'Admin Actions',
                                 style: TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
