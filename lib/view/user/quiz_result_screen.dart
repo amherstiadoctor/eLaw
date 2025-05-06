@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:sp_code/model/quiz.dart';
-import 'package:sp_code/theme/theme.dart';
+import 'package:sp_code/config/theme.dart';
 
 class QuizResultScreen extends StatefulWidget {
   final Quiz quiz;

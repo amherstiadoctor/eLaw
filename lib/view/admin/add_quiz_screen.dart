@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:sp_code/model/category.dart';
 import 'package:sp_code/model/question.dart';
 import 'package:sp_code/model/quiz.dart';
-import 'package:sp_code/theme/theme.dart';
+import 'package:sp_code/config/theme.dart';
 
 class AddQuizScreen extends StatefulWidget {
   final String? categoryId;

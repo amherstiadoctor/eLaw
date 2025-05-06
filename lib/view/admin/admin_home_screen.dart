@@ -1,11 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:sp_code/theme/theme.dart';
+import 'package:sp_code/config/theme.dart';
+import 'package:sp_code/model/user_entity.dart';
 import 'package:sp_code/view/admin/manage_categories_screen.dart';
 import 'package:sp_code/view/admin/manage_quizzes_screen.dart';
 
 class AdminHomeScreen extends StatefulWidget {
-  const AdminHomeScreen({super.key});
+  final UserEntity loggedInUser;
+  const AdminHomeScreen({super.key, required this.loggedInUser});
 
   @override
   State<AdminHomeScreen> createState() => _AdminHomeScreenState();

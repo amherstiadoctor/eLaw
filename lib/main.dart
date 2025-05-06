@@ -1,9 +1,8 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:sp_code/firebase_options.dart';
-import 'package:sp_code/theme/theme.dart';
-import 'package:sp_code/view/admin/admin_home_screen.dart';
-import 'package:sp_code/view/user/home_screen.dart';
+import 'package:sp_code/config/theme.dart';
+import 'package:sp_code/view/common/splash_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,7 +19,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: "eLaw",
       theme: AppTheme.theme,
-      home: HomeScreen(),
+      home: SplashScreen(),
     );
   }
 }

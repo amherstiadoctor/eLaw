@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:sp_code/model/category.dart';
 import 'package:sp_code/model/quiz.dart';
-import 'package:sp_code/theme/theme.dart';
+import 'package:sp_code/config/theme.dart';
 import 'package:sp_code/view/admin/add_quiz_screen.dart';
 import 'package:sp_code/view/admin/edit_quiz_screen.dart';
 

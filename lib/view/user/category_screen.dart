@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:sp_code/model/category.dart';
 import 'package:sp_code/model/quiz.dart';
-import 'package:sp_code/theme/theme.dart';
+import 'package:sp_code/config/theme.dart';
 import 'package:sp_code/view/user/quiz_play_screen.dart';
 
 class CategoryScreen extends StatefulWidget {

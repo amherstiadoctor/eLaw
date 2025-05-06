@@ -1,24 +1,34 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:sp_code/auth-service/auth.dart';
+import 'package:sp_code/auth-service/firebase_auth_service.dart';
 import 'package:sp_code/model/category.dart';
-import 'package:sp_code/theme/theme.dart';
+import 'package:sp_code/config/theme.dart';
+import 'package:sp_code/model/user_entity.dart';
+import 'package:sp_code/view/common/splash_screen.dart';
 import 'package:sp_code/view/user/category_screen.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final UserEntity loggedInUser;
+  HomeScreen({super.key, required this.loggedInUser});
+
+  final AuthService _authService = FirebaseAuthService(
+    authService: FirebaseAuth.instance,
+  );
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final TextEditingController _searchController = TextEditingController();
   List<Category> _allCategories = [];
   List<Category> _filteredCategories = [];
 
-  List<String> _categoryFilters = ['All'];
-  String _selectedFilter = "All";
+  handleSignOut() async {
+    await widget._authService.onSignOut();
+  }
 
   @override
   void initState() {
@@ -40,31 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
               .map((doc) => Category.fromMap(doc.id, doc.data()))
               .toList();
 
-      _categoryFilters =
-          ['All'] +
-          _allCategories.map((category) => category.name).toSet().toList();
-
       _filteredCategories = _allCategories;
-    });
-  }
-
-  void _filterCategories(String query, {String? categoryFilter}) {
-    setState(() {
-      _filteredCategories =
-          _allCategories.where((category) {
-            final matchesSearch =
-                category.name.toLowerCase().contains(query.toLowerCase()) ||
-                category.description.toLowerCase().contains(
-                  query.toLowerCase(),
-                );
-
-            final matchesCategory =
-                categoryFilter == null ||
-                categoryFilter == "All" ||
-                category.name.toLowerCase() == categoryFilter.toLowerCase();
-
-            return matchesSearch && matchesCategory;
-          }).toList();
     });
   }
 
@@ -85,6 +71,20 @@ class _HomeScreenState extends State<HomeScreen> {
               borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(20),
                 bottomRight: Radius.circular(20),
+              ),
+            ),
+            leading: Positioned(
+              right: 0,
+              child: ElevatedButton(
+                onPressed: () {
+                  handleSignOut();
+                  Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(builder: (context) => SplashScreen()),
+                    (Route<dynamic> route) => false,
+                  );
+                },
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.black),
+                child: const Text('Sign Out'),
               ),
             ),
             title: Text(
@@ -122,49 +122,6 @@ class _HomeScreenState extends State<HomeScreen> {
                               color: AppTheme.white.withOpacity(0.8),
                             ),
                           ),
-                          // SizedBox(height: 16),
-                          // Container(
-                          //   decoration: BoxDecoration(
-                          //     color: AppTheme.white,
-                          //     borderRadius: BorderRadius.circular(8),
-                          //     boxShadow: [
-                          //       BoxShadow(
-                          //         color: Colors.black.withOpacity(0.1),
-                          //         blurRadius: 4,
-                          //         offset: Offset(0, 2),
-                          //       ),
-                          //     ],
-                          //   ),
-                          //   child: TextField(
-                          //     controller: _searchController,
-                          //     onChanged: (value) => _filterCategories(value),
-                          //     decoration: InputDecoration(
-                          //       hintText: "Search categories...",
-                          //       prefixIcon: Icon(
-                          //         Icons.search,
-                          //         color: AppTheme.primary,
-                          //       ),
-                          //       suffixIcon:
-                          //           _searchController.text.isNotEmpty
-                          //               ? IconButton(
-                          //                 onPressed: () {
-                          //                   _searchController.clear();
-                          //                   _filterCategories('');
-                          //                 },
-                          //                 icon: Icon(
-                          //                   Icons.clear,
-                          //                   color: AppTheme.primary,
-                          //                 ),
-                          //               )
-                          //               : null,
-                          //       border: InputBorder.none,
-                          //       contentPadding: EdgeInsets.symmetric(
-                          //         horizontal: 16,
-                          //         vertical: 12,
-                          //       ),
-                          //     ),
-                          //   ),
-                          // ),
                         ],
                       ),
                     ),
@@ -173,45 +130,6 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
           ),
-          // SliverToBoxAdapter(
-          //   child: Container(
-          //     margin: EdgeInsets.all(16),
-          //     height: 40,
-          //     child: ListView.builder(
-          //       scrollDirection: Axis.horizontal,
-          //       itemCount: _categoryFilters.length,
-          //       itemBuilder: (context, index) {
-          //         final filter = _categoryFilters[index];
-          //         return Padding(
-          //           padding: EdgeInsets.only(right: 8),
-          //           child: ChoiceChip(
-          //             label: Text(
-          //               filter,
-          //               style: TextStyle(
-          //                 color:
-          //                     _selectedFilter == filter
-          //                         ? AppTheme.white
-          //                         : AppTheme.text,
-          //               ),
-          //             ),
-          //             selected: _selectedFilter == filter,
-          //             selectedColor: AppTheme.primary,
-          //             backgroundColor: AppTheme.white,
-          //             onSelected: (bool selected) {
-          //               setState(() {
-          //                 _selectedFilter = filter;
-          //                 _filterCategories(
-          //                   _searchController.text,
-          //                   categoryFilter: filter,
-          //                 );
-          //               });
-          //             },
-          //           ),
-          //         );
-          //       },
-          //     ),
-          //   ),
-          // ),
           SliverPadding(
             padding: EdgeInsets.all(16),
             sliver:
