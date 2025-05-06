@@ -11,9 +11,9 @@ class Header extends StatefulWidget {
     this.hasBackButton = false,
   });
   final String title;
-  Color? color;
-  bool has3rdIcon;
-  bool hasBackButton;
+  final Color? color;
+  final bool? has3rdIcon;
+  final bool? hasBackButton;
 
   @override
   State<Header> createState() => _HeaderState();
@@ -50,7 +50,7 @@ class _HeaderState extends State<Header> {
               ),
             ),
             const Spacer(),
-            widget.has3rdIcon
+            widget.has3rdIcon!
                 ? Icon(Icons.settings_rounded, color: AppTheme.white, size: 40)
                 : Container(width: 50.responsiveW),
           ],
