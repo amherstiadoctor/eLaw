@@ -81,7 +81,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     try {
       await widget._authService.signInWithGoogle().then((value) async {
         await widget._authService
-            .googleRoles(user: value.user!, register: false)
+            .googleRoles(user: value.user!, register: true)
             .then((result) {
               UserEntity loggedInUser = getUser.getLoggedInUser(result);
               if (result.role == 'user') {
