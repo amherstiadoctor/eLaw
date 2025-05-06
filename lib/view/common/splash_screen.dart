@@ -1,5 +1,4 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:sp_code/auth-service/auth.dart';
 import 'package:sp_code/auth-service/firebase_auth_service.dart';
@@ -9,6 +8,7 @@ import 'package:sp_code/utils/get_user.dart';
 import 'package:sp_code/utils/widgets/button.dart';
 import 'package:sp_code/view/common/dashboard.dart';
 import 'package:sp_code/view/common/sign_up_screen.dart';
+import 'package:sp_code/view/common/user_sign_in_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   SplashScreen({super.key});
@@ -174,7 +174,7 @@ class _SplashScreenState extends State<SplashScreen> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => SignInScreen(),
+                              builder: (context) => UserSignInScreen(),
                             ),
                           );
                         },
