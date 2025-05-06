@@ -3,12 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:sp_code/firebase_options.dart';
 import 'package:sp_code/theme/theme.dart';
 import 'package:sp_code/view/admin/admin_home_screen.dart';
+import 'package:sp_code/view/user/home_screen.dart';
 
-void main() async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(MyApp());
 }
 
@@ -21,7 +20,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: "eLaw",
       theme: AppTheme.theme,
-      home: AdminHomeScreen(),
+      home: HomeScreen(),
     );
   }
 }
