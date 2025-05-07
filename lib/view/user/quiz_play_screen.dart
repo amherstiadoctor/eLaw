@@ -5,11 +5,17 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:sp_code/model/question.dart';
 import 'package:sp_code/model/quiz.dart';
 import 'package:sp_code/config/theme.dart';
+import 'package:sp_code/model/user_entity.dart';
 import 'package:sp_code/view/user/quiz_result_screen.dart';
 
 class QuizPlayScreen extends StatefulWidget {
+  final UserEntity loggedInUser;
   final Quiz quiz;
-  const QuizPlayScreen({super.key, required this.quiz});
+  const QuizPlayScreen({
+    super.key,
+    required this.quiz,
+    required this.loggedInUser,
+  });
 
   @override
   State<QuizPlayScreen> createState() => _QuizPlayScreenState();
@@ -93,6 +99,7 @@ class _QuizPlayScreenState extends State<QuizPlayScreen>
               totalQuestions: widget.quiz.questions.length,
               correctAnswers: correctAnswers,
               selectedAnswers: _selectedAnswers,
+              loggedInUser: widget.loggedInUser,
             ),
       ),
     );

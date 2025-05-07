@@ -55,11 +55,11 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
 
-    Future.delayed(const Duration(seconds: 1)).then((value) {
+    Future.delayed(const Duration(seconds: 2)).then((value) {
       checkUser();
     });
 
-    Future.delayed(const Duration(seconds: 2)).then((value) {
+    Future.delayed(const Duration(seconds: 3)).then((value) {
       if (mounted) {
         setState(() {
           _delayed = false;
@@ -67,7 +67,7 @@ class _SplashScreenState extends State<SplashScreen> {
       }
     });
 
-    Future.delayed(const Duration(milliseconds: 2100)).then((value) {
+    Future.delayed(const Duration(milliseconds: 3100)).then((value) {
       if (mounted) {
         setState(() {
           _display = true;

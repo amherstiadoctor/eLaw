@@ -16,6 +16,18 @@ class GetMessage {
     );
   }
 
+  static getGoodToastMessage(String message) {
+    Fluttertoast.showToast(
+      msg: message,
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.CENTER,
+      timeInSecForIosWeb: 1,
+      textColor: AppTheme.white,
+      fontSize: 16.0,
+      backgroundColor: AppTheme.green,
+    );
+  }
+
   static getErrorMessage(e) {
     String errorMessage = '';
     switch (e.toString().split('.').last) {

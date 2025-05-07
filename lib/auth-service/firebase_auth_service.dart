@@ -1,23 +1,21 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart' as auth;
-import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sp_code/auth-service/auth.dart';
 import 'package:sp_code/model/auth_error.dart';
 import 'package:sp_code/model/user_entity.dart';
-import 'package:sp_code/repository/user_repository.dart';
 
 class FirebaseAuthService implements AuthService {
   FirebaseAuthService({required auth.FirebaseAuth authService})
     : _firebaseAuth = authService;
 
   final auth.FirebaseAuth _firebaseAuth;
-  final userRepo = Get.put(UserRepository());
   final _db = FirebaseFirestore.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
 
   Future<UserEntity> _mapFirebaseUser(auth.User? user, bool register) async {
     String userRole = '';
+    String userId = '';
     if (user == null) {
       return UserEntity.empty();
     }
@@ -33,21 +31,29 @@ class FirebaseAuthService implements AuthService {
           .where("email", isEqualTo: user.email)
           .get()
           .then((querySnapshot) {
+            userId = querySnapshot.docs[0].data()["id"];
             userRole = querySnapshot.docs[0].data()["role"];
           }, onError: (e) => print("Error completing: $e"));
     }
 
+    final docUser = FirebaseFirestore.instance.collection('Users').doc();
+
     final map = <String, dynamic>{
-      'id': user.uid,
+      'id': userId.isNotEmpty ? userId : docUser.id,
       'firstName': splittedName.first,
       'lastName': splittedName.last,
       'email': user.email ?? '',
       'emailVerified': user.emailVerified,
       'role': userRole.isNotEmpty ? userRole : "user",
+      'quizzesTaken': <String>[],
+      'quizzesCompleted': <String>[],
+      'totalPoints': 0,
     };
 
     if (register) {
-      userRepo.createUser(UserEntity.fromJson(map));
+      await docUser.set(map).catchError((error, stackTrace) {
+        print(error.ToString());
+      });
     }
 
     return UserEntity.fromJson(map);

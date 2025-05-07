@@ -7,6 +7,9 @@ class UserEntity extends Equatable {
     required this.lastName,
     required this.email,
     required this.role,
+    required this.quizzesTaken,
+    required this.quizzesCompleted,
+    required this.totalPoints,
   });
 
   final String id;
@@ -14,6 +17,9 @@ class UserEntity extends Equatable {
   final String lastName;
   final String email;
   final String role;
+  final List<String> quizzesTaken;
+  final List<String> quizzesCompleted;
+  final int totalPoints;
 
   factory UserEntity.fromJson(Map<String, dynamic> json) => UserEntity(
     id: json['id'] ?? "",
@@ -21,6 +27,9 @@ class UserEntity extends Equatable {
     lastName: json['lastName'] ?? "",
     email: json['email'] ?? "",
     role: json['role'] ?? "",
+    quizzesTaken: json['quizzesTaken'] ?? [],
+    quizzesCompleted: json['quizzesCompleted'] ?? [],
+    totalPoints: json['totalPoints'] ?? 0,
   );
 
   Map<String, dynamic> toJson() => <String, dynamic>{
@@ -29,6 +38,9 @@ class UserEntity extends Equatable {
     'lastName': lastName,
     'email': email,
     'role': role,
+    'quizzesTaken': quizzesTaken,
+    'quizzesCompleted': quizzesCompleted,
+    'totalPoints': totalPoints,
   };
 
   factory UserEntity.empty() => const UserEntity(
@@ -37,8 +49,37 @@ class UserEntity extends Equatable {
     lastName: "",
     email: "",
     role: "",
+    quizzesTaken: [],
+    quizzesCompleted: [],
+    totalPoints: 0,
   );
 
   @override
-  List<Object?> get props => [id, firstName, lastName, email, role];
+  List<Object?> get props => [
+    id,
+    firstName,
+    lastName,
+    email,
+    role,
+    quizzesTaken,
+    quizzesCompleted,
+    totalPoints,
+  ];
+
+  UserEntity copyWith({
+    List<String>? quizzesTaken,
+    List<String>? quizzesCompleted,
+    int? totalPoints,
+  }) {
+    return UserEntity(
+      id: id,
+      firstName: firstName,
+      lastName: lastName,
+      email: email,
+      role: role,
+      quizzesTaken: quizzesTaken ?? this.quizzesTaken,
+      quizzesCompleted: quizzesCompleted ?? this.quizzesCompleted,
+      totalPoints: totalPoints ?? this.totalPoints,
+    );
+  }
 }

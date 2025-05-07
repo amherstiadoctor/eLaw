@@ -161,7 +161,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 context,
                 MaterialPageRoute(
                   builder:
-                      (context) => DifficultyScreen(difficulty: difficulty),
+                      (context) => DifficultyScreen(
+                        difficulty: difficulty,
+                        loggedInUser: widget.loggedInUser,
+                      ),
                 ),
               );
             },
