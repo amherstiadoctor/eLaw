@@ -167,20 +167,6 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     await widget._authService.onSignOut();
   }
 
-  // Center(
-  //       child: ElevatedButton(
-  //         onPressed: () {
-  //           handleSignOut();
-  //           Navigator.of(context).pushAndRemoveUntil(
-  //             MaterialPageRoute(builder: (context) => SplashScreen()),
-  //             (Route<dynamic> route) => false,
-  //           );
-  //         },
-  //         style: ElevatedButton.styleFrom(backgroundColor: Colors.black),
-  //         child: const Text('Sign Out'),
-  //       ),
-  //     ),
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -264,12 +250,10 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                       ),
                       child: Column(
                         children: [
-                          Container(
-                            height: 100,
-                            width: 100,
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(50),
-                            ),
+                          Icon(
+                            Icons.account_circle_outlined,
+                            color: AppTheme.primary,
+                            size: 100,
                           ),
                           SizedBox(height: 16),
                           Text(
@@ -319,55 +303,13 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                         ],
                       ),
                     ),
-                    SizedBox(height: 24),
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 24),
                       child: Column(
                         children: [
                           _buildSection(
-                            title: 'Account Settings',
+                            title: '',
                             items: [
-                              _buildMenuItem(
-                                icon: Icons.person_outline,
-                                title: 'Personal Details',
-                                subtitle: 'Update your personal information',
-                                onTap: () {},
-                                color: AppTheme.primary,
-                              ),
-                              _buildMenuItem(
-                                icon: Icons.lock_outline,
-                                title: 'Change Password',
-                                subtitle: 'Update your password',
-                                onTap: () {},
-                                color: AppTheme.primary,
-                              ),
-                              _buildMenuItem(
-                                icon: Icons.notifications_outlined,
-                                title: 'Notifications',
-                                subtitle: 'Manage your notifications',
-                                onTap: () {},
-                                color: AppTheme.primary,
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 15),
-                          _buildSection(
-                            title: 'More',
-                            items: [
-                              _buildMenuItem(
-                                icon: Icons.settings_outlined,
-                                title: 'Settings',
-                                subtitle: 'App preferences and settings',
-                                onTap: () {},
-                                color: AppTheme.secondary,
-                              ),
-                              _buildMenuItem(
-                                icon: Icons.help_outline,
-                                title: 'Help & Support',
-                                subtitle: 'Get help and contact us',
-                                onTap: () {},
-                                color: AppTheme.secondary,
-                              ),
                               _buildMenuItem(
                                 icon: Icons.logout_outlined,
                                 title: 'Sign Out',
