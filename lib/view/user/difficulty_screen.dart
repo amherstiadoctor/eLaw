@@ -5,7 +5,6 @@ import 'package:sp_code/model/difficulty.dart';
 import 'package:sp_code/model/quiz.dart';
 import 'package:sp_code/config/theme.dart';
 import 'package:sp_code/model/user_entity.dart';
-import 'package:sp_code/utils/get_message.dart';
 import 'package:sp_code/view/user/quiz_play_screen.dart';
 
 class DifficultyScreen extends StatefulWidget {
@@ -22,31 +21,8 @@ class DifficultyScreen extends StatefulWidget {
 }
 
 class _DifficultyScreenState extends State<DifficultyScreen> {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   List<Quiz> _quizzes = [];
   bool _isLoading = true;
-
-  Future<void> _addQuizzesTaken(Quiz quiz) async {
-    String? userId;
-    try {
-      final currentTakenList = widget.loggedInUser.quizzesTaken;
-      currentTakenList.add(quiz.id);
-
-      await _firestore
-          .collection("Users")
-          .where("email", isEqualTo: widget.loggedInUser.email)
-          .get()
-          .then((querySnapshot) {
-            userId = querySnapshot.docs[0].data()["id"];
-          }, onError: (e) => print("Error completing: $e"));
-
-      await _firestore.collection("Users").doc(userId).update({
-        'quizzesTaken': currentTakenList,
-      });
-    } catch (e) {
-      GetMessage.getToastMessage(e.toString());
-    }
-  }
 
   @override
   void initState() {
@@ -189,77 +165,16 @@ class _DifficultyScreenState extends State<DifficultyScreen> {
           child: InkWell(
             borderRadius: BorderRadius.circular(16),
             onTap: () {
-              if (widget.loggedInUser.quizzesTaken.isEmpty) {
-                _addQuizzesTaken(quiz);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder:
-                        (context) => QuizPlayScreen(
-                          quiz: quiz,
-                          loggedInUser: widget.loggedInUser,
-                        ),
-                  ),
-                );
-              } else {
-                for (var item in widget.loggedInUser.quizzesTaken) {
-                  if (item == quiz.id) {
-                    if (widget.loggedInUser.quizzesCompleted.isEmpty) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder:
-                              (context) => QuizPlayScreen(
-                                quiz: quiz,
-                                loggedInUser: widget.loggedInUser,
-                              ),
-                        ),
-                      );
-                    } else {
-                      for (var item in widget.loggedInUser.quizzesCompleted) {
-                        if (item == quiz.id) {
-                          GetMessage.getGoodToastMessage(
-                            "You've already perfected this quiz!\nCan't get anymore points",
-                          );
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder:
-                                  (context) => QuizPlayScreen(
-                                    quiz: quiz,
-                                    loggedInUser: widget.loggedInUser,
-                                  ),
-                            ),
-                          );
-                        } else {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder:
-                                  (context) => QuizPlayScreen(
-                                    quiz: quiz,
-                                    loggedInUser: widget.loggedInUser,
-                                  ),
-                            ),
-                          );
-                        }
-                      }
-                    }
-                  } else {
-                    widget.loggedInUser.quizzesTaken.add(quiz.id);
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder:
-                            (context) => QuizPlayScreen(
-                              quiz: quiz,
-                              loggedInUser: widget.loggedInUser,
-                            ),
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder:
+                      (context) => QuizPlayScreen(
+                        quiz: quiz,
+                        loggedInUser: widget.loggedInUser,
                       ),
-                    );
-                  }
-                }
-              }
+                ),
+              );
             },
             child: Padding(
               padding: EdgeInsets.all(16),

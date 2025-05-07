@@ -8,7 +8,6 @@ class getUser {
       lastName: userValue.lastName,
       email: userValue.email,
       role: userValue.role,
-      quizzesTaken: userValue.quizzesTaken,
       quizzesCompleted: userValue.quizzesCompleted,
       totalPoints: userValue.totalPoints,
     );

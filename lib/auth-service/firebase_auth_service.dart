@@ -45,7 +45,6 @@ class FirebaseAuthService implements AuthService {
       'email': user.email ?? '',
       'emailVerified': user.emailVerified,
       'role': userRole.isNotEmpty ? userRole : "user",
-      'quizzesTaken': <String>[],
       'quizzesCompleted': <String>[],
       'totalPoints': 0,
     };

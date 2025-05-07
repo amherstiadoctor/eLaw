@@ -1,11 +1,13 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:sp_code/model/question.dart';
 import 'package:sp_code/model/quiz.dart';
 import 'package:sp_code/config/theme.dart';
 import 'package:sp_code/model/user_entity.dart';
+import 'package:sp_code/utils/get_message.dart';
 import 'package:sp_code/view/user/quiz_result_screen.dart';
 
 class QuizPlayScreen extends StatefulWidget {
@@ -23,6 +25,7 @@ class QuizPlayScreen extends StatefulWidget {
 
 class _QuizPlayScreenState extends State<QuizPlayScreen>
     with SingleTickerProviderStateMixin {
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   late PageController _pageController;
 
   int _currentQuestionIndex = 0;
@@ -73,6 +76,76 @@ class _QuizPlayScreenState extends State<QuizPlayScreen>
     }
   }
 
+  Future<void> _addQuizzesCompleted(Quiz quiz) async {
+    String? userId;
+    try {
+      if (widget.loggedInUser.quizzesCompleted.contains(widget.quiz.id)) {
+      } else {
+        final currentCompletedList = widget.loggedInUser.quizzesCompleted;
+        currentCompletedList.add(quiz.id);
+
+        await _firestore
+            .collection("Users")
+            .where("email", isEqualTo: widget.loggedInUser.email)
+            .get()
+            .then((querySnapshot) {
+              userId = querySnapshot.docs[0].data()["id"];
+            }, onError: (e) => print("Error completing: $e"));
+
+        await _firestore.collection("Users").doc(userId).update({
+          'quizzesCompleted': currentCompletedList,
+        });
+      }
+    } catch (e) {
+      GetMessage.getToastMessage(e.toString());
+    }
+  }
+
+  Future<void> _calculatePoints(int correctAnswers) async {
+    String? userId;
+    int? calculatedPoints;
+    if (widget.quiz.difficultyId == "Easy") {
+      await _firestore
+          .collection("Users")
+          .where("email", isEqualTo: widget.loggedInUser.email)
+          .get()
+          .then((querySnapshot) {
+            userId = querySnapshot.docs[0].data()["id"];
+            calculatedPoints = querySnapshot.docs[0].data()["totalPoints"];
+          }, onError: (e) => print("Error completing: $e"));
+
+      await _firestore.collection("Users").doc(userId).update({
+        'totalPoints': calculatedPoints! + 5,
+      });
+    } else if (widget.quiz.difficultyId == "Medium") {
+      await _firestore
+          .collection("Users")
+          .where("email", isEqualTo: widget.loggedInUser.email)
+          .get()
+          .then((querySnapshot) {
+            userId = querySnapshot.docs[0].data()["id"];
+            calculatedPoints = querySnapshot.docs[0].data()["totalPoints"];
+          }, onError: (e) => print("Error completing: $e"));
+
+      await _firestore.collection("Users").doc(userId).update({
+        'totalPoints': calculatedPoints! + 15,
+      });
+    } else {
+      await _firestore
+          .collection("Users")
+          .where("email", isEqualTo: widget.loggedInUser.email)
+          .get()
+          .then((querySnapshot) {
+            userId = querySnapshot.docs[0].data()["id"];
+            calculatedPoints = querySnapshot.docs[0].data()["totalPoints"];
+          }, onError: (e) => print("Error completing: $e"));
+
+      await _firestore.collection("Users").doc(userId).update({
+        'totalPoints': calculatedPoints! + 50,
+      });
+    }
+  }
+
   void _nextQuestion() {
     if (_currentQuestionIndex < widget.quiz.questions.length - 1) {
       setState(() {
@@ -90,6 +163,19 @@ class _QuizPlayScreenState extends State<QuizPlayScreen>
   void _completeQuiz() {
     _timer?.cancel();
     int correctAnswers = _calculateScore();
+
+    if (widget.loggedInUser.quizzesCompleted.contains(widget.quiz.id)) {
+      GetMessage.getGoodToastMessage(
+        "You've already perfected this quiz!\nCan't get anymore points",
+      );
+    } else {
+      final score = correctAnswers / widget.quiz.questions.length;
+      if (score == 1) {
+        _addQuizzesCompleted(widget.quiz);
+        _calculatePoints(correctAnswers);
+      }
+    }
+
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(

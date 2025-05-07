@@ -61,16 +61,18 @@ class _AddDifficultyScreenState extends State<AddDifficultyScreen> {
           SnackBar(content: Text("Difficulty updated successfully")),
         );
       } else {
-        await _firestore
-            .collection("difficulties")
-            .add(
-              Difficulty(
-                id: _firestore.collection("difficulties").doc().id,
-                name: _nameController.text.trim(),
-                description: _descriptionController.text.trim(),
-                createdAt: DateTime.now(),
-              ).toMap(),
-            );
+        final docDifficulties = FirebaseFirestore.instance
+            .collection('difficulties')
+            .doc(_nameController.text.trim());
+
+        await docDifficulties.set(
+          Difficulty(
+            id: _firestore.collection("difficulties").doc().id,
+            name: _nameController.text.trim(),
+            description: _descriptionController.text.trim(),
+            createdAt: DateTime.now(),
+          ).toMap(),
+        );
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("Difficulty added successfully")),
