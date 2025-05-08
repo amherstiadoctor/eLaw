@@ -31,7 +31,7 @@ class _StudyScreenState extends State<StudyScreen> {
                   topRight: Radius.circular(30),
                 ),
               ),
-              child: const StudyTabs(),
+              child: StudyTabs(),
             ),
           ),
         ],
