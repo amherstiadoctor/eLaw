@@ -12,7 +12,8 @@ import 'package:sp_code/model/flashcard_deck.dart';
 import 'package:sp_code/model/user_entity.dart';
 import 'package:sp_code/utils/get_user.dart';
 import 'package:sp_code/utils/widgets/circle_tab_indicator.dart';
-import 'package:sp_code/utils/widgets/flip_card.dart';
+import 'package:sp_code/view/common/add_deck_screen.dart';
+import 'package:sp_code/view/common/view_deck_screen.dart';
 import 'package:sp_code/view/user/difficulty_screen.dart';
 
 class StudyTabs extends StatefulWidget {
@@ -171,7 +172,9 @@ class _StudyTabsState extends State<StudyTabs>
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => FlipCard()),
+                MaterialPageRoute(
+                  builder: (context) => ViewDeckScreen(deckId: deck.id),
+                ),
               );
             },
             child: Container(
@@ -188,7 +191,11 @@ class _StudyTabsState extends State<StudyTabs>
                       color: AppTheme.primary.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: Icon(Icons.quiz, size: 28, color: AppTheme.primary),
+                    child: Icon(
+                      Icons.view_carousel,
+                      size: 28,
+                      color: AppTheme.primary,
+                    ),
                   ),
                   SizedBox(width: 10),
                   Text(
@@ -269,7 +276,7 @@ class _StudyTabsState extends State<StudyTabs>
                       child: ListView.builder(
                         shrinkWrap: true,
                         physics: NeverScrollableScrollPhysics(),
-                        itemCount: _filteredDifficulties.length,
+                        itemCount: _allDecks.length,
                         itemBuilder: (context, index) {
                           final flashcardDeck = _allDecks[index];
                           return _buildDeckItem(
@@ -288,7 +295,11 @@ class _StudyTabsState extends State<StudyTabs>
                         onPressed: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => FlipCard()),
+                            MaterialPageRoute(
+                              builder:
+                                  (context) =>
+                                      AddDeckScreen(loggedInUser: loggedInUser),
+                            ),
                           );
                         },
                         child: Text("Add flashcard deck"),

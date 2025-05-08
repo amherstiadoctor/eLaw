@@ -47,6 +47,7 @@ dependencies:
   get: ^4.7.2
   fluttertoast: ^8.2.12
   flutter_svg: ^2.1.0
+  carousel_slider: ^5.0.0
 
 dev_dependencies:
   flutter_test:

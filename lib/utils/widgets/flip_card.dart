@@ -2,7 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:sp_code/config/theme.dart';
 
 class FlipCard extends StatefulWidget {
-  const FlipCard({super.key});
+  TextEditingController? flashcardTitleController;
+  TextEditingController? frontInfoController;
+  TextEditingController? backInfoController;
+
+  FlipCard({
+    super.key,
+    this.flashcardTitleController,
+    this.frontInfoController,
+    this.backInfoController,
+  });
 
   @override
   State<FlipCard> createState() => _FlipCardState();
@@ -49,58 +58,78 @@ class _FlipCardState extends State<FlipCard>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text("Flashcards")),
-      body: Center(
-        child: GestureDetector(
-          onTap: _toggleCard,
-          child: AnimatedBuilder(
-            animation: _animation,
-            builder: (context, child) {
-              return Transform(
-                transform: Matrix4.rotationY(_animation.value * 3.14159),
-                alignment: Alignment.center,
-                child:
-                    _animation.value < 0.5
-                        ? _buildFrontCard()
-                        : Transform.scale(
-                          scaleX: -1,
-                          scaleY: 1,
-                          child: _buildBackCard(),
-                        ),
-              );
-            },
-          ),
+    return Center(
+      child: GestureDetector(
+        onTap: _toggleCard,
+        child: AnimatedBuilder(
+          animation: _animation,
+          builder: (context, child) {
+            return Transform(
+              transform: Matrix4.rotationY(_animation.value * 3.14159),
+              alignment: Alignment.center,
+              child:
+                  _animation.value < 0.5
+                      ? _buildFrontCard(widget.frontInfoController)
+                      : Transform.scale(
+                        scaleX: -1,
+                        scaleY: 1,
+                        child: _buildBackCard(),
+                      ),
+            );
+          },
         ),
       ),
     );
   }
 }
 
-Widget _buildFrontCard() {
+Widget _buildFrontCard(TextEditingController? controller) {
   return Container(
-    width: 200,
-    height: 300,
+    width: 300,
+    height: 500,
     decoration: BoxDecoration(
       color: AppTheme.primary,
       borderRadius: BorderRadius.circular(10),
     ),
     alignment: Alignment.center,
-    child: Text(
-      "Front",
-      style: TextStyle(
-        fontSize: 24,
-        fontWeight: FontWeight.bold,
-        color: AppTheme.white,
-      ),
-    ),
+    child:
+        controller != null
+            ? TextFormField(
+              controller: controller,
+              decoration: InputDecoration(
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: AppTheme.primary, width: 0.0),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                labelText: "Front Info",
+                hintText: "Enter info",
+                prefixIcon: Icon(
+                  Icons.question_answer,
+                  color: AppTheme.primary,
+                ),
+              ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return "Please enter info";
+                }
+                return null;
+              },
+            )
+            : Text(
+              "Front",
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: AppTheme.white,
+              ),
+            ),
   );
 }
 
 Widget _buildBackCard() {
   return Container(
-    width: 200,
-    height: 300,
+    width: 300,
+    height: 500,
     decoration: BoxDecoration(
       color: AppTheme.secondary,
       borderRadius: BorderRadius.circular(10),
