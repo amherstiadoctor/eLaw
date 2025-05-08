@@ -7,7 +7,6 @@ import 'package:sp_code/auth-service/firebase_auth_service.dart';
 import 'package:sp_code/config/theme.dart';
 import 'package:sp_code/model/user_entity.dart';
 import 'package:sp_code/view/common/splash_screen.dart';
-import 'package:text_marquee/text_marquee.dart';
 
 class UserProfileScreen extends StatefulWidget {
   final UserEntity loggedInUser;
@@ -32,7 +31,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     return Expanded(
       child:
           Container(
-                padding: EdgeInsets.all(16),
+                height: 125,
+                padding: EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   color: AppTheme.white,
                   borderRadius: BorderRadius.circular(16),
@@ -57,16 +57,11 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                       ),
                     ),
                     SizedBox(height: 4),
-                    title.length > 8
-                        ? TextMarquee(
-                          title,
-                          spaceSize: title.length + 5,
-                          style: TextStyle(fontSize: 12, color: AppTheme.text2),
-                        )
-                        : Text(
-                          title,
-                          style: TextStyle(fontSize: 12, color: AppTheme.text2),
-                        ),
+                    Text(
+                      title,
+                      style: TextStyle(fontSize: 12, color: AppTheme.text2),
+                      textAlign: TextAlign.center,
+                    ),
                   ],
                 ),
               )
