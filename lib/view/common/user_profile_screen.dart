@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -21,6 +22,7 @@ class UserProfileScreen extends StatefulWidget {
 }
 
 class _UserProfileScreenState extends State<UserProfileScreen> {
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   Widget _buildActionCard({
     required IconData icon,
     required String title,
@@ -179,172 +181,196 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.white,
-      body: SingleChildScrollView(
-        child: Stack(
-          children: [
-            Container(
-              height: MediaQuery.of(context).size.height * 0.3,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [AppTheme.primary, AppTheme.primaryTint],
-                  end: Alignment.bottomRight,
-                  begin: Alignment.topLeft,
-                ),
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(35),
-                  bottomRight: Radius.circular(35),
-                ),
-              ),
-              child: Stack(
-                children: [
-                  Positioned(
-                    top: -50,
-                    right: -50,
-                    child: Container(
-                      height: 150,
-                      width: 150,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: AppTheme.white.withOpacity(0.1),
-                      ),
+      body: StreamBuilder<QuerySnapshot>(
+        stream:
+            _firestore
+                .collection("Users")
+                .where('email', isEqualTo: widget.loggedInUser.email)
+                .snapshots(),
+        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(child: CircularProgressIndicator());
+          }
+
+          final fetchedDocs = snapshot.data!.docs;
+          final currentUser = fetchedDocs[0].data() as Map<String, dynamic>;
+          if (currentUser.isEmpty) {
+            return Center(child: Text("No user found."));
+          }
+
+          return SingleChildScrollView(
+            child: Stack(
+              children: [
+                Container(
+                  height: MediaQuery.of(context).size.height * 0.3,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [AppTheme.primary, AppTheme.primaryTint],
+                      end: Alignment.bottomRight,
+                      begin: Alignment.topLeft,
+                    ),
+                    borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(35),
+                      bottomRight: Radius.circular(35),
                     ),
                   ),
-                  Positioned(
-                    top: 40,
-                    left: 16,
-                    right: 16,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  child: Stack(
+                    children: [
+                      Positioned(
+                        top: -50,
+                        right: -50,
+                        child: Container(
+                          height: 150,
+                          width: 150,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: AppTheme.white.withOpacity(0.1),
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        top: 40,
+                        left: 16,
+                        right: 16,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Profile',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 24,
+                                color: AppTheme.white,
+                              ),
+                            ),
+                            IconButton(
+                              onPressed: () {},
+                              icon: Icon(
+                                Icons.more_vert,
+                                color: AppTheme.white,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Center(
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                      top: MediaQuery.of(context).size.height * 0.15,
+                    ),
+                    child: Column(
                       children: [
-                        Text(
-                          'Profile',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 24,
+                        Container(
+                          width: MediaQuery.of(context).size.width / 1.5,
+                          margin: EdgeInsets.symmetric(horizontal: 24),
+                          padding: EdgeInsets.symmetric(vertical: 16),
+                          decoration: BoxDecoration(
                             color: AppTheme.white,
-                          ),
-                        ),
-                        IconButton(
-                          onPressed: () {},
-                          icon: Icon(Icons.more_vert, color: AppTheme.white),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Center(
-              child: Padding(
-                padding: EdgeInsets.only(
-                  top: MediaQuery.of(context).size.height * 0.15,
-                ),
-                child: Column(
-                  children: [
-                    Container(
-                      width: MediaQuery.of(context).size.width / 1.5,
-                      margin: EdgeInsets.symmetric(horizontal: 24),
-                      padding: EdgeInsets.symmetric(vertical: 16),
-                      decoration: BoxDecoration(
-                        color: AppTheme.white,
-                        borderRadius: BorderRadius.circular(20),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppTheme.black.withOpacity(0.1),
-                            blurRadius: 20,
-                            offset: Offset(0, 10),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        children: [
-                          Icon(
-                            Icons.account_circle_outlined,
-                            color: AppTheme.primary,
-                            size: 100,
-                          ),
-                          SizedBox(height: 16),
-                          Text(
-                            "${widget.loggedInUser.firstName} ${widget.loggedInUser.lastName}",
-                            style: TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                              color: AppTheme.text,
-                            ),
-                          ),
-                          SizedBox(height: 8),
-                          Text(
-                            widget.loggedInUser.email,
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: AppTheme.text2,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: 24),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 24),
-                      child: Row(
-                        children: [
-                          _buildActionCard(
-                            icon: Icons.quiz_outlined,
-                            title: 'Flashcard Decks',
-                            value: '12',
-                            color: AppTheme.primary,
-                          ),
-                          SizedBox(width: 12),
-                          _buildActionCard(
-                            icon: Icons.favorite_outline_outlined,
-                            title: 'Rank',
-                            value: '8',
-                            color: AppTheme.secondary,
-                          ),
-                          SizedBox(width: 12),
-                          _buildActionCard(
-                            icon: Icons.group_outlined,
-                            title: 'Friends',
-                            value: '2',
-                            color: AppTheme.tertiary,
-                          ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 24),
-                      child: Column(
-                        children: [
-                          _buildSection(
-                            title: '',
-                            items: [
-                              _buildMenuItem(
-                                icon: Icons.logout_outlined,
-                                title: 'Sign Out',
-                                subtitle: 'Sign out from your account',
-                                onTap: () {
-                                  handleSignOut();
-                                  Navigator.of(context).pushAndRemoveUntil(
-                                    MaterialPageRoute(
-                                      builder: (context) => SplashScreen(),
-                                    ),
-                                    (Route<dynamic> route) => false,
-                                  );
-                                },
-                                color: AppTheme.red,
+                            borderRadius: BorderRadius.circular(20),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppTheme.black.withOpacity(0.1),
+                                blurRadius: 20,
+                                offset: Offset(0, 10),
                               ),
                             ],
                           ),
-                        ],
-                      ),
+                          child: Column(
+                            children: [
+                              Icon(
+                                Icons.account_circle_outlined,
+                                color: AppTheme.primary,
+                                size: 100,
+                              ),
+                              SizedBox(height: 16),
+                              Text(
+                                "${currentUser["firstName"]} ${currentUser["lastName"]}",
+                                style: TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppTheme.text,
+                                ),
+                              ),
+                              SizedBox(height: 8),
+                              Text(
+                                currentUser["email"],
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: AppTheme.text2,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(height: 24),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 24),
+                          child: Row(
+                            children: [
+                              _buildActionCard(
+                                icon: Icons.quiz_outlined,
+                                title: 'Completed Quizzes',
+                                value:
+                                    currentUser["quizzesCompleted"].length
+                                        .toString(),
+                                color: AppTheme.primary,
+                              ),
+                              SizedBox(width: 12),
+                              _buildActionCard(
+                                icon: Icons.favorite_outline_outlined,
+                                title: 'Points',
+                                value: currentUser["totalPoints"].toString(),
+                                color: AppTheme.secondary,
+                              ),
+                              SizedBox(width: 12),
+                              _buildActionCard(
+                                icon: Icons.group_outlined,
+                                title: 'Friends',
+                                value: currentUser["friends"].length.toString(),
+                                color: AppTheme.tertiary,
+                              ),
+                            ],
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 24),
+                          child: Column(
+                            children: [
+                              _buildSection(
+                                title: '',
+                                items: [
+                                  _buildMenuItem(
+                                    icon: Icons.logout_outlined,
+                                    title: 'Sign Out',
+                                    subtitle: 'Sign out from your account',
+                                    onTap: () {
+                                      handleSignOut();
+                                      Navigator.of(context).pushAndRemoveUntil(
+                                        MaterialPageRoute(
+                                          builder: (context) => SplashScreen(),
+                                        ),
+                                        (Route<dynamic> route) => false,
+                                      );
+                                    },
+                                    color: AppTheme.red,
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(height: 150),
+                      ],
                     ),
-                    SizedBox(height: 150),
-                  ],
+                  ),
                 ),
-              ),
+              ],
             ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
