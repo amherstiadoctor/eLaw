@@ -136,8 +136,8 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
         ],
       ),
     ).animate().scale(
-      duration: Duration(milliseconds: 200),
-      delay: Duration(milliseconds: 100),
+      delay: Duration(milliseconds: 200),
+      curve: Curves.elasticOut,
     );
   }
 

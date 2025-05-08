@@ -47,6 +47,7 @@ class _DashboardState extends State<Dashboard> {
       body: Center(child: widgetOptions.elementAt(_selectedIndex)),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: FloatingActionButton(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
         backgroundColor: AppTheme.primary,
         onPressed: () {
           _onItemTapped(1);
@@ -58,7 +59,8 @@ class _DashboardState extends State<Dashboard> {
         ),
       ),
       bottomNavigationBar: BottomAppBar(
-        height: 85,
+        color: AppTheme.grey1,
+        height: 70,
         shape: const CircularNotchedRectangle(),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
