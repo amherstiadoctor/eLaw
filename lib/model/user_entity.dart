@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:sp_code/model/flashcard_deck.dart';
 
 class UserEntity extends Equatable {
   const UserEntity({
@@ -9,6 +10,8 @@ class UserEntity extends Equatable {
     required this.role,
     required this.quizzesCompleted,
     required this.totalPoints,
+    required this.decks,
+    required this.friends,
   });
 
   final String id;
@@ -18,6 +21,8 @@ class UserEntity extends Equatable {
   final String role;
   final List<String> quizzesCompleted;
   final int totalPoints;
+  final List<String> decks;
+  final List<String> friends;
 
   factory UserEntity.fromJson(Map<String, dynamic> json) => UserEntity(
     id: json['id'] ?? "",
@@ -27,6 +32,8 @@ class UserEntity extends Equatable {
     role: json['role'] ?? "",
     quizzesCompleted: json['quizzesCompleted'] ?? [],
     totalPoints: json['totalPoints'] ?? 0,
+    decks: json['decks'] ?? [],
+    friends: json['friends'] ?? [],
   );
 
   Map<String, dynamic> toJson() => <String, dynamic>{
@@ -37,6 +44,8 @@ class UserEntity extends Equatable {
     'role': role,
     'quizzesCompleted': quizzesCompleted,
     'totalPoints': totalPoints,
+    'decks': decks,
+    'friends': friends,
   };
 
   factory UserEntity.empty() => const UserEntity(
@@ -47,6 +56,8 @@ class UserEntity extends Equatable {
     role: "",
     quizzesCompleted: [],
     totalPoints: 0,
+    decks: [],
+    friends: [],
   );
 
   @override
@@ -58,9 +69,15 @@ class UserEntity extends Equatable {
     role,
     quizzesCompleted,
     totalPoints,
+    decks,
   ];
 
-  UserEntity copyWith({List<String>? quizzesCompleted, int? totalPoints}) {
+  UserEntity copyWith({
+    List<String>? quizzesCompleted,
+    int? totalPoints,
+    List<String>? decks,
+    List<String>? friends,
+  }) {
     return UserEntity(
       id: id,
       firstName: firstName,
@@ -69,6 +86,8 @@ class UserEntity extends Equatable {
       role: role,
       quizzesCompleted: quizzesCompleted ?? this.quizzesCompleted,
       totalPoints: totalPoints ?? this.totalPoints,
+      decks: decks ?? this.decks,
+      friends: friends ?? this.friends,
     );
   }
 }
