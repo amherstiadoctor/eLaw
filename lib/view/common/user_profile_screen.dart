@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:sp_code/auth-service/auth.dart';
 import 'package:sp_code/auth-service/firebase_auth_service.dart';
 import 'package:sp_code/config/theme.dart';
@@ -27,45 +28,49 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     required Color color,
   }) {
     return Expanded(
-      child: Container(
-        padding: EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: AppTheme.white,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black12.withOpacity(0.1),
-              blurRadius: 10,
-              offset: Offset(0, 5),
-            ),
-          ],
-        ),
-        child: Column(
-          children: [
-            Icon(icon, color: color),
-            SizedBox(height: 8),
-            Text(
-              value,
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: color,
-              ),
-            ),
-            SizedBox(height: 4),
-            title.length > 8
-                ? TextMarquee(
-                  title,
-                  spaceSize: title.length + 5,
-                  style: TextStyle(fontSize: 12, color: AppTheme.text2),
-                )
-                : Text(
-                  title,
-                  style: TextStyle(fontSize: 12, color: AppTheme.text2),
+      child:
+          Container(
+                padding: EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: AppTheme.white,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black12.withOpacity(0.1),
+                      blurRadius: 10,
+                      offset: Offset(0, 5),
+                    ),
+                  ],
                 ),
-          ],
-        ),
-      ),
+                child: Column(
+                  children: [
+                    Icon(icon, color: color),
+                    SizedBox(height: 8),
+                    Text(
+                      value,
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: color,
+                      ),
+                    ),
+                    SizedBox(height: 4),
+                    title.length > 8
+                        ? TextMarquee(
+                          title,
+                          spaceSize: title.length + 5,
+                          style: TextStyle(fontSize: 12, color: AppTheme.text2),
+                        )
+                        : Text(
+                          title,
+                          style: TextStyle(fontSize: 12, color: AppTheme.text2),
+                        ),
+                  ],
+                ),
+              )
+              .animate(delay: Duration(milliseconds: 100))
+              .slideY(begin: 0.5, end: 0, duration: Duration(milliseconds: 300))
+              .fadeIn(),
     );
   }
 
@@ -85,19 +90,22 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
           ),
         ),
         Container(
-          decoration: BoxDecoration(
-            color: AppTheme.white,
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: [
-              BoxShadow(
-                color: AppTheme.black.withOpacity(0.1),
-                blurRadius: 20,
-                offset: Offset(0, 10),
+              decoration: BoxDecoration(
+                color: AppTheme.white,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppTheme.black.withOpacity(0.1),
+                    blurRadius: 20,
+                    offset: Offset(0, 10),
+                  ),
+                ],
               ),
-            ],
-          ),
-          child: Column(children: items),
-        ),
+              child: Column(children: items),
+            )
+            .animate(delay: Duration(milliseconds: 100))
+            .slideY(begin: 0.5, end: 0, duration: Duration(milliseconds: 300))
+            .fadeIn(),
       ],
     );
   }

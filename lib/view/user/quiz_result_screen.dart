@@ -1,11 +1,9 @@
-// import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:sp_code/model/quiz.dart';
 import 'package:sp_code/config/theme.dart';
 import 'package:sp_code/model/user_entity.dart';
-// import 'package:sp_code/utils/get_message.dart';
 
 class QuizResultScreen extends StatefulWidget {
   final UserEntity loggedInUser;
@@ -27,7 +25,6 @@ class QuizResultScreen extends StatefulWidget {
 }
 
 class _QuizResultScreenState extends State<QuizResultScreen> {
-  // final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   Widget _buildStatCard(
     String title,
     String value,
@@ -120,41 +117,6 @@ class _QuizResultScreenState extends State<QuizResultScreen> {
     if (score >= 0.4) return "Keep Practicing!";
     return "Try Again!";
   }
-
-  // Future<void> _addQuizzesCompleted(Quiz quiz) async {
-  //   String? userId;
-  //   try {
-  //     if (widget.loggedInUser.quizzesCompleted.contains(widget.quiz.id)) {
-  //     } else {
-  //       final currentCompletedList = widget.loggedInUser.quizzesCompleted;
-  //       currentCompletedList.add(quiz.id);
-
-  //       await _firestore
-  //           .collection("Users")
-  //           .where("email", isEqualTo: widget.loggedInUser.email)
-  //           .get()
-  //           .then((querySnapshot) {
-  //             userId = querySnapshot.docs[0].data()["id"];
-  //           }, onError: (e) => print("Error completing: $e"));
-
-  //       await _firestore.collection("Users").doc(userId).update({
-  //         'quizzesCompleted': currentCompletedList,
-  //       });
-  //     }
-  //   } catch (e) {
-  //     GetMessage.getToastMessage(e.toString());
-  //   }
-  // }
-
-  // @override
-  // void initState() {
-  //   final score = widget.correctAnswers / widget.totalQuestions;
-  //   // TODO: implement initState
-  //   super.initState();
-  //   if (score == 1) {
-  //     _addQuizzesCompleted(widget.quiz);
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {

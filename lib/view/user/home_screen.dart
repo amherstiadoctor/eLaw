@@ -17,6 +17,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   List<Difficulty> _allDifficulties = [];
   List<Difficulty> _filteredDifficulties = [];
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -26,6 +27,10 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _fetchDifficulties() async {
+    setState(() {
+      isLoading = true;
+    });
+
     final snapshot =
         await FirebaseFirestore.instance
             .collection('difficulties')
@@ -33,6 +38,7 @@ class _HomeScreenState extends State<HomeScreen> {
             .get();
 
     setState(() {
+      isLoading = false;
       _allDifficulties =
           snapshot.docs
               .map((doc) => Difficulty.fromMap(doc.id, doc.data()))
@@ -118,7 +124,18 @@ class _HomeScreenState extends State<HomeScreen> {
           SliverPadding(
             padding: EdgeInsets.all(16),
             sliver:
-                _filteredDifficulties.isEmpty
+                isLoading == true
+                    ? SliverToBoxAdapter(
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            AppTheme.primary,
+                          ),
+                          strokeWidth: 2,
+                        ),
+                      ),
+                    )
+                    : _filteredDifficulties.isEmpty && isLoading == false
                     ? SliverToBoxAdapter(
                       child: Center(
                         child: Text(
