@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:sp_code/model/user_entity.dart';
 import 'package:sp_code/config/theme.dart';
 import 'package:sp_code/view/admin/admin_home_screen.dart';
-import 'package:sp_code/view/common/flashcard_screen.dart';
 import 'package:sp_code/view/common/friendslist_screen.dart';
+import 'package:sp_code/view/common/study_screen.dart';
 import 'package:sp_code/view/common/user_profile_screen.dart';
 import 'package:sp_code/view/user/home_screen.dart';
 import 'package:sp_code/view/user/leaderboard_screen.dart';
@@ -37,7 +37,7 @@ class _DashboardState extends State<Dashboard> {
   @override
   Widget build(BuildContext context) {
     List<Widget> widgetOptions = <Widget>[
-      FlashcardScreen(),
+      StudyScreen(),
       const LeaderboardScreen(),
       _role == "user"
           ? HomeScreen(loggedInUser: widget.loggedInUser)

@@ -19,6 +19,7 @@ class Input extends StatefulWidget {
     this.isPasswordField = false,
     this.contentPadding,
     this.initText,
+    this.fillColor,
   }) : super(key: key);
   final EdgeInsets? contentPadding;
   final String label;
@@ -30,6 +31,7 @@ class Input extends StatefulWidget {
   final TextStyle? errorStyle;
   final bool isPasswordField;
   final String? initText;
+  final Color? fillColor;
 
   @override
   State<Input> createState() => _InputState();
@@ -85,6 +87,7 @@ class _InputState extends State<Input> {
                 cursorColor: AppTheme.grey3,
                 controller: textEditingController,
                 decoration: InputDecoration(
+                  fillColor: widget.fillColor ?? AppTheme.white,
                   isDense: true,
                   contentPadding:
                       widget.contentPadding ??

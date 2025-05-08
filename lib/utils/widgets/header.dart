@@ -30,16 +30,18 @@ class _HeaderState extends State<Header> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            InkWell(
-              child: Icon(
-                Icons.arrow_back_ios,
-                color: AppTheme.black,
-                size: 30,
-              ),
-              onTap: () {
-                Navigator.pop(context);
-              },
-            ),
+            widget.hasBackButton!
+                ? InkWell(
+                  child: Icon(
+                    Icons.arrow_back_ios,
+                    color: AppTheme.black,
+                    size: 30,
+                  ),
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                )
+                : Container(width: 50.responsiveW),
             const Spacer(),
             Text(
               widget.title.isEmpty ? '' : widget.title,

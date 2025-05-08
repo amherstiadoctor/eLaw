@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:sp_code/config/theme.dart';
 
-class FlashcardScreen extends StatefulWidget {
-  const FlashcardScreen({super.key});
+class FlipCard extends StatefulWidget {
+  const FlipCard({super.key});
 
   @override
-  State<FlashcardScreen> createState() => _FlashcardScreenState();
+  State<FlipCard> createState() => _FlipCardState();
 }
 
-class _FlashcardScreenState extends State<FlashcardScreen>
+class _FlipCardState extends State<FlipCard>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;

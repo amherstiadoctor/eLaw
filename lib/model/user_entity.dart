@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:sp_code/model/flashcard_deck.dart';
 
 class UserEntity extends Equatable {
   const UserEntity({
