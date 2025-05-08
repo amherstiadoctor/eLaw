@@ -19,7 +19,7 @@ class Dashboard extends StatefulWidget {
 
 class _DashboardState extends State<Dashboard> {
   late String _role = "";
-  int _selectedIndex = 1;
+  int _selectedIndex = 2;
 
   void _onItemTapped(int index) {
     setState(() {
@@ -59,7 +59,7 @@ class _DashboardState extends State<Dashboard> {
         child: Icon(
           Icons.home_rounded,
           size: 28,
-          color: _selectedIndex == 1 ? AppTheme.white : AppTheme.black,
+          color: _selectedIndex == 2 ? AppTheme.white : AppTheme.black,
         ),
       ),
       bottomNavigationBar: BottomAppBar(
