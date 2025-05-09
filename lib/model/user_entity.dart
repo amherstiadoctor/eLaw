@@ -68,7 +68,6 @@ class UserEntity extends Equatable {
   UserEntity copyWith({
     List<String>? quizzesCompleted,
     int? totalPoints,
-    List<String>? decks,
     List<String>? friends,
   }) {
     return UserEntity(

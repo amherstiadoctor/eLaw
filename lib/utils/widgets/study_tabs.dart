@@ -17,7 +17,9 @@ import 'package:sp_code/view/common/view_deck_screen.dart';
 import 'package:sp_code/view/user/difficulty_screen.dart';
 
 class StudyTabs extends StatefulWidget {
-  StudyTabs({Key? key}) : super(key: key);
+  final Map<String, dynamic> currentUser;
+
+  StudyTabs({super.key, required this.currentUser});
   final AuthService _authService = FirebaseAuthService(
     authService: FirebaseAuth.instance,
   );
@@ -70,7 +72,11 @@ class _StudyTabsState extends State<StudyTabs>
       isLoading = true;
     });
 
-    final snapshot = await FirebaseFirestore.instance.collection('decks').get();
+    final snapshot =
+        await FirebaseFirestore.instance
+            .collection('decks')
+            .where('creatorId', isEqualTo: widget.currentUser['id'])
+            .get();
 
     setState(() {
       isLoading = false;

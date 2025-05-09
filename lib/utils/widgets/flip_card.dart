@@ -1,16 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:sp_code/config/theme.dart';
 
+//ignore: must_be_immutable
 class FlipCard extends StatefulWidget {
   TextEditingController? flashcardTitleController;
   TextEditingController? frontInfoController;
   TextEditingController? backInfoController;
+
+  Map<String, dynamic>? cardInfo;
+
+  bool isView;
+  bool isEdit;
 
   FlipCard({
     super.key,
     this.flashcardTitleController,
     this.frontInfoController,
     this.backInfoController,
+    this.cardInfo,
+    this.isView = false,
+    this.isEdit = false,
   });
 
   @override
@@ -69,7 +78,11 @@ class _FlipCardState extends State<FlipCard>
               alignment: Alignment.center,
               child:
                   _animation.value < 0.5
-                      ? _buildFrontCard(widget.frontInfoController)
+                      ? _buildFrontCard(
+                        widget.frontInfoController,
+                        widget.isView,
+                        widget.cardInfo!['frontInfo'],
+                      )
                       : Transform.scale(
                         scaleX: -1,
                         scaleY: 1,
@@ -83,7 +96,11 @@ class _FlipCardState extends State<FlipCard>
   }
 }
 
-Widget _buildFrontCard(TextEditingController? controller) {
+Widget _buildFrontCard(
+  TextEditingController? controller,
+  bool isView,
+  String info,
+) {
   return Container(
     width: 300,
     height: 500,
@@ -93,7 +110,16 @@ Widget _buildFrontCard(TextEditingController? controller) {
     ),
     alignment: Alignment.center,
     child:
-        controller != null
+        isView
+            ? Text(
+              info,
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: AppTheme.white,
+              ),
+            )
+            : controller != null
             ? TextFormField(
               controller: controller,
               decoration: InputDecoration(

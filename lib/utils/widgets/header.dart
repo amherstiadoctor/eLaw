@@ -33,7 +33,7 @@ class _HeaderState extends State<Header> {
             widget.hasBackButton!
                 ? InkWell(
                   child: Icon(
-                    Icons.arrow_back_ios,
+                    Icons.arrow_back,
                     color: AppTheme.black,
                     size: 30,
                   ),
@@ -46,7 +46,7 @@ class _HeaderState extends State<Header> {
             Text(
               widget.title.isEmpty ? '' : widget.title,
               style: TextStyle(
-                fontSize: 16,
+                fontSize: 24,
                 fontWeight: FontWeight.w700,
                 color: widget.color ?? AppTheme.text,
               ),
