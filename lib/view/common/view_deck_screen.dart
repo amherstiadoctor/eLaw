@@ -11,23 +11,33 @@ class ViewDeckScreen extends StatefulWidget {
 }
 
 class _ViewDeckScreenState extends State<ViewDeckScreen> {
-  late FlashcardDeck currentDeck;
+  String help = "";
+  // late FlashcardDeck currentDeck = FlAS;
+
+  Future<void> _fetchDeck() async {
+    DocumentReference doc_ref = FirebaseFirestore.instance
+        .collection('decks')
+        .doc(widget.deckId);
+
+    DocumentSnapshot docSnap = await doc_ref.get();
+    var currentDoc = docSnap.data();
+
+    print(currentDoc);
+
+    setState(() {
+      // help = currentDoc!['cards'][0]['frontInfo'];
+    });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _fetchDeck();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      // body: StreamBuilder(
-      //   stream:
-      //       FirebaseFirestore.instance
-      //           .collection('decks')
-      //           .where("id", isEqualTo: widget.deckId)
-      //           .snapshots(),
-      //   builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-      //     final fetchedDocs = snapshot.data?.docs;
-      //     final currentDeck = fetchedDocs?[0].data() as Map<String, dynamic>;
-      //     return Text(currentDeck['title']);
-      //   },
-      // ),
-    );
+    return Scaffold();
   }
 }

@@ -45,6 +45,12 @@ class _AddDeckScreenState extends State<AddDeckScreen> {
   var _currentCarouselPage = 0;
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
+  @override
   void dispose() {
     // TODO: implement dispose
     _titleController.dispose();
@@ -70,7 +76,7 @@ class _AddDeckScreenState extends State<AddDeckScreen> {
     });
   }
 
-  Future<void> _saveDeck() async {
+  Future<void> _saveDeck(Map<String, dynamic> currentUser) async {
     if (!_formKey.currentState!.validate()) {
       return;
     }
@@ -99,6 +105,7 @@ class _AddDeckScreenState extends State<AddDeckScreen> {
               id: _firestore.collection("decks").doc().id,
               title: _titleController.text.trim(),
               cards: flashcards,
+              creatorId: currentUser['id'],
             ).toMap(),
           );
 
@@ -111,28 +118,6 @@ class _AddDeckScreenState extends State<AddDeckScreen> {
       setState(() {
         _isLoading = false;
       });
-    }
-  }
-
-  Future<void> _addUserFlashcardDeck(FlashcardDeck deck) async {
-    String? userId;
-    try {
-      final currentDeckList = widget.loggedInUser.decks;
-      currentDeckList.add(deck.id);
-
-      await _firestore
-          .collection("Users")
-          .where("email", isEqualTo: widget.loggedInUser.email)
-          .get()
-          .then((querySnapshot) {
-            userId = querySnapshot.docs[0].data()["id"];
-          }, onError: (e) => print("Error completing: $e"));
-
-      await _firestore.collection("Users").doc(userId).update({
-        'decks': currentDeckList,
-      });
-    } catch (e) {
-      GetMessage.getToastMessage(e.toString());
     }
   }
 
@@ -154,125 +139,148 @@ class _AddDeckScreenState extends State<AddDeckScreen> {
       ),
       body: Form(
         key: _formKey,
-        child: ListView(
-          padding: EdgeInsets.all(20),
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+        child: StreamBuilder<QuerySnapshot>(
+          stream:
+              _firestore
+                  .collection("Users")
+                  .where('email', isEqualTo: widget.loggedInUser.email)
+                  .snapshots(),
+          builder: (
+            BuildContext context,
+            AsyncSnapshot<QuerySnapshot> snapshot,
+          ) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: CircularProgressIndicator());
+            }
+
+            final fetchedDocs = snapshot.data!.docs;
+            final currentUser = fetchedDocs[0].data() as Map<String, dynamic>;
+            if (currentUser.isEmpty) {
+              return Center(child: Text("No user found."));
+            }
+
+            return ListView(
+              padding: EdgeInsets.all(20),
               children: [
-                TextFormField(
-                  controller: _titleController,
-                  decoration: InputDecoration(
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: AppTheme.primary,
-                        width: 0.0,
-                      ),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    labelText: "Deck Title",
-                    hintText: "Enter a deck title",
-                    prefixIcon: Icon(Icons.title, color: AppTheme.primary),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return "Please enter deck title";
-                    }
-                    return null;
-                  },
-                ),
-                SizedBox(height: 16),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    TextFormField(
+                      controller: _titleController,
+                      decoration: InputDecoration(
+                        enabledBorder: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: AppTheme.primary,
+                            width: 0.0,
+                          ),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        labelText: "Deck Title",
+                        hintText: "Enter a deck title",
+                        prefixIcon: Icon(Icons.title, color: AppTheme.primary),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "Please enter deck title";
+                        }
+                        return null;
+                      },
+                    ),
+                    SizedBox(height: 16),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          "Flashcards",
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: AppTheme.text,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "Flashcards",
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: AppTheme.text,
+                              ),
+                            ),
+                            ElevatedButton.icon(
+                              onPressed: _addFlashcard,
+                              label: Text("Add Flashcard"),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppTheme.primary,
+                                foregroundColor: AppTheme.white,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 16),
+                        CarouselSlider(
+                          carouselController: _carouselController,
+                          items:
+                              _flashcardItems.map((i) {
+                                return Container(
+                                  margin: EdgeInsets.symmetric(horizontal: 2),
+                                  child: FlipCard(
+                                    frontInfoController: i.frontInfoController,
+                                  ),
+                                );
+                              }).toList(),
+                          options: CarouselOptions(
+                            viewportFraction: 1,
+                            padEnds: false,
+                            onPageChanged: (index, reason) {
+                              setState(() {
+                                _currentCarouselPage = index;
+                              });
+                            },
+                            height: 500,
+                            enableInfiniteScroll: false,
                           ),
                         ),
-                        ElevatedButton.icon(
-                          onPressed: _addFlashcard,
-                          label: Text("Add Flashcard"),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppTheme.primary,
-                            foregroundColor: AppTheme.white,
+                        SizedBox(height: 5),
+                        Visibility(
+                          visible: _flashcardItems.isNotEmpty,
+                          child: Center(
+                            child: Text(
+                              "${_currentCarouselPage + 1}/${_flashcardItems.length}",
+                              style: TextStyle(fontSize: 24),
+                            ),
                           ),
                         ),
                       ],
                     ),
-                    SizedBox(height: 16),
-                    CarouselSlider(
-                      carouselController: _carouselController,
-                      items:
-                          _flashcardItems.map((i) {
-                            return Container(
-                              margin: EdgeInsets.symmetric(horizontal: 2),
-                              child: FlipCard(
-                                frontInfoController: i.frontInfoController,
-                              ),
-                            );
-                          }).toList(),
-                      options: CarouselOptions(
-                        viewportFraction: 1,
-                        padEnds: false,
-                        onPageChanged: (index, reason) {
-                          setState(() {
-                            _currentCarouselPage = index;
-                          });
-                        },
-                        height: 500,
-                        enableInfiniteScroll: false,
-                      ),
-                    ),
-                    SizedBox(height: 5),
-                    Visibility(
-                      visible: _flashcardItems.isNotEmpty,
-                      child: Center(
-                        child: Text(
-                          "${_currentCarouselPage + 1}/${_flashcardItems.length}",
-                          style: TextStyle(fontSize: 24),
+                    SizedBox(height: 32),
+                    Center(
+                      child: SizedBox(
+                        height: 50,
+                        child: ElevatedButton(
+                          onPressed:
+                              _isLoading ? null : () => _saveDeck(currentUser),
+                          child:
+                              _isLoading
+                                  ? SizedBox(
+                                    height: 20,
+                                    width: 20,
+                                    child: CircularProgressIndicator(
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                        AppTheme.white,
+                                      ),
+                                      strokeWidth: 2,
+                                    ),
+                                  )
+                                  : Text(
+                                    "Save Deck",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
                         ),
                       ),
                     ),
                   ],
                 ),
-                SizedBox(height: 32),
-                Center(
-                  child: SizedBox(
-                    height: 50,
-                    child: ElevatedButton(
-                      onPressed: _isLoading ? null : _saveDeck,
-                      child:
-                          _isLoading
-                              ? SizedBox(
-                                height: 20,
-                                width: 20,
-                                child: CircularProgressIndicator(
-                                  valueColor: AlwaysStoppedAnimation<Color>(
-                                    AppTheme.white,
-                                  ),
-                                  strokeWidth: 2,
-                                ),
-                              )
-                              : Text(
-                                "Save Deck",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                    ),
-                  ),
-                ),
               ],
-            ),
-          ],
+            );
+          },
         ),
       ),
     );

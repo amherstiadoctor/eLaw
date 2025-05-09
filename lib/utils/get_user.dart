@@ -10,7 +10,6 @@ class getUser {
       role: userValue.role,
       quizzesCompleted: userValue.quizzesCompleted,
       totalPoints: userValue.totalPoints,
-      decks: userValue.decks,
       friends: userValue.friends,
     );
   }

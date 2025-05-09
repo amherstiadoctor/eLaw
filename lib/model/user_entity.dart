@@ -9,7 +9,6 @@ class UserEntity extends Equatable {
     required this.role,
     required this.quizzesCompleted,
     required this.totalPoints,
-    required this.decks,
     required this.friends,
   });
 
@@ -20,7 +19,6 @@ class UserEntity extends Equatable {
   final String role;
   final List<String> quizzesCompleted;
   final int totalPoints;
-  final List<String> decks;
   final List<String> friends;
 
   factory UserEntity.fromJson(Map<String, dynamic> json) => UserEntity(
@@ -31,7 +29,6 @@ class UserEntity extends Equatable {
     role: json['role'] ?? "",
     quizzesCompleted: json['quizzesCompleted'] ?? [],
     totalPoints: json['totalPoints'] ?? 0,
-    decks: json['decks'] ?? [],
     friends: json['friends'] ?? [],
   );
 
@@ -43,7 +40,6 @@ class UserEntity extends Equatable {
     'role': role,
     'quizzesCompleted': quizzesCompleted,
     'totalPoints': totalPoints,
-    'decks': decks,
     'friends': friends,
   };
 
@@ -55,7 +51,6 @@ class UserEntity extends Equatable {
     role: "",
     quizzesCompleted: [],
     totalPoints: 0,
-    decks: [],
     friends: [],
   );
 
@@ -68,7 +63,6 @@ class UserEntity extends Equatable {
     role,
     quizzesCompleted,
     totalPoints,
-    decks,
   ];
 
   UserEntity copyWith({
@@ -85,7 +79,6 @@ class UserEntity extends Equatable {
       role: role,
       quizzesCompleted: quizzesCompleted ?? this.quizzesCompleted,
       totalPoints: totalPoints ?? this.totalPoints,
-      decks: decks ?? this.decks,
       friends: friends ?? this.friends,
     );
   }
