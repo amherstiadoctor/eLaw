@@ -14,29 +14,28 @@ A simple quiz app that focuses on Criminal Law Topics
 
 ## Tasks/Features
 - [ ] Front End
-  - [ ] Splash when opening app
-  - [ ] Login Page
-  - [ ] Sign up Page
-  - [ ] Home Page
-    - [ ] Normal User
-    - [ ] Admin User
-  - [ ] Profile Page
+  - [X] Splash when opening app
+  - [X] Login Page
+  - [X] Sign up Page
+  - [X] Home Page
+    - [X] Normal User
+    - [X] Admin User
+  - [X] Profile Page
   - [ ] Friends Page
-    - [ ] Leaderboard
-  - [ ] Quizzes Page
-    - [ ] Quiz Interface
-  - [ ] Flashcards Page
-    - [ ] Flashcard Interface
-- [ ] Firebase
-  - [ ] Email Password Login
-  - [ ] Google Login
-- [ ] Features
-  - [ ] Multiplayer (2 users head-to-head quiz)
-  - [ ] Flashcards
-  - [ ] Quizzes
-    - [ ] Easy
-    - [ ] Medium
-    - [ ] Hard
+  - [X] Leaderboard
+  - [X] Quizzes Page
+    - [X] Quiz Interface
+  - [X] Flashcards Page
+    - [X] Flashcard Interface
+- [X] Firebase
+  - [X] Email Password Login
+  - [X] Google Login
+- [X] Features
+  - [X] Flashcards
+  - [X] Quizzes
+    - [X] Easy
+    - [X] Medium
+    - [X] Hard
 
 ## Author
 Doctor, Amherstia S.
