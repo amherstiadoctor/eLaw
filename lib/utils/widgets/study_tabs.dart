@@ -10,7 +10,6 @@ import 'package:sp_code/config/theme.dart';
 import 'package:sp_code/model/difficulty.dart';
 import 'package:sp_code/model/flashcard_deck.dart';
 import 'package:sp_code/model/user_entity.dart';
-import 'package:sp_code/utils/get_user.dart';
 import 'package:sp_code/utils/widgets/circle_tab_indicator.dart';
 import 'package:sp_code/view/common/add_deck_screen.dart';
 import 'package:sp_code/view/common/view_deck_screen.dart';
@@ -47,24 +46,8 @@ class _StudyTabsState extends State<StudyTabs>
         _selectedIndex = _tabController!.index;
       });
     });
-    checkUser();
     _fetchDifficulties();
     _fetchFlashcardDecks();
-  }
-
-  checkUser() async {
-    if (FirebaseAuth.instance.currentUser != null) {
-      await widget._authService
-          .googleRoles(
-            user: FirebaseAuth.instance.currentUser!,
-            register: false,
-          )
-          .then((result) {
-            setState(() {
-              loggedInUser = getUser.getLoggedInUser(result);
-            });
-          });
-    }
   }
 
   Future<void> _fetchFlashcardDecks() async {
@@ -179,7 +162,7 @@ class _StudyTabsState extends State<StudyTabs>
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => ViewDeckScreen(deckId: deck.id),
+                  builder: (context) => ViewDeckScreen(deck: deck),
                 ),
               );
             },
@@ -276,22 +259,39 @@ class _StudyTabsState extends State<StudyTabs>
                     ),
                   )
                   : _allDecks.isNotEmpty
-                  ? SingleChildScrollView(
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 16),
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                        itemCount: _allDecks.length,
-                        itemBuilder: (context, index) {
-                          final flashcardDeck = _allDecks[index];
-                          return _buildDeckItem(
-                            deck: flashcardDeck,
-                            index: index,
+                  ? Column(
+                    children: [
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder:
+                                  (context) => AddDeckScreen(
+                                    currentUser: widget.currentUser,
+                                  ),
+                            ),
                           );
                         },
+                        child: Text("Add flashcard deck"),
                       ),
-                    ),
+                      SingleChildScrollView(
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 16),
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: _allDecks.length,
+                            itemBuilder: (context, index) {
+                              final flashcardDeck = _allDecks[index];
+                              return _buildDeckItem(
+                                deck: flashcardDeck,
+                                index: index,
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
                   )
                   : Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -303,8 +303,9 @@ class _StudyTabsState extends State<StudyTabs>
                             context,
                             MaterialPageRoute(
                               builder:
-                                  (context) =>
-                                      AddDeckScreen(loggedInUser: loggedInUser),
+                                  (context) => AddDeckScreen(
+                                    currentUser: widget.currentUser,
+                                  ),
                             ),
                           );
                         },

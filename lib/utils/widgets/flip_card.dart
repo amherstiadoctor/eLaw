@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:sp_code/config/theme.dart';
+import 'package:sp_code/model/flashcard.dart';
 
 //ignore: must_be_immutable
 class FlipCard extends StatefulWidget {
@@ -7,7 +8,7 @@ class FlipCard extends StatefulWidget {
   TextEditingController? frontInfoController;
   TextEditingController? backInfoController;
 
-  Map<String, dynamic>? cardInfo;
+  Flashcard? cardInfo;
 
   bool isView;
   bool isEdit;
@@ -81,7 +82,7 @@ class _FlipCardState extends State<FlipCard>
                       ? _buildFrontCard(
                         widget.frontInfoController,
                         widget.isView,
-                        widget.cardInfo!['frontInfo'],
+                        widget.cardInfo!.frontInfo,
                       )
                       : Transform.scale(
                         scaleX: -1,
@@ -99,7 +100,7 @@ class _FlipCardState extends State<FlipCard>
 Widget _buildFrontCard(
   TextEditingController? controller,
   bool isView,
-  String info,
+  String? info,
 ) {
   return Container(
     width: 300,
@@ -112,7 +113,7 @@ Widget _buildFrontCard(
     child:
         isView
             ? Text(
-              info,
+              info ?? "",
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,

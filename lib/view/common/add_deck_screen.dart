@@ -4,13 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:sp_code/config/theme.dart';
 import 'package:sp_code/model/flashcard.dart';
 import 'package:sp_code/model/flashcard_deck.dart';
-import 'package:sp_code/model/user_entity.dart';
 import 'package:sp_code/utils/get_message.dart';
 import 'package:sp_code/utils/widgets/flip_card.dart';
 
 class AddDeckScreen extends StatefulWidget {
-  final UserEntity loggedInUser;
-  const AddDeckScreen({super.key, required this.loggedInUser});
+  final Map<String, dynamic> currentUser;
+  const AddDeckScreen({super.key, required this.currentUser});
 
   @override
   State<AddDeckScreen> createState() => _AddDeckScreenState();
@@ -139,148 +138,132 @@ class _AddDeckScreenState extends State<AddDeckScreen> {
       ),
       body: Form(
         key: _formKey,
-        child: StreamBuilder<QuerySnapshot>(
-          stream:
-              _firestore
-                  .collection("Users")
-                  .where('email', isEqualTo: widget.loggedInUser.email)
-                  .snapshots(),
-          builder: (
-            BuildContext context,
-            AsyncSnapshot<QuerySnapshot> snapshot,
-          ) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(child: CircularProgressIndicator());
-            }
-
-            final fetchedDocs = snapshot.data!.docs;
-            final currentUser = fetchedDocs[0].data() as Map<String, dynamic>;
-            if (currentUser.isEmpty) {
-              return Center(child: Text("No user found."));
-            }
-
-            return ListView(
-              padding: EdgeInsets.all(20),
+        child: ListView(
+          padding: EdgeInsets.all(20),
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                TextFormField(
+                  controller: _titleController,
+                  decoration: InputDecoration(
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: AppTheme.primary,
+                        width: 0.0,
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    labelText: "Deck Title",
+                    hintText: "Enter a deck title",
+                    prefixIcon: Icon(Icons.title, color: AppTheme.primary),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return "Please enter deck title";
+                    }
+                    return null;
+                  },
+                ),
+                SizedBox(height: 16),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    TextFormField(
-                      controller: _titleController,
-                      decoration: InputDecoration(
-                        enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: AppTheme.primary,
-                            width: 0.0,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "Flashcards",
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: AppTheme.text,
                           ),
-                          borderRadius: BorderRadius.circular(12),
                         ),
-                        labelText: "Deck Title",
-                        hintText: "Enter a deck title",
-                        prefixIcon: Icon(Icons.title, color: AppTheme.primary),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return "Please enter deck title";
-                        }
-                        return null;
-                      },
+                        ElevatedButton.icon(
+                          onPressed: _addFlashcard,
+                          label: Text("Add Flashcard"),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppTheme.primary,
+                            foregroundColor: AppTheme.white,
+                          ),
+                        ),
+                      ],
                     ),
                     SizedBox(height: 16),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              "Flashcards",
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: AppTheme.text,
-                              ),
-                            ),
-                            ElevatedButton.icon(
-                              onPressed: _addFlashcard,
-                              label: Text("Add Flashcard"),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: AppTheme.primary,
-                                foregroundColor: AppTheme.white,
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 16),
-                        CarouselSlider(
-                          carouselController: _carouselController,
-                          items:
-                              _flashcardItems.map((i) {
+                    CarouselSlider(
+                      carouselController: _carouselController,
+                      items:
+                          _flashcardItems.map((i) {
+                            return Builder(
+                              builder: (context) {
                                 return Container(
                                   margin: EdgeInsets.symmetric(horizontal: 2),
                                   child: FlipCard(
                                     frontInfoController: i.frontInfoController,
                                   ),
                                 );
-                              }).toList(),
-                          options: CarouselOptions(
-                            viewportFraction: 1,
-                            padEnds: false,
-                            onPageChanged: (index, reason) {
-                              setState(() {
-                                _currentCarouselPage = index;
-                              });
-                            },
-                            height: 500,
-                            enableInfiniteScroll: false,
-                          ),
-                        ),
-                        SizedBox(height: 5),
-                        Visibility(
-                          visible: _flashcardItems.isNotEmpty,
-                          child: Center(
-                            child: Text(
-                              "${_currentCarouselPage + 1}/${_flashcardItems.length}",
-                              style: TextStyle(fontSize: 24),
-                            ),
-                          ),
-                        ),
-                      ],
+                              },
+                            );
+                          }).toList(),
+                      options: CarouselOptions(
+                        viewportFraction: 1,
+                        padEnds: false,
+                        onPageChanged: (index, reason) {
+                          setState(() {
+                            _currentCarouselPage = index;
+                          });
+                        },
+                        height: 500,
+                        enableInfiniteScroll: false,
+                      ),
                     ),
-                    SizedBox(height: 32),
-                    Center(
-                      child: SizedBox(
-                        height: 50,
-                        child: ElevatedButton(
-                          onPressed:
-                              _isLoading ? null : () => _saveDeck(currentUser),
-                          child:
-                              _isLoading
-                                  ? SizedBox(
-                                    height: 20,
-                                    width: 20,
-                                    child: CircularProgressIndicator(
-                                      valueColor: AlwaysStoppedAnimation<Color>(
-                                        AppTheme.white,
-                                      ),
-                                      strokeWidth: 2,
-                                    ),
-                                  )
-                                  : Text(
-                                    "Save Deck",
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
+                    SizedBox(height: 5),
+                    Visibility(
+                      visible: _flashcardItems.isNotEmpty,
+                      child: Center(
+                        child: Text(
+                          "${_currentCarouselPage + 1}/${_flashcardItems.length}",
+                          style: TextStyle(fontSize: 24),
                         ),
                       ),
                     ),
                   ],
                 ),
+                SizedBox(height: 32),
+                Center(
+                  child: SizedBox(
+                    height: 50,
+                    child: ElevatedButton(
+                      onPressed:
+                          _isLoading
+                              ? null
+                              : () => _saveDeck(widget.currentUser),
+                      child:
+                          _isLoading
+                              ? SizedBox(
+                                height: 20,
+                                width: 20,
+                                child: CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    AppTheme.white,
+                                  ),
+                                  strokeWidth: 2,
+                                ),
+                              )
+                              : Text(
+                                "Save Deck",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                    ),
+                  ),
+                ),
               ],
-            );
-          },
+            ),
+          ],
         ),
       ),
     );
