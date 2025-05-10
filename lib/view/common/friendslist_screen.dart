@@ -19,6 +19,7 @@ class FriendslistScreen extends StatefulWidget {
 }
 
 class _FriendslistScreenState extends State<FriendslistScreen> {
+  var searchUser = "";
   _buildFriendItem({
     required String friendId,
     required int index,
@@ -97,6 +98,93 @@ class _FriendslistScreenState extends State<FriendslistScreen> {
     );
   }
 
+  _buildSearchItem({
+    required String friendId,
+    required int index,
+    required Map<String, dynamic> currentUser,
+  }) {
+    return StreamBuilder<DocumentSnapshot>(
+      stream:
+          FirebaseFirestore.instance
+              .collection("Users")
+              .doc(friendId)
+              .snapshots(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return Container();
+        }
+
+        var friend = snapshot.data as DocumentSnapshot;
+
+        return currentUser['id'] == friendId
+            ? Center(child: CircularProgressIndicator())
+            : Card(
+                  margin: EdgeInsets.only(bottom: 12),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: AppTheme.primary),
+                    ),
+                    child: ListTile(
+                      contentPadding: EdgeInsets.all(16),
+                      leading: Container(
+                        padding: EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: AppTheme.primary.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Icon(
+                          Icons.account_circle_outlined,
+                          color: AppTheme.primary,
+                        ),
+                      ),
+                      title: Text(
+                        "${friend['firstName']} ${friend['lastName']}",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        ),
+                      ),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(height: 8),
+                          Row(
+                            children: [
+                              Text(
+                                friend['email'],
+                                style: TextStyle(fontSize: 16),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder:
+                                (context) => UserProfileScreen(
+                                  friendId: friendId,
+                                  currentUser: currentUser,
+                                ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                )
+                .animate(delay: Duration(milliseconds: 100 * index))
+                .slideY(
+                  begin: 0.5,
+                  end: 0,
+                  duration: Duration(milliseconds: 300),
+                )
+                .fadeIn();
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -122,11 +210,21 @@ class _FriendslistScreenState extends State<FriendslistScreen> {
                     width: 30,
                     color: AppTheme.primaryShade,
                   ),
-                  SizedBox(
+                  Container(
+                    padding: EdgeInsets.only(left: 5),
                     width: 250.responsiveW,
-                    child: const Input(
+                    child: Input(
+                      contentPadding: EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 2,
+                      ),
                       label: "",
                       placeholder: "Enter email to search",
+                      onTextChange: (value) {
+                        setState(() {
+                          searchUser = value;
+                        });
+                      },
                     ),
                   ),
                 ],
@@ -160,31 +258,82 @@ class _FriendslistScreenState extends State<FriendslistScreen> {
                   final currentUser =
                       fetchedDocs[0].data() as Map<String, dynamic>;
                   final friendsList = currentUser['friends'];
-                  if (friendsList.isEmpty) {
-                    return Center(child: Text("NO FRIENDS"));
+                  if (friendsList.isEmpty && searchUser == "") {
+                    return Center(child: Text("No friends yet!"));
                   }
 
-                  return Container(
-                    padding: const EdgeInsets.only(
-                      right: 20,
-                      left: 20,
-                      top: 20,
-                    ),
-                    child: SingleChildScrollView(
-                      child: ListView.builder(
-                        padding: EdgeInsets.zero,
-                        shrinkWrap: true,
-                        itemCount: friendsList.length,
-                        itemBuilder: (context, index) {
-                          return _buildFriendItem(
-                            friendId: friendsList[index],
-                            index: index,
-                            currentUser: currentUser,
-                          );
-                        },
-                      ),
-                    ),
-                  );
+                  return searchUser == ""
+                      ? Container(
+                        padding: const EdgeInsets.only(
+                          right: 20,
+                          left: 20,
+                          top: 20,
+                        ),
+                        child: SingleChildScrollView(
+                          child: ListView.builder(
+                            padding: EdgeInsets.zero,
+                            shrinkWrap: true,
+                            itemCount: friendsList.length,
+                            itemBuilder: (context, index) {
+                              return _buildFriendItem(
+                                friendId: friendsList[index],
+                                index: index,
+                                currentUser: currentUser,
+                              );
+                            },
+                          ),
+                        ),
+                      )
+                      : Container(
+                        padding: const EdgeInsets.only(
+                          right: 20,
+                          left: 20,
+                          top: 20,
+                        ),
+                        child: SingleChildScrollView(
+                          child: StreamBuilder<QuerySnapshot>(
+                            stream:
+                                FirebaseFirestore.instance
+                                    .collection('Users')
+                                    .orderBy('email')
+                                    .startAt([searchUser])
+                                    .endAt([searchUser + "\uf8ff"])
+                                    .snapshots(),
+                            builder: (context, snapshot) {
+                              if (snapshot.hasError) {
+                                return Center(
+                                  child: Text("Something went wrong"),
+                                );
+                              }
+
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return Container();
+                              }
+
+                              if (snapshot.data!.docs.isEmpty) {
+                                return Center(
+                                  child: Text("No User found with that email"),
+                                );
+                              }
+
+                              return ListView.builder(
+                                padding: EdgeInsets.zero,
+                                shrinkWrap: true,
+                                itemCount: snapshot.data!.docs.length,
+                                itemBuilder: (context, index) {
+                                  var listItem = snapshot.data!.docs[index];
+                                  return _buildSearchItem(
+                                    friendId: listItem['id'],
+                                    index: index,
+                                    currentUser: currentUser,
+                                  );
+                                },
+                              );
+                            },
+                          ),
+                        ),
+                      );
                 },
               ),
             ),

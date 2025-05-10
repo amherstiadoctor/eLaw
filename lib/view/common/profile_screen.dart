@@ -205,21 +205,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ),
                   child: Stack(
-                    children: [
-                      Positioned(
-                        top: -50,
-                        right: -50,
-                        child: Container(
-                          height: 150,
-                          width: 150,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: AppTheme.white.withOpacity(0.1),
-                          ),
-                        ),
-                      ),
-                      Header(title: "Profile", color: AppTheme.white),
-                    ],
+                    children: [Header(title: "Profile", color: AppTheme.white)],
                   ),
                 ),
                 Center(

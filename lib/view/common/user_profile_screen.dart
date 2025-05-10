@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:sp_code/config/theme.dart';
+import 'package:sp_code/model/friend_request.dart';
+import 'package:sp_code/utils/get_message.dart';
 import 'package:sp_code/utils/widgets/header.dart';
 
 class UserProfileScreen extends StatefulWidget {
@@ -18,7 +20,17 @@ class UserProfileScreen extends StatefulWidget {
 }
 
 class _UserProfileScreenState extends State<UserProfileScreen> {
+  bool requestSent = false;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  Stream<List<Map<String, dynamic>>> getFriendRequestData() {
+    return FirebaseFirestore.instance
+        .collection('friendRequests')
+        .where('senderId', isEqualTo: widget.currentUser['id'])
+        .snapshots()
+        .map((snapshot) => snapshot.docs.map((doc) => doc.data()).toList());
+  }
+
   Widget _buildActionCard({
     required IconData icon,
     required String title,
@@ -194,6 +206,28 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     }
   }
 
+  Future<void> _sendFriendRequest() async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('friendRequests')
+          .doc()
+          .set(
+            FriendRequest(
+              id: _firestore.collection("friendRequest").doc().id,
+              receiverId: widget.friendId,
+              senderId: widget.currentUser['id'],
+              status: "pending",
+              createdAt: DateTime.now(),
+            ).toMap(),
+          );
+    } catch (e) {
+    } finally {
+      setState(() {
+        requestSent = true;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -228,18 +262,6 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                   ),
                   child: Stack(
                     children: [
-                      Positioned(
-                        top: -50,
-                        right: -50,
-                        child: Container(
-                          height: 150,
-                          width: 150,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: AppTheme.white.withOpacity(0.1),
-                          ),
-                        ),
-                      ),
                       Header(
                         title: "User Profile",
                         color: AppTheme.white,
@@ -332,44 +354,78 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                           padding: EdgeInsets.symmetric(horizontal: 24),
                           child: Column(
                             children: [
-                              _buildSection(
-                                title: 'Actions',
-                                items: [
-                                  currentUser['friends'].contains(
-                                        widget.friendId,
-                                      )
-                                      ? _buildMenuItem(
-                                        icon: Icons.add_reaction_outlined,
-                                        title: 'Add Friend',
-                                        subtitle: 'Send a friend request',
-                                        onTap: () {},
-                                        color: AppTheme.primary,
-                                      )
-                                      : Container(),
-                                  _buildMenuItem(
-                                    icon: Icons.sentiment_dissatisfied_outlined,
-                                    title: 'Delete Friend',
-                                    subtitle: 'Remove friend from friends list',
-                                    onTap: () {
-                                      _removeFriend(
-                                        currentUser: widget.currentUser,
-                                      );
-                                    },
-                                    color: AppTheme.red,
-                                  ),
-                                  currentUser['friends'].contains(
-                                        widget.friendId,
-                                      )
-                                      ? _buildMenuItem(
-                                        icon:
-                                            Icons.check_circle_outline_outlined,
-                                        title: 'Friend Request Sent!',
-                                        subtitle: 'Waiting for their response',
-                                        onTap: () {},
-                                        color: AppTheme.secondary,
-                                      )
-                                      : Container(),
-                                ],
+                              StreamBuilder(
+                                stream: getFriendRequestData(),
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return Center(
+                                      child: CircularProgressIndicator(),
+                                    );
+                                  }
+                                  final requests = snapshot.data;
+                                  if (requests!.isEmpty) {
+                                    GetMessage.getErrorMessage(
+                                      "No requests found",
+                                    );
+                                  }
+                                  var alreadySent = false;
+                                  for (Map<String, dynamic> item in requests) {
+                                    if (item['receiverId'] == widget.friendId) {
+                                      alreadySent = true;
+                                    }
+                                  }
+
+                                  return _buildSection(
+                                    title: 'Actions',
+                                    items: [
+                                      currentUser['friends'].contains(
+                                                widget.friendId,
+                                              ) ||
+                                              alreadySent
+                                          ? Container()
+                                          : _buildMenuItem(
+                                            icon: Icons.add_reaction_outlined,
+                                            title: 'Add Friend',
+                                            subtitle: 'Send a friend request',
+                                            onTap: () {
+                                              _sendFriendRequest();
+                                            },
+                                            color: AppTheme.primary,
+                                          ),
+                                      currentUser['friends'].contains(
+                                            widget.friendId,
+                                          )
+                                          ? _buildMenuItem(
+                                            icon:
+                                                Icons
+                                                    .sentiment_dissatisfied_outlined,
+                                            title: 'Delete Friend',
+                                            subtitle:
+                                                'Remove friend from friends list',
+                                            onTap: () {
+                                              _removeFriend(
+                                                currentUser: widget.currentUser,
+                                              );
+                                            },
+                                            color: AppTheme.red,
+                                          )
+                                          : Container(),
+                                      alreadySent
+                                          ? _buildMenuItem(
+                                            icon:
+                                                Icons
+                                                    .check_circle_outline_outlined,
+                                            title: 'Friend Request Sent!',
+                                            subtitle:
+                                                'Waiting for their response',
+                                            onTap: () {},
+                                            color: AppTheme.secondary,
+                                          )
+                                          : Container(),
+                                    ],
+                                  );
+                                },
                               ),
                             ],
                           ),
