@@ -80,7 +80,7 @@ class _ManageDeckScreenState extends State<ManageDeckScreen> {
           return FlashcardFromItem(
             flashcardTitleController: TextEditingController(text: card.title),
             frontInfoController: TextEditingController(text: card.frontInfo),
-            backInfoController: TextEditingController(text: card.title),
+            backInfoController: TextEditingController(text: card.backInfo),
           );
         }).toList();
   }
