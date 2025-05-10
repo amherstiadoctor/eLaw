@@ -9,10 +9,12 @@ import 'package:sp_code/utils/widgets/header.dart';
 class UserProfileScreen extends StatefulWidget {
   final String friendId;
   final Map<String, dynamic> currentUser;
-  const UserProfileScreen({
+  bool isReceived;
+  UserProfileScreen({
     super.key,
     required this.friendId,
     required this.currentUser,
+    this.isReceived = false,
   });
 
   @override
@@ -24,7 +26,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   Stream<List<Map<String, dynamic>>> getFriendRequestData() {
-    return FirebaseFirestore.instance
+    return _firestore
         .collection('friendRequests')
         .where('senderId', isEqualTo: widget.currentUser['id'])
         .snapshots()
@@ -208,18 +210,17 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
 
   Future<void> _sendFriendRequest() async {
     try {
-      await FirebaseFirestore.instance
-          .collection('friendRequests')
-          .doc()
-          .set(
-            FriendRequest(
-              id: _firestore.collection("friendRequest").doc().id,
-              receiverId: widget.friendId,
-              senderId: widget.currentUser['id'],
-              status: "pending",
-              createdAt: DateTime.now(),
-            ).toMap(),
-          );
+      var newDocRef =
+          FirebaseFirestore.instance.collection('friendRequests').doc();
+      await newDocRef.set(
+        FriendRequest(
+          id: newDocRef.id,
+          receiverId: widget.friendId,
+          senderId: widget.currentUser['id'],
+          status: "pending",
+          createdAt: DateTime.now(),
+        ).toMap(),
+      );
     } catch (e) {
     } finally {
       setState(() {
@@ -376,55 +377,74 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                     }
                                   }
 
-                                  return _buildSection(
-                                    title: 'Actions',
-                                    items: [
-                                      currentUser['friends'].contains(
-                                                widget.friendId,
-                                              ) ||
-                                              alreadySent
-                                          ? Container()
-                                          : _buildMenuItem(
-                                            icon: Icons.add_reaction_outlined,
-                                            title: 'Add Friend',
-                                            subtitle: 'Send a friend request',
-                                            onTap: () {
-                                              _sendFriendRequest();
-                                            },
-                                            color: AppTheme.primary,
-                                          ),
-                                      currentUser['friends'].contains(
-                                            widget.friendId,
-                                          )
-                                          ? _buildMenuItem(
+                                  return widget.isReceived
+                                      ? _buildSection(
+                                        title: "Information",
+                                        items: [
+                                          _buildMenuItem(
                                             icon:
-                                                Icons
-                                                    .sentiment_dissatisfied_outlined,
-                                            title: 'Delete Friend',
+                                                Icons.hourglass_empty_outlined,
+                                            title:
+                                                'This user sent you a friend request!',
                                             subtitle:
-                                                'Remove friend from friends list',
-                                            onTap: () {
-                                              _removeFriend(
-                                                currentUser: widget.currentUser,
-                                              );
-                                            },
-                                            color: AppTheme.red,
-                                          )
-                                          : Container(),
-                                      alreadySent
-                                          ? _buildMenuItem(
-                                            icon:
-                                                Icons
-                                                    .check_circle_outline_outlined,
-                                            title: 'Friend Request Sent!',
-                                            subtitle:
-                                                'Waiting for their response',
+                                                'Waiting for your response',
                                             onTap: () {},
                                             color: AppTheme.secondary,
-                                          )
-                                          : Container(),
-                                    ],
-                                  );
+                                          ),
+                                        ],
+                                      )
+                                      : _buildSection(
+                                        title: 'Actions',
+                                        items: [
+                                          currentUser['friends'].contains(
+                                                    widget.friendId,
+                                                  ) ||
+                                                  alreadySent
+                                              ? Container()
+                                              : _buildMenuItem(
+                                                icon:
+                                                    Icons.add_reaction_outlined,
+                                                title: 'Add Friend',
+                                                subtitle:
+                                                    'Send a friend request',
+                                                onTap: () {
+                                                  _sendFriendRequest();
+                                                },
+                                                color: AppTheme.primary,
+                                              ),
+                                          currentUser['friends'].contains(
+                                                widget.friendId,
+                                              )
+                                              ? _buildMenuItem(
+                                                icon:
+                                                    Icons
+                                                        .sentiment_dissatisfied_outlined,
+                                                title: 'Delete Friend',
+                                                subtitle:
+                                                    'Remove friend from friends list',
+                                                onTap: () {
+                                                  _removeFriend(
+                                                    currentUser:
+                                                        widget.currentUser,
+                                                  );
+                                                },
+                                                color: AppTheme.red,
+                                              )
+                                              : Container(),
+                                          alreadySent
+                                              ? _buildMenuItem(
+                                                icon:
+                                                    Icons
+                                                        .check_circle_outline_outlined,
+                                                title: 'Friend Request Sent!',
+                                                subtitle:
+                                                    'Waiting for their response',
+                                                onTap: () {},
+                                                color: AppTheme.secondary,
+                                              )
+                                              : Container(),
+                                        ],
+                                      );
                                 },
                               ),
                             ],

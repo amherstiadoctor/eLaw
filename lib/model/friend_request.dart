@@ -26,11 +26,15 @@ class FriendRequest {
     );
   }
 
-  Map<String, dynamic> toMap({bool isUpdate = false}) {
+  Map<String, dynamic> toMap({
+    bool isUpdate = false,
+    String updateStatus = "",
+  }) {
     return {
+      'id': id,
       'receiverId': receiverId,
       'senderId': senderId,
-      'status': status,
+      'status': updateStatus == "" ? status : updateStatus,
       'createdAt': createdAt,
       if (isUpdate) 'updatedAt': DateTime.now(),
     };

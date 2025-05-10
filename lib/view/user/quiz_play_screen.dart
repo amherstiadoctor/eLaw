@@ -81,7 +81,7 @@ class _QuizPlayScreenState extends State<QuizPlayScreen>
     try {
       if (widget.loggedInUser.quizzesCompleted.contains(widget.quiz.id)) {
       } else {
-        final currentCompletedList = widget.loggedInUser.quizzesCompleted;
+        var currentCompletedList = widget.loggedInUser.quizzesCompleted;
         currentCompletedList.add(quiz.id);
 
         await _firestore

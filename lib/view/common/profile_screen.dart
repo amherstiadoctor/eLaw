@@ -7,6 +7,7 @@ import 'package:sp_code/auth-service/firebase_auth_service.dart';
 import 'package:sp_code/config/theme.dart';
 import 'package:sp_code/model/user_entity.dart';
 import 'package:sp_code/utils/widgets/header.dart';
+import 'package:sp_code/view/common/friend_requests_screen.dart';
 import 'package:sp_code/view/common/splash_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -298,7 +299,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     icon: Icons.notifications_outlined,
                                     title: 'Friend Requests',
                                     subtitle: 'Manage your friend requests',
-                                    onTap: () {},
+                                    onTap: () {
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder:
+                                              (context) => FriendRequestsScreen(
+                                                currentUser: currentUser,
+                                              ),
+                                        ),
+                                      );
+                                    },
                                     color: AppTheme.primary,
                                   ),
                                   _buildMenuItem(
