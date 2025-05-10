@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:sp_code/model/taken_quiz.dart';
 
 class UserEntity extends Equatable {
   const UserEntity({
@@ -7,7 +8,8 @@ class UserEntity extends Equatable {
     required this.lastName,
     required this.email,
     required this.role,
-    required this.quizzesCompleted,
+    this.quizzesTaken,
+    this.quizzesCompleted,
     required this.totalPoints,
     required this.friends,
   });
@@ -17,7 +19,8 @@ class UserEntity extends Equatable {
   final String lastName;
   final String email;
   final String role;
-  final List<String> quizzesCompleted;
+  final List<TakenQuiz>? quizzesTaken;
+  final List<String>? quizzesCompleted;
   final int totalPoints;
   final List<String> friends;
 
@@ -27,9 +30,17 @@ class UserEntity extends Equatable {
     lastName: json['lastName'] ?? "",
     email: json['email'] ?? "",
     role: json['role'] ?? "",
-    quizzesCompleted: json['quizzesCompleted'] ?? [],
+    quizzesTaken:
+        ((json['quizzesTaken'] ?? []) as List)
+            .map((e) => TakenQuiz.fromMap(e))
+            .toList(),
+    quizzesCompleted:
+        ((json['quizzesCompleted'] ?? []) as List)
+            .map((e) => e.toString())
+            .toList(),
     totalPoints: json['totalPoints'] ?? 0,
-    friends: json['friends'] ?? [],
+    friends:
+        ((json['friends'] ?? []) as List).map((e) => e.toString()).toList(),
   );
 
   Map<String, dynamic> toJson() => <String, dynamic>{
@@ -38,17 +49,19 @@ class UserEntity extends Equatable {
     'lastName': lastName,
     'email': email,
     'role': role,
+    'quizzesTaken': quizzesTaken,
     'quizzesCompleted': quizzesCompleted,
     'totalPoints': totalPoints,
     'friends': friends,
   };
 
-  factory UserEntity.empty() => const UserEntity(
+  factory UserEntity.empty() => UserEntity(
     id: "",
     firstName: "",
     lastName: "",
     email: "",
     role: "",
+    quizzesTaken: [],
     quizzesCompleted: [],
     totalPoints: 0,
     friends: [],
@@ -61,12 +74,14 @@ class UserEntity extends Equatable {
     lastName,
     email,
     role,
+    quizzesTaken,
     quizzesCompleted,
     totalPoints,
   ];
 
   UserEntity copyWith({
     List<String>? quizzesCompleted,
+    List<TakenQuiz>? quizzesTaken,
     int? totalPoints,
     List<String>? friends,
   }) {
@@ -76,6 +91,7 @@ class UserEntity extends Equatable {
       lastName: lastName,
       email: email,
       role: role,
+      quizzesTaken: quizzesTaken ?? this.quizzesTaken,
       quizzesCompleted: quizzesCompleted ?? this.quizzesCompleted,
       totalPoints: totalPoints ?? this.totalPoints,
       friends: friends ?? this.friends,

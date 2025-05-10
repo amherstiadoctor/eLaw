@@ -35,7 +35,6 @@ class _StudyTabsState extends State<StudyTabs>
   bool isLoading = false;
   TabController? _tabController;
   int _selectedIndex = 0;
-  UserEntity loggedInUser = UserEntity.empty();
 
   @override
   void initState() {
@@ -89,7 +88,7 @@ class _StudyTabsState extends State<StudyTabs>
                   builder:
                       (context) => DifficultyScreen(
                         difficulty: difficulty,
-                        loggedInUser: loggedInUser,
+                        loggedInUser: UserEntity.fromJson(widget.currentUser),
                       ),
                 ),
               );

@@ -6,6 +6,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:sp_code/model/question.dart';
 import 'package:sp_code/model/quiz.dart';
 import 'package:sp_code/config/theme.dart';
+import 'package:sp_code/model/taken_quiz.dart';
 import 'package:sp_code/model/user_entity.dart';
 import 'package:sp_code/utils/get_message.dart';
 import 'package:sp_code/view/user/quiz_result_screen.dart';
@@ -76,13 +77,66 @@ class _QuizPlayScreenState extends State<QuizPlayScreen>
     }
   }
 
+  Future<void> _addQuizzesTaken({required double quizScore}) async {
+    String? userId;
+    try {
+      TakenQuiz? foundQuiz = widget.loggedInUser.quizzesTaken?.firstWhere(
+        (quiz) => quiz.quizId == widget.quiz.id,
+      );
+      if (foundQuiz != null) {
+        final index = widget.loggedInUser.quizzesTaken!.indexWhere(
+          (quiz) => quiz.quizId == widget.quiz.id,
+        );
+
+        widget.loggedInUser.quizzesTaken![index].quizScore = quizScore;
+
+        List<Map<String, dynamic>> quizzesMap =
+            widget.loggedInUser.quizzesTaken!
+                .map((quiz) => quiz.toMap(isUpdate: true))
+                .toList();
+
+        await _firestore
+            .collection("Users")
+            .where("email", isEqualTo: widget.loggedInUser.email)
+            .get()
+            .then((querySnapshot) {
+              userId = querySnapshot.docs[0].data()["id"];
+            }, onError: (e) => print("Error completing: $e"));
+
+        await _firestore.collection("Users").doc(userId).update({
+          'quizzesTaken': quizzesMap,
+        });
+      } else {
+        TakenQuiz quiz = TakenQuiz(
+          quizId: widget.quiz.id,
+          quizScore: quizScore,
+        );
+
+        await _firestore
+            .collection("Users")
+            .where("email", isEqualTo: widget.loggedInUser.email)
+            .get()
+            .then((querySnapshot) {
+              userId = querySnapshot.docs[0].data()["id"];
+            }, onError: (e) => print("Error completing: $e"));
+
+        await _firestore.collection("Users").doc(userId).update({
+          'quizzesTaken': FieldValue.arrayUnion([quiz.toMap(isUpdate: true)]),
+        });
+      }
+    } catch (e) {
+      print(e.toString());
+      GetMessage.getToastMessage(e.toString());
+    }
+  }
+
   Future<void> _addQuizzesCompleted(Quiz quiz) async {
     String? userId;
     try {
-      if (widget.loggedInUser.quizzesCompleted.contains(widget.quiz.id)) {
+      if (widget.loggedInUser.quizzesCompleted!.contains(widget.quiz.id)) {
       } else {
         var currentCompletedList = widget.loggedInUser.quizzesCompleted;
-        currentCompletedList.add(quiz.id);
+        currentCompletedList!.add(quiz.id);
 
         await _firestore
             .collection("Users")
@@ -162,14 +216,16 @@ class _QuizPlayScreenState extends State<QuizPlayScreen>
 
   void _completeQuiz() {
     _timer?.cancel();
-    int correctAnswers = _calculateScore();
 
-    if (widget.loggedInUser.quizzesCompleted.contains(widget.quiz.id)) {
+    int correctAnswers = _calculateScore();
+    final score = correctAnswers / widget.quiz.questions.length;
+
+    if (widget.loggedInUser.quizzesCompleted!.contains(widget.quiz.id)) {
       GetMessage.getGoodToastMessage(
         "You've already perfected this quiz!\nCan't get anymore points",
       );
     } else {
-      final score = correctAnswers / widget.quiz.questions.length;
+      _addQuizzesTaken(quizScore: score);
       if (score == 1) {
         _addQuizzesCompleted(widget.quiz);
         _calculatePoints(correctAnswers);

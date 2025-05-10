@@ -58,104 +58,130 @@ class _DifficultyScreenState extends State<DifficultyScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body:
-          _isLoading
-              ? Center(
-                child: CircularProgressIndicator(color: AppTheme.primary),
-              )
-              : _quizzes.isEmpty
-              ? Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.quiz_outlined, size: 64, color: AppTheme.text2),
-                    SizedBox(height: 16),
-                    Text(
-                      "No quizzes available for this difficulty",
-                      style: TextStyle(fontSize: 16, color: AppTheme.text2),
+    return StreamBuilder<QuerySnapshot>(
+      stream:
+          FirebaseFirestore.instance
+              .collection("Users")
+              .where('email', isEqualTo: widget.loggedInUser.email)
+              .snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Center(child: CircularProgressIndicator());
+        }
+
+        final fetchedDocs = snapshot.data!.docs;
+        final currentUser = fetchedDocs[0].data() as Map<String, dynamic>;
+        if (currentUser.isEmpty) {
+          return Center(child: Text("No user found."));
+        }
+        return Scaffold(
+          body:
+              _isLoading
+                  ? Center(
+                    child: CircularProgressIndicator(color: AppTheme.primary),
+                  )
+                  : _quizzes.isEmpty
+                  ? Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.quiz_outlined,
+                          size: 64,
+                          color: AppTheme.text2,
+                        ),
+                        SizedBox(height: 16),
+                        Text(
+                          "No quizzes available for this difficulty",
+                          style: TextStyle(fontSize: 16, color: AppTheme.text2),
+                        ),
+                        SizedBox(height: 16),
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: Text("Go Back"),
+                        ),
+                      ],
                     ),
-                    SizedBox(height: 16),
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      child: Text("Go Back"),
-                    ),
-                  ],
-                ),
-              )
-              : CustomScrollView(
-                slivers: [
-                  SliverAppBar(
-                    foregroundColor: AppTheme.white,
-                    backgroundColor: AppTheme.primary,
-                    expandedHeight: 230,
-                    floating: false,
-                    pinned: true,
-                    leading: IconButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      icon: Icon(Icons.arrow_back, color: AppTheme.white),
-                    ),
-                    flexibleSpace: FlexibleSpaceBar(
-                      centerTitle: true,
-                      title: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          widget.difficulty.description,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: AppTheme.white.withOpacity(0.8),
-                            fontSize: 12,
+                  )
+                  : CustomScrollView(
+                    slivers: [
+                      SliverAppBar(
+                        foregroundColor: AppTheme.white,
+                        backgroundColor: AppTheme.primary,
+                        expandedHeight: 230,
+                        floating: false,
+                        pinned: true,
+                        leading: IconButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          icon: Icon(Icons.arrow_back, color: AppTheme.white),
+                        ),
+                        flexibleSpace: FlexibleSpaceBar(
+                          centerTitle: true,
+                          title: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              widget.difficulty.description,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: AppTheme.white.withOpacity(0.8),
+                                fontSize: 12,
+                              ),
+                            ),
+                          ),
+                          background: Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.category_rounded,
+                                  size: 64,
+                                  color: AppTheme.white,
+                                ),
+                                SizedBox(height: 16),
+                                Text(
+                                  widget.difficulty.name,
+                                  style: TextStyle(
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.bold,
+                                    color: AppTheme.white,
+                                  ),
+                                ),
+                                SizedBox(height: 20),
+                              ],
+                            ),
                           ),
                         ),
                       ),
-                      background: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.category_rounded,
-                              size: 64,
-                              color: AppTheme.white,
-                            ),
-                            SizedBox(height: 16),
-                            Text(
-                              widget.difficulty.name,
-                              style: TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
-                                color: AppTheme.white,
-                              ),
-                            ),
-                            SizedBox(height: 20),
-                          ],
+                      SliverToBoxAdapter(
+                        child: Padding(
+                          padding: EdgeInsets.all(16),
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            itemCount: _quizzes.length,
+                            itemBuilder: (context, index) {
+                              final quiz = _quizzes[index];
+                              return _buildQuizCard(quiz, index, currentUser);
+                            },
+                          ),
                         ),
                       ),
-                    ),
+                    ],
                   ),
-                  SliverToBoxAdapter(
-                    child: Padding(
-                      padding: EdgeInsets.all(16),
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                        itemCount: _quizzes.length,
-                        itemBuilder: (context, index) {
-                          final quiz = _quizzes[index];
-                          return _buildQuizCard(quiz, index);
-                        },
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+        );
+      },
     );
   }
 
-  Widget _buildQuizCard(Quiz quiz, int index) {
+  Widget _buildQuizCard(
+    Quiz quiz,
+    int index,
+    Map<String, dynamic> currentUser,
+  ) {
     return Card(
           margin: EdgeInsets.only(bottom: 16),
           elevation: 4,
@@ -171,7 +197,7 @@ class _DifficultyScreenState extends State<DifficultyScreen> {
                   builder:
                       (context) => QuizPlayScreen(
                         quiz: quiz,
-                        loggedInUser: widget.loggedInUser,
+                        loggedInUser: UserEntity.fromJson(currentUser),
                       ),
                 ),
               );

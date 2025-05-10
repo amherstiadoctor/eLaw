@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sp_code/auth-service/auth.dart';
 import 'package:sp_code/model/auth_error.dart';
+import 'package:sp_code/model/taken_quiz.dart';
 import 'package:sp_code/model/user_entity.dart';
 
 class FirebaseAuthService implements AuthService {
@@ -45,6 +46,7 @@ class FirebaseAuthService implements AuthService {
       'email': user.email ?? '',
       'emailVerified': user.emailVerified,
       'role': userRole.isNotEmpty ? userRole : "user",
+      'quizzesTaken': <TakenQuiz>[],
       'quizzesCompleted': <String>[],
       'totalPoints': 0,
     };
