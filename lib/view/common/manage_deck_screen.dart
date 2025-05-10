@@ -1,3 +1,5 @@
+// ignore_for_file: must_be_immutable
+
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -9,11 +11,11 @@ import 'package:sp_code/utils/get_message.dart';
 import 'package:sp_code/utils/widgets/flip_card.dart';
 import 'package:sp_code/utils/widgets/header.dart';
 
-class AddDeckScreen extends StatefulWidget {
+class ManageDeckScreen extends StatefulWidget {
   final Map<String, dynamic> currentUser;
   final bool isEdit;
   FlashcardDeck? deck;
-  AddDeckScreen({
+  ManageDeckScreen({
     super.key,
     required this.currentUser,
     this.isEdit = false,
@@ -21,7 +23,7 @@ class AddDeckScreen extends StatefulWidget {
   });
 
   @override
-  State<AddDeckScreen> createState() => _AddDeckScreenState();
+  State<ManageDeckScreen> createState() => _ManageDeckScreenState();
 }
 
 class FlashcardFromItem {
@@ -42,7 +44,7 @@ class FlashcardFromItem {
   }
 }
 
-class _AddDeckScreenState extends State<AddDeckScreen> {
+class _ManageDeckScreenState extends State<ManageDeckScreen> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final _formKey = GlobalKey<FormState>();
   TextEditingController _titleController = TextEditingController();

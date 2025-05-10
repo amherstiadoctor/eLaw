@@ -12,7 +12,7 @@ import 'package:sp_code/model/flashcard_deck.dart';
 import 'package:sp_code/model/user_entity.dart';
 import 'package:sp_code/utils/get_message.dart';
 import 'package:sp_code/utils/widgets/circle_tab_indicator.dart';
-import 'package:sp_code/view/common/add_deck_screen.dart';
+import 'package:sp_code/view/common/manage_deck_screen.dart';
 import 'package:sp_code/view/common/view_deck_screen.dart';
 import 'package:sp_code/view/user/difficulty_screen.dart';
 
@@ -242,7 +242,7 @@ class _StudyTabsState extends State<StudyTabs>
         context,
         MaterialPageRoute(
           builder:
-              (context) => AddDeckScreen(
+              (context) => ManageDeckScreen(
                 currentUser: widget.currentUser,
                 isEdit: true,
                 deck: deck,
@@ -347,7 +347,7 @@ class _StudyTabsState extends State<StudyTabs>
                             context,
                             MaterialPageRoute(
                               builder:
-                                  (context) => AddDeckScreen(
+                                  (context) => ManageDeckScreen(
                                     currentUser: widget.currentUser,
                                   ),
                             ),
@@ -388,7 +388,7 @@ class _StudyTabsState extends State<StudyTabs>
                             context,
                             MaterialPageRoute(
                               builder:
-                                  (context) => AddDeckScreen(
+                                  (context) => ManageDeckScreen(
                                     currentUser: widget.currentUser,
                                   ),
                             ),
