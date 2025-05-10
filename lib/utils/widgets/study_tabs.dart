@@ -32,7 +32,6 @@ class _StudyTabsState extends State<StudyTabs>
     with SingleTickerProviderStateMixin {
   List<Difficulty> _allDifficulties = [];
   List<Difficulty> _filteredDifficulties = [];
-  List<FlashcardDeck> _allDecks = [];
   bool isLoading = false;
   TabController? _tabController;
   int _selectedIndex = 0;
@@ -48,27 +47,6 @@ class _StudyTabsState extends State<StudyTabs>
       });
     });
     _fetchDifficulties();
-    _fetchFlashcardDecks();
-  }
-
-  Future<void> _fetchFlashcardDecks() async {
-    setState(() {
-      isLoading = true;
-    });
-
-    final snapshot =
-        await FirebaseFirestore.instance
-            .collection('decks')
-            .where('creatorId', isEqualTo: widget.currentUser['id'])
-            .get();
-
-    setState(() {
-      isLoading = false;
-      _allDecks =
-          snapshot.docs
-              .map((doc) => FlashcardDeck.fromMap(doc.id, doc.data()))
-              .toList();
-    });
   }
 
   Future<void> _fetchDifficulties() async {
@@ -338,65 +316,93 @@ class _StudyTabsState extends State<StudyTabs>
                       child: CircularProgressIndicator(),
                     ),
                   )
-                  : _allDecks.isNotEmpty
-                  ? Column(
-                    children: [
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder:
-                                  (context) => ManageDeckScreen(
-                                    currentUser: widget.currentUser,
+                  : StreamBuilder<QuerySnapshot>(
+                    stream:
+                        FirebaseFirestore.instance
+                            .collection('decks')
+                            .where(
+                              'creatorId',
+                              isEqualTo: widget.currentUser['id'],
+                            )
+                            .snapshots(),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasError) {
+                        return Text("Error");
+                      }
+
+                      if (!snapshot.hasData) {
+                        return Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text("No Flashcards Found"),
+                            ElevatedButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder:
+                                        (context) => ManageDeckScreen(
+                                          currentUser: widget.currentUser,
+                                        ),
                                   ),
+                                );
+                              },
+                              child: Text("Add flashcard deck"),
                             ),
-                          );
-                        },
-                        child: Text("Add flashcard deck"),
-                      ),
-                      SingleChildScrollView(
-                        child: Padding(
-                          padding: EdgeInsets.only(
-                            right: 16,
-                            left: 16,
-                            top: 16,
-                          ),
-                          child: ListView.builder(
-                            padding: EdgeInsets.zero,
-                            shrinkWrap: true,
-                            itemCount: _allDecks.length,
-                            itemBuilder: (context, index) {
-                              final flashcardDeck = _allDecks[index];
-                              return _buildDeckItem(
-                                deck: flashcardDeck,
-                                index: index,
+                          ],
+                        );
+                      }
+
+                      final allDecks =
+                          snapshot.data!.docs
+                              .map(
+                                (doc) => FlashcardDeck.fromMap(
+                                  doc.id,
+                                  doc.data() as Map<String, dynamic>,
+                                ),
+                              )
+                              .toList();
+
+                      return Column(
+                        children: [
+                          ElevatedButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder:
+                                      (context) => ManageDeckScreen(
+                                        currentUser: widget.currentUser,
+                                      ),
+                                ),
                               );
                             },
+                            child: Text("Add flashcard deck"),
                           ),
-                        ),
-                      ),
-                    ],
-                  )
-                  : Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text("No Flashcards Found"),
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder:
-                                  (context) => ManageDeckScreen(
-                                    currentUser: widget.currentUser,
-                                  ),
+                          SingleChildScrollView(
+                            child: Padding(
+                              padding: EdgeInsets.only(
+                                right: 16,
+                                left: 16,
+                                top: 16,
+                              ),
+                              child: ListView.builder(
+                                padding: EdgeInsets.zero,
+                                shrinkWrap: true,
+                                itemCount: allDecks.length,
+                                itemBuilder: (context, index) {
+                                  final flashcardDeck = allDecks[index];
+                                  return _buildDeckItem(
+                                    deck: flashcardDeck,
+                                    index: index,
+                                  );
+                                },
+                              ),
                             ),
-                          );
-                        },
-                        child: Text("Add flashcard deck"),
-                      ),
-                    ],
+                          ),
+                        ],
+                      );
+                    },
                   ),
             ],
           ),
