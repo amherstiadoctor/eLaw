@@ -10,6 +10,7 @@ import 'package:sp_code/config/theme.dart';
 import 'package:sp_code/model/difficulty.dart';
 import 'package:sp_code/model/flashcard_deck.dart';
 import 'package:sp_code/model/user_entity.dart';
+import 'package:sp_code/utils/get_message.dart';
 import 'package:sp_code/utils/widgets/circle_tab_indicator.dart';
 import 'package:sp_code/view/common/add_deck_screen.dart';
 import 'package:sp_code/view/common/view_deck_screen.dart';
@@ -152,57 +153,135 @@ class _StudyTabsState extends State<StudyTabs>
 
   _buildDeckItem({required FlashcardDeck deck, required int index}) {
     return Card(
-          elevation: 0,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: InkWell(
-            borderRadius: BorderRadius.circular(16),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ViewDeckScreen(deck: deck),
+          margin: EdgeInsets.only(bottom: 12),
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: AppTheme.primary),
+            ),
+            child: ListTile(
+              contentPadding: EdgeInsets.all(16),
+              leading: Container(
+                padding: EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: AppTheme.primary.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12),
                 ),
-              );
-            },
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: AppTheme.primary),
+                child: Icon(
+                  Icons.view_carousel_rounded,
+                  color: AppTheme.primary,
+                ),
               ),
-              padding: EdgeInsets.all(16),
-              child: Row(
+              title: Text(
+                deck.title,
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              ),
+              subtitle: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
-                    padding: EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: AppTheme.primary.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Icon(
-                      Icons.view_carousel,
-                      size: 28,
-                      color: AppTheme.primary,
-                    ),
-                  ),
-                  SizedBox(width: 10),
-                  Text(
-                    deck.title,
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: AppTheme.text,
-                    ),
+                  SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Text(
+                        deck.cards.length > 1
+                            ? "${deck.cards.length} Flashcards"
+                            : deck.cards.isEmpty
+                            ? "No Flashcards"
+                            : "${deck.cards.length} Flashcard",
+                        style: TextStyle(fontSize: 12),
+                      ),
+                    ],
                   ),
                 ],
               ),
+              trailing: PopupMenuButton(
+                itemBuilder:
+                    (context) => [
+                      PopupMenuItem(
+                        value: "edit",
+                        child: ListTile(
+                          contentPadding: EdgeInsets.zero,
+                          leading: Icon(Icons.edit, color: AppTheme.primary),
+                          title: Text("Edit"),
+                        ),
+                      ),
+                      PopupMenuItem(
+                        value: "delete",
+                        child: ListTile(
+                          contentPadding: EdgeInsets.zero,
+                          leading: Icon(Icons.edit, color: AppTheme.red),
+                          title: Text("Delete"),
+                        ),
+                      ),
+                    ],
+                onSelected: (value) => _handleDeckAction(context, value, deck),
+              ),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ViewDeckScreen(deck: deck),
+                  ),
+                );
+              },
             ),
           ),
         )
         .animate(delay: Duration(milliseconds: 100 * index))
         .slideY(begin: 0.5, end: 0, duration: Duration(milliseconds: 300))
         .fadeIn();
+  }
+
+  Future<void> _handleDeckAction(
+    BuildContext context,
+    String value,
+    FlashcardDeck deck,
+  ) async {
+    if (value == "edit") {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder:
+              (context) => AddDeckScreen(
+                currentUser: widget.currentUser,
+                isEdit: true,
+                deck: deck,
+              ),
+        ),
+      );
+    } else if (value == "delete") {
+      final confirm = await showDialog<bool>(
+        context: context,
+        builder:
+            (context) => AlertDialog(
+              title: Text("Delete Flashcard Deck"),
+              content: Text("Are you sure you want to delete this deck?"),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context, false);
+                  },
+                  child: Text("Cancel"),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context, true);
+                  },
+                  child: Text("Delete", style: TextStyle(color: AppTheme.red)),
+                ),
+              ],
+            ),
+      );
+
+      if (confirm == true) {
+        await FirebaseFirestore.instance
+            .collection("decks")
+            .doc(deck.id)
+            .delete();
+
+        GetMessage.getToastMessage("Flashcard deck deleted");
+      }
+    }
   }
 
   @override
@@ -221,7 +300,7 @@ class _StudyTabsState extends State<StudyTabs>
         const SizedBox(height: 10),
         Container(
           height: 550,
-          decoration: const BoxDecoration(color: AppTheme.white),
+          decoration: const BoxDecoration(color: AppTheme.grey1),
           child: TabBarView(
             controller: _tabController,
             children: [
@@ -237,6 +316,7 @@ class _StudyTabsState extends State<StudyTabs>
                     child: Padding(
                       padding: EdgeInsets.symmetric(horizontal: 16),
                       child: ListView.builder(
+                        padding: EdgeInsets.zero,
                         shrinkWrap: true,
                         physics: NeverScrollableScrollPhysics(),
                         itemCount: _filteredDifficulties.length,
@@ -277,8 +357,13 @@ class _StudyTabsState extends State<StudyTabs>
                       ),
                       SingleChildScrollView(
                         child: Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 16),
+                          padding: EdgeInsets.only(
+                            right: 16,
+                            left: 16,
+                            top: 16,
+                          ),
                           child: ListView.builder(
+                            padding: EdgeInsets.zero,
                             shrinkWrap: true,
                             itemCount: _allDecks.length,
                             itemBuilder: (context, index) {

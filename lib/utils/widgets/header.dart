@@ -28,21 +28,20 @@ class _HeaderState extends State<Header> {
         color: Colors.transparent,
         height: 40,
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             widget.hasBackButton!
                 ? InkWell(
                   child: Icon(
                     Icons.arrow_back,
-                    color: AppTheme.black,
+                    color: widget.color ?? AppTheme.black,
                     size: 30,
                   ),
                   onTap: () {
                     Navigator.pop(context);
                   },
                 )
-                : Container(width: 50.responsiveW),
-            const Spacer(),
+                : Container(width: 30.responsiveW),
             Text(
               widget.title.isEmpty ? '' : widget.title,
               style: TextStyle(
@@ -51,10 +50,9 @@ class _HeaderState extends State<Header> {
                 color: widget.color ?? AppTheme.text,
               ),
             ),
-            const Spacer(),
             widget.has3rdIcon!
                 ? Icon(Icons.settings_rounded, color: AppTheme.white, size: 40)
-                : Container(width: 50.responsiveW),
+                : Container(width: 30.responsiveW),
           ],
         ),
       ),

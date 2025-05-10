@@ -82,12 +82,16 @@ class _FlipCardState extends State<FlipCard>
                       ? _buildFrontCard(
                         widget.frontInfoController,
                         widget.isView,
-                        widget.cardInfo!.frontInfo,
+                        widget.cardInfo?.frontInfo,
                       )
                       : Transform.scale(
                         scaleX: -1,
                         scaleY: 1,
-                        child: _buildBackCard(),
+                        child: _buildBackCard(
+                          widget.backInfoController,
+                          widget.isView,
+                          widget.cardInfo?.backInfo,
+                        ),
                       ),
             );
           },
@@ -103,25 +107,27 @@ Widget _buildFrontCard(
   String? info,
 ) {
   return Container(
+    padding: EdgeInsets.symmetric(horizontal: 16),
     width: 300,
     height: 500,
     decoration: BoxDecoration(
-      color: AppTheme.primary,
+      color: AppTheme.white,
       borderRadius: BorderRadius.circular(10),
+      border: Border.all(color: AppTheme.primaryShade),
     ),
     alignment: Alignment.center,
     child:
         isView
             ? Text(
-              info ?? "",
+              info ?? "Front",
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: AppTheme.white,
+                color: AppTheme.text,
               ),
+              textAlign: TextAlign.center,
             )
-            : controller != null
-            ? TextFormField(
+            : TextFormField(
               controller: controller,
               decoration: InputDecoration(
                 enabledBorder: OutlineInputBorder(
@@ -129,46 +135,61 @@ Widget _buildFrontCard(
                   borderRadius: BorderRadius.circular(12),
                 ),
                 labelText: "Front Info",
-                hintText: "Enter info",
-                prefixIcon: Icon(
-                  Icons.question_answer,
-                  color: AppTheme.primary,
+                hintText: "Enter front info",
+                errorBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: AppTheme.red),
                 ),
               ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return "Please enter info";
-                }
-                return null;
-              },
-            )
-            : Text(
-              "Front",
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: AppTheme.white,
-              ),
+              maxLines: 10,
+              validator: (value) => value!.isEmpty ? "Enter info" : null,
+              textInputAction: TextInputAction.next,
             ),
   );
 }
 
-Widget _buildBackCard() {
+Widget _buildBackCard(
+  TextEditingController? controller,
+  bool isView,
+  String? info,
+) {
   return Container(
+    padding: EdgeInsets.symmetric(horizontal: 16),
     width: 300,
     height: 500,
     decoration: BoxDecoration(
-      color: AppTheme.secondary,
+      color: AppTheme.white,
       borderRadius: BorderRadius.circular(10),
+      border: Border.all(color: AppTheme.primaryShade),
     ),
     alignment: Alignment.center,
-    child: Text(
-      "Back",
-      style: TextStyle(
-        fontSize: 24,
-        fontWeight: FontWeight.bold,
-        color: AppTheme.white,
-      ),
-    ),
+    child:
+        isView
+            ? Text(
+              info ?? "Back",
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: AppTheme.text,
+              ),
+              textAlign: TextAlign.center,
+            )
+            : TextFormField(
+              controller: controller,
+              decoration: InputDecoration(
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: AppTheme.primary, width: 0.0),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                labelText: "Back Info",
+                hintText: "Back front info",
+
+                errorBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: AppTheme.red),
+                ),
+              ),
+              maxLines: 10,
+              validator: (value) => value!.isEmpty ? "Enter info" : null,
+              textInputAction: TextInputAction.next,
+            ),
   );
 }

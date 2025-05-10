@@ -144,7 +144,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.white,
+      backgroundColor: AppTheme.grey1,
       body: StreamBuilder(
         stream: getLeaderboardData(),
         builder: (context, snapshot) {

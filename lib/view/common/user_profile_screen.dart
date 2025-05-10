@@ -175,7 +175,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.white,
+      backgroundColor: AppTheme.grey1,
       body: StreamBuilder<QuerySnapshot>(
         stream:
             _firestore

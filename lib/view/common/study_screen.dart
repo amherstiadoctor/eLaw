@@ -42,7 +42,7 @@ class _StudyScreenState extends State<StudyScreen> {
               Header(
                 title: "Study",
                 hasBackButton: false,
-                color: AppTheme.white,
+                color: AppTheme.grey1,
               ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(10, 100, 10, 0),
@@ -50,7 +50,7 @@ class _StudyScreenState extends State<StudyScreen> {
                   height: 650.responsiveH,
                   width: double.infinity,
                   decoration: const BoxDecoration(
-                    color: AppTheme.white,
+                    color: AppTheme.grey1,
                     borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(30),
                       topRight: Radius.circular(30),

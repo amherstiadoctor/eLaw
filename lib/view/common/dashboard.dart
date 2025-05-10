@@ -63,7 +63,7 @@ class _DashboardState extends State<Dashboard> {
         ),
       ),
       bottomNavigationBar: BottomAppBar(
-        color: AppTheme.grey1,
+        color: AppTheme.white,
         height: 70,
         shape: const CircularNotchedRectangle(),
         child: Row(
