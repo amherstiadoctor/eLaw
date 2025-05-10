@@ -4,7 +4,7 @@ import 'package:sp_code/config/theme.dart';
 import 'package:sp_code/view/admin/admin_home_screen.dart';
 import 'package:sp_code/view/common/friendslist_screen.dart';
 import 'package:sp_code/view/common/study_screen.dart';
-import 'package:sp_code/view/common/user_profile_screen.dart';
+import 'package:sp_code/view/common/profile_screen.dart';
 import 'package:sp_code/view/user/home_screen.dart';
 import 'package:sp_code/view/user/leaderboard_screen.dart';
 
@@ -42,8 +42,8 @@ class _DashboardState extends State<Dashboard> {
       _role == "user"
           ? HomeScreen(loggedInUser: widget.loggedInUser)
           : AdminHomeScreen(loggedInUser: widget.loggedInUser),
-      FriendslistScreen(),
-      UserProfileScreen(loggedInUser: widget.loggedInUser),
+      FriendslistScreen(loggedInUser: widget.loggedInUser),
+      ProfileScreen(loggedInUser: widget.loggedInUser),
     ];
     return Scaffold(
       resizeToAvoidBottomInset: false,

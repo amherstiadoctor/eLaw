@@ -78,19 +78,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 bottomRight: Radius.circular(20),
               ),
             ),
-            title: Text(
-              "eLaw",
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: AppTheme.white,
-              ),
-            ),
             flexibleSpace: FlexibleSpaceBar(
               background: SafeArea(
                 child: Column(
                   children: [
-                    SizedBox(height: kToolbarHeight + 16),
+                    SizedBox(height: kToolbarHeight),
                     Padding(
                       padding: EdgeInsets.symmetric(horizontal: 16),
                       child: Column(

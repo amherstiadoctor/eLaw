@@ -1,23 +1,27 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:sp_code/auth-service/auth.dart';
+import 'package:sp_code/auth-service/firebase_auth_service.dart';
 import 'package:sp_code/config/theme.dart';
+import 'package:sp_code/model/user_entity.dart';
 import 'package:sp_code/utils/widgets/header.dart';
+import 'package:sp_code/view/common/splash_screen.dart';
 
-class UserProfileScreen extends StatefulWidget {
-  final String friendId;
-  final Map<String, dynamic> currentUser;
-  const UserProfileScreen({
-    super.key,
-    required this.friendId,
-    required this.currentUser,
-  });
+class ProfileScreen extends StatefulWidget {
+  final UserEntity loggedInUser;
+  ProfileScreen({super.key, required this.loggedInUser});
+
+  final AuthService _authService = FirebaseAuthService(
+    authService: FirebaseAuth.instance,
+  );
 
   @override
-  State<UserProfileScreen> createState() => _UserProfileScreenState();
+  State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
-class _UserProfileScreenState extends State<UserProfileScreen> {
+class _ProfileScreenState extends State<ProfileScreen> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   Widget _buildActionCard({
     required IconData icon,
@@ -79,7 +83,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
               color: AppTheme.text,
             ),
           ),
-        ).animate(delay: Duration(milliseconds: 100)).fadeIn(),
+        ),
         Container(
           decoration: BoxDecoration(
             color: AppTheme.white,
@@ -152,63 +156,37 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                 ],
               ),
             ),
+            Icon(Icons.chevron_right, color: AppTheme.text2, size: 20),
           ],
         ),
       ),
     );
   }
 
-  Future<void> _removeFriend({
-    required Map<String, dynamic> currentUser,
-  }) async {
-    final confirm = await showDialog<bool>(
-      context: context,
-      builder:
-          (context) => AlertDialog(
-            title: Text("Delete Friend"),
-            content: Text("Are you sure you want to delete this friend?"),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context, false);
-                },
-                child: Text("Cancel"),
-              ),
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context, true);
-                },
-                child: Text("Delete", style: TextStyle(color: AppTheme.red)),
-              ),
-            ],
-          ),
-    );
-
-    if (confirm == true) {
-      currentUser['friends'].remove(widget.friendId);
-      await _firestore.collection("Users").doc(currentUser['id']).update({
-        'friends': currentUser['friends'],
-      });
-
-      Navigator.pop(context);
-    }
+  handleSignOut() async {
+    await widget._authService.onSignOut();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.grey1,
-      body: StreamBuilder<DocumentSnapshot>(
-        stream: _firestore.collection("Users").doc(widget.friendId).snapshots(),
-        builder: (BuildContext context, snapshot) {
+      body: StreamBuilder<QuerySnapshot>(
+        stream:
+            _firestore
+                .collection("Users")
+                .where('email', isEqualTo: widget.loggedInUser.email)
+                .snapshots(),
+        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator());
           }
-          if (!snapshot.hasData) {
+
+          final fetchedDocs = snapshot.data!.docs;
+          final currentUser = fetchedDocs[0].data() as Map<String, dynamic>;
+          if (currentUser.isEmpty) {
             return Center(child: Text("No user found."));
           }
-
-          final currentUser = snapshot.data as DocumentSnapshot;
 
           return SingleChildScrollView(
             child: Stack(
@@ -240,11 +218,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                           ),
                         ),
                       ),
-                      Header(
-                        title: "User Profile",
-                        color: AppTheme.white,
-                        hasBackButton: true,
-                      ),
+                      Header(title: "Profile", color: AppTheme.white),
                     ],
                   ),
                 ),
@@ -327,53 +301,41 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                             ],
                           ),
                         ),
-                        SizedBox(height: 5),
                         Padding(
                           padding: EdgeInsets.symmetric(horizontal: 24),
                           child: Column(
                             children: [
                               _buildSection(
-                                title: 'Actions',
+                                title: '',
                                 items: [
-                                  currentUser['friends'].contains(
-                                        widget.friendId,
-                                      )
-                                      ? _buildMenuItem(
-                                        icon: Icons.add_reaction_outlined,
-                                        title: 'Add Friend',
-                                        subtitle: 'Send a friend request',
-                                        onTap: () {},
-                                        color: AppTheme.primary,
-                                      )
-                                      : Container(),
                                   _buildMenuItem(
-                                    icon: Icons.sentiment_dissatisfied_outlined,
-                                    title: 'Delete Friend',
-                                    subtitle: 'Remove friend from friends list',
+                                    icon: Icons.notifications_outlined,
+                                    title: 'Friend Requests',
+                                    subtitle: 'Manage your friend requests',
+                                    onTap: () {},
+                                    color: AppTheme.primary,
+                                  ),
+                                  _buildMenuItem(
+                                    icon: Icons.logout_outlined,
+                                    title: 'Sign Out',
+                                    subtitle: 'Sign out from your account',
                                     onTap: () {
-                                      _removeFriend(
-                                        currentUser: widget.currentUser,
+                                      handleSignOut();
+                                      Navigator.of(context).pushAndRemoveUntil(
+                                        MaterialPageRoute(
+                                          builder: (context) => SplashScreen(),
+                                        ),
+                                        (Route<dynamic> route) => false,
                                       );
                                     },
                                     color: AppTheme.red,
                                   ),
-                                  currentUser['friends'].contains(
-                                        widget.friendId,
-                                      )
-                                      ? _buildMenuItem(
-                                        icon:
-                                            Icons.check_circle_outline_outlined,
-                                        title: 'Friend Request Sent!',
-                                        subtitle: 'Waiting for their response',
-                                        onTap: () {},
-                                        color: AppTheme.secondary,
-                                      )
-                                      : Container(),
                                 ],
                               ),
                             ],
                           ),
                         ),
+                        SizedBox(height: 150),
                       ],
                     ),
                   ),
