@@ -78,17 +78,25 @@ class _QuizPlayScreenState extends State<QuizPlayScreen>
   }
 
   Future<void> _addQuizzesTaken({required double quizScore}) async {
+    TakenQuiz item;
     String? userId;
     try {
-      final TakenQuiz? foundQuiz = widget.loggedInUser.quizzesTaken?.firstWhere(
-        (quiz) => quiz.quizId == widget.quiz.id,
-      );
+      final TakenQuiz? foundQuiz =
+          widget.loggedInUser.quizzesTaken
+              ?.where((quiz) => quiz.quizId == widget.quiz.id)
+              .firstOrNull;
+
       if (foundQuiz != null) {
         final index = widget.loggedInUser.quizzesTaken!.indexWhere(
           (quiz) => quiz.quizId == widget.quiz.id,
         );
+        if (index != -1) {
+          item = widget.loggedInUser.quizzesTaken![index]; // Safe to access
+        } else {
+          item = TakenQuiz(quizId: widget.quiz.id, quizScore: quizScore);
+        }
 
-        widget.loggedInUser.quizzesTaken![index].quizScore = quizScore;
+        item.quizScore = quizScore;
 
         final List<Map<String, dynamic>> quizzesMap =
             widget.loggedInUser.quizzesTaken!

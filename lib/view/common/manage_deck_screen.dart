@@ -188,9 +188,7 @@ class _ManageDeckScreenState extends State<ManageDeckScreen> {
         Container(
           height: 350.responsiveH,
           decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [AppTheme.primary, AppTheme.primaryTint],
-            ),
+            color: AppTheme.primary,
             borderRadius: BorderRadius.only(
               bottomLeft: Radius.circular(40),
               bottomRight: Radius.circular(40),

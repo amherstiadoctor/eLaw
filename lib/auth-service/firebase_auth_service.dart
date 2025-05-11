@@ -49,6 +49,7 @@ class FirebaseAuthService implements AuthService {
       'quizzesTaken': <TakenQuiz>[],
       'quizzesCompleted': <String>[],
       'totalPoints': 0,
+      'friends': <String>[],
     };
 
     if (register) {

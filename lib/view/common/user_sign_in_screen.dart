@@ -108,7 +108,7 @@ class _UserSignInScreenState extends State<UserSignInScreen> {
     resizeToAvoidBottomInset: false,
     body: Stack(
       children: [
-        const Header(title: "Sign Into Account"),
+        const Header(title: "Sign Into Account", hasBackButton: true),
         Center(
           child: Container(
             padding: EdgeInsets.only(top: 100.responsiveH),

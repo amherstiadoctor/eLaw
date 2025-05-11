@@ -120,7 +120,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     resizeToAvoidBottomInset: false,
     body: Stack(
       children: [
-        const Header(title: "Create Account"),
+        const Header(title: "Create Account", hasBackButton: true),
         Center(
           child: Container(
             padding: EdgeInsets.only(top: 100.responsiveH),

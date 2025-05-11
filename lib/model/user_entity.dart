@@ -2,7 +2,6 @@ import 'package:equatable/equatable.dart';
 import 'package:sp_code/model/taken_quiz.dart';
 
 class UserEntity extends Equatable {
-
   factory UserEntity.fromJson(Map<String, dynamic> json) => UserEntity(
     id: json['id'] ?? "",
     firstName: json['firstName'] ?? "",
@@ -77,6 +76,7 @@ class UserEntity extends Equatable {
     quizzesTaken,
     quizzesCompleted,
     totalPoints,
+    friends,
   ];
 
   UserEntity copyWith({
@@ -85,14 +85,14 @@ class UserEntity extends Equatable {
     int? totalPoints,
     List<String>? friends,
   }) => UserEntity(
-      id: id,
-      firstName: firstName,
-      lastName: lastName,
-      email: email,
-      role: role,
-      quizzesTaken: quizzesTaken ?? this.quizzesTaken,
-      quizzesCompleted: quizzesCompleted ?? this.quizzesCompleted,
-      totalPoints: totalPoints ?? this.totalPoints,
-      friends: friends ?? this.friends,
-    );
+    id: id,
+    firstName: firstName,
+    lastName: lastName,
+    email: email,
+    role: role,
+    quizzesTaken: quizzesTaken ?? this.quizzesTaken,
+    quizzesCompleted: quizzesCompleted ?? this.quizzesCompleted,
+    totalPoints: totalPoints ?? this.totalPoints,
+    friends: friends ?? this.friends,
+  );
 }
