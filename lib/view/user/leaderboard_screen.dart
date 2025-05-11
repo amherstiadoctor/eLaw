@@ -1,22 +1,62 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:sp_code/config/responsive_sizer/responsive_sizer.dart';
 import 'package:sp_code/config/theme.dart';
+import 'package:sp_code/model/taken_quiz.dart';
+import 'package:sp_code/model/user_entity.dart';
 
 class LeaderboardScreen extends StatefulWidget {
-  const LeaderboardScreen({super.key});
+  const LeaderboardScreen({super.key, required this.loggedInUser});
+  final UserEntity loggedInUser;
 
   @override
   State<LeaderboardScreen> createState() => _LeaderboardScreenState();
 }
 
 class _LeaderboardScreenState extends State<LeaderboardScreen> {
+  UserEntity? _currentUser;
+  List<Map<String, dynamic>>? userFriends;
+  int selectedIndex = 0;
+  final List<String> tabs = ['All Time', 'Friends'];
   Stream<List<Map<String, dynamic>>> getLeaderboardData() => FirebaseFirestore
       .instance
       .collection("Users")
       .orderBy('totalPoints', descending: true)
       .snapshots()
       .map((snapshot) => snapshot.docs.map((doc) => doc.data()).toList());
+
+  Future<UserEntity?> fetchCurrentUserFromFirestore() async {
+    final snapshot =
+        await FirebaseFirestore.instance
+            .collection('Users')
+            .where('email', isEqualTo: widget.loggedInUser.email)
+            .limit(1)
+            .get();
+
+    if (snapshot.docs.isEmpty) return null;
+
+    final data = snapshot.docs.first.data();
+
+    return UserEntity(
+      id: snapshot.docs.first.id,
+      firstName: data['firstName'] ?? '',
+      lastName: data['lastName'] ?? '',
+      email: data['email'] ?? '',
+      role: data['role'] ?? '',
+      quizzesTaken:
+          (data['quizzesTaken'] as List?)
+              ?.map((quizData) => TakenQuiz.fromMap(quizData))
+              .toList(),
+      quizzesCompleted:
+          (data['quizzesCompleted'] as List?)
+              ?.map((e) => e.toString())
+              .toList(),
+      totalPoints: data['totalPoints'] ?? 0,
+      friends:
+          (data['friends'] as List?)?.map((e) => e.toString()).toList() ?? [],
+    );
+  }
 
   Widget _buildUserItem({
     required Map<String, dynamic> user,
@@ -65,10 +105,13 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                   Expanded(
                     child: Text(
                       "${user['firstName']} ${user['lastName']}",
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.w500,
-                        color: AppTheme.text,
+                        color:
+                            user['id'] == _currentUser!.id
+                                ? AppTheme.green
+                                : AppTheme.text,
                       ),
                     ),
                   ),
@@ -111,7 +154,10 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
         ),
         Icon(
           Icons.account_circle_outlined,
-          color: AppTheme.white,
+          color:
+              user['email'] == _currentUser!.email
+                  ? AppTheme.secondary
+                  : AppTheme.white,
           size:
               rank == 1
                   ? 100
@@ -122,17 +168,33 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
         const SizedBox(height: 5),
         Text(
           user['totalPoints'].toString(),
-          style: const TextStyle(fontSize: 28, color: AppTheme.white),
+          style: TextStyle(
+            fontSize: 28,
+            color:
+                user['email'] == _currentUser!.email
+                    ? AppTheme.secondary
+                    : AppTheme.white,
+          ),
         ),
         Text(
-          // "${user['firstName']} ${user['lastName']}",
           user['firstName'],
-          style: const TextStyle(fontSize: 12, color: AppTheme.white),
+          style: TextStyle(
+            fontSize: 12,
+            color:
+                user['email'] == _currentUser!.email
+                    ? AppTheme.secondary
+                    : AppTheme.white,
+          ),
         ),
         Text(
-          // "${user['firstName']} ${user['lastName']}",
           user['lastName'],
-          style: const TextStyle(fontSize: 12, color: AppTheme.white),
+          style: TextStyle(
+            fontSize: 12,
+            color:
+                user['email'] == _currentUser!.email
+                    ? AppTheme.secondary
+                    : AppTheme.white,
+          ),
         ),
       ],
     ),
@@ -140,6 +202,20 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
     delay: const Duration(milliseconds: 200),
     curve: Curves.elasticOut,
   );
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    fetchCurrentUser();
+  }
+
+  void fetchCurrentUser() async {
+    final user = await fetchCurrentUserFromFirestore();
+    setState(() {
+      _currentUser = user;
+    });
+  }
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -156,13 +232,31 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
           return const Center(child: Text("No users found."));
         }
 
+        final List<Map<String, dynamic>> userFriends;
+        if (_currentUser == null) {
+          return const Center(child: CircularProgressIndicator());
+        } else {
+          userFriends =
+              users
+                  .where((user) => _currentUser!.friends.contains(user['id']))
+                  .toList()
+                ..add(_currentUser!.toJson())
+                ..sort(
+                  (a, b) =>
+                      (b['totalPoints'] ?? 0).compareTo(a['totalPoints'] ?? 0),
+                );
+        }
+
         final topThree = users.take(3).toList();
         final remainingUsers = users.skip(3).toList();
+
+        final topThreeFriends = userFriends.take(3).toList();
+        final remainingFriends = userFriends.skip(3).toList();
 
         return CustomScrollView(
           slivers: [
             SliverAppBar(
-              expandedHeight: 320,
+              expandedHeight: 350,
               pinned: true,
               floating: true,
               centerTitle: true,
@@ -183,24 +277,130 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                 ),
               ),
               flexibleSpace:
-                  users.isNotEmpty && topThree.length > 3
+                  topThree.isNotEmpty
                       ? FlexibleSpaceBar(
                         background: Container(
                           margin: const EdgeInsets.only(top: 90),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+
+                          child: Column(
                             children: [
-                              _buildTopUser(topThree[1], 2, context),
-                              _buildTopUser(topThree[0], 1, context),
-                              _buildTopUser(topThree[2], 3, context),
+                              Container(
+                                width: 200.responsiveW,
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 5,
+                                  horizontal: 5,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: AppTheme.secondaryTint,
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: List.generate(tabs.length, (index) {
+                                    final isSelected = index == selectedIndex;
+                                    return GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          selectedIndex = index;
+                                        });
+                                      },
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 20,
+                                          vertical: 8,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color:
+                                              isSelected
+                                                  ? AppTheme.secondaryShade
+                                                  : Colors.transparent,
+                                          borderRadius: BorderRadius.circular(
+                                            20,
+                                          ),
+                                        ),
+                                        child: Text(
+                                          tabs[index],
+                                          style: TextStyle(
+                                            color:
+                                                isSelected
+                                                    ? AppTheme.white
+                                                    : Colors.brown[300],
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  }),
+                                ),
+                              ),
+                              selectedIndex == 0
+                                  ? Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      _buildTopUser(topThree[1], 2, context),
+                                      _buildTopUser(topThree[0], 1, context),
+                                      _buildTopUser(topThree[2], 3, context),
+                                    ],
+                                  )
+                                  : topThreeFriends.length == 1
+                                  ? Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      _buildTopUser(
+                                        topThreeFriends[0],
+                                        1,
+                                        context,
+                                      ),
+                                    ],
+                                  )
+                                  : topThreeFriends.length == 2
+                                  ? Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      _buildTopUser(
+                                        topThreeFriends[1],
+                                        2,
+                                        context,
+                                      ),
+                                      _buildTopUser(
+                                        topThreeFriends[0],
+                                        1,
+                                        context,
+                                      ),
+                                    ],
+                                  )
+                                  : Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      _buildTopUser(
+                                        topThreeFriends[1],
+                                        2,
+                                        context,
+                                      ),
+                                      _buildTopUser(
+                                        topThreeFriends[0],
+                                        1,
+                                        context,
+                                      ),
+                                      _buildTopUser(
+                                        topThreeFriends[2],
+                                        3,
+                                        context,
+                                      ),
+                                    ],
+                                  ),
                             ],
                           ),
                         ),
                       )
                       : FlexibleSpaceBar(
                         background: Container(
-                          padding: EdgeInsets.symmetric(horizontal: 16),
-                          child: Center(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: const Center(
                             child: Text(
                               "No Rankings Yet!\nGo Rack Up Your Points!",
                               style: TextStyle(
@@ -213,25 +413,46 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                         ),
                       ),
             ),
-            users.isNotEmpty && remainingUsers.isNotEmpty
-                ? SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: remainingUsers.length,
-                      itemBuilder: (context, index) {
-                        final remainingUser = remainingUsers[index];
-                        return _buildUserItem(
-                          user: remainingUser,
-                          color: AppTheme.primary,
-                          index: index,
-                        );
-                      },
-                    ),
-                  ),
-                )
+            remainingUsers.isNotEmpty
+                ? selectedIndex == 1
+                    ? SliverToBoxAdapter(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: remainingUsers.length,
+                          itemBuilder: (context, index) {
+                            final remainingUser = remainingUsers[index];
+                            return _buildUserItem(
+                              user: remainingUser,
+                              color: AppTheme.primary,
+                              index: index,
+                            );
+                          },
+                        ),
+                      ),
+                    )
+                    : userFriends.isNotEmpty
+                    ? SliverToBoxAdapter(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: remainingFriends.length,
+                          itemBuilder: (context, index) {
+                            final remainingFriend = remainingFriends[index];
+                            return _buildUserItem(
+                              user: remainingFriend,
+                              color: AppTheme.primary,
+                              index: index,
+                            );
+                          },
+                        ),
+                      ),
+                    )
+                    : const SliverToBoxAdapter()
                 : const SliverToBoxAdapter(),
           ],
         );
