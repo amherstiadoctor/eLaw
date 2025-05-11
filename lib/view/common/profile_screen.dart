@@ -2,8 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:sp_code/auth-service/auth.dart';
 import 'package:sp_code/auth-service/firebase_auth_service.dart';
+import 'package:sp_code/config/svg_images.dart';
 import 'package:sp_code/config/theme.dart';
 import 'package:sp_code/model/user_entity.dart';
 import 'package:sp_code/utils/widgets/header.dart';
@@ -24,14 +26,14 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   Widget _buildActionCard({
-    required IconData icon,
+    required String icon,
     required String title,
     required String value,
     required Color color,
   }) => Expanded(
     child:
         Container(
-          height: 125,
+          height: 140,
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
             color: AppTheme.white,
@@ -46,7 +48,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
           child: Column(
             children: [
-              Icon(icon, color: color),
+              SvgPicture.string(
+                icon,
+                width: 40,
+                height: 40,
+                colorFilter: ColorFilter.mode(color, BlendMode.srcIn),
+              ),
               const SizedBox(height: 8),
               Text(
                 value,
@@ -257,7 +264,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         child: Row(
                           children: [
                             _buildActionCard(
-                              icon: Icons.quiz_outlined,
+                              icon: rankIcon,
                               title: 'Completed Quizzes',
                               value:
                                   currentUser["quizzesCompleted"].length
@@ -266,14 +273,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                             const SizedBox(width: 12),
                             _buildActionCard(
-                              icon: Icons.favorite_outline_outlined,
+                              icon: pointsIcon,
                               title: 'Points',
                               value: currentUser["totalPoints"].toString(),
                               color: AppTheme.secondary,
                             ),
                             const SizedBox(width: 12),
                             _buildActionCard(
-                              icon: Icons.group_outlined,
+                              icon: laughIcon,
                               title: 'Friends',
                               value: currentUser["friends"].length.toString(),
                               color: AppTheme.tertiary,

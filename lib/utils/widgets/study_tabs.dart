@@ -4,8 +4,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:sp_code/auth-service/auth.dart';
 import 'package:sp_code/auth-service/firebase_auth_service.dart';
+import 'package:sp_code/config/svg_images.dart';
 import 'package:sp_code/config/theme.dart';
 import 'package:sp_code/model/difficulty.dart';
 import 'package:sp_code/model/flashcard_deck.dart';
@@ -100,16 +102,13 @@ class _StudyTabsState extends State<StudyTabs>
                 padding: const EdgeInsets.all(16),
                 child: Row(
                   children: [
-                    Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: AppTheme.primaryTint,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: const Icon(
-                        Icons.quiz,
-                        size: 28,
-                        color: AppTheme.primary,
+                    SvgPicture.string(
+                      quizIcon,
+                      width: 40,
+                      height: 40,
+                      colorFilter: const ColorFilter.mode(
+                        AppTheme.primary,
+                        BlendMode.srcIn,
                       ),
                     ),
                     const SizedBox(width: 10),
@@ -144,15 +143,13 @@ class _StudyTabsState extends State<StudyTabs>
               ),
               child: ListTile(
                 contentPadding: const EdgeInsets.all(16),
-                leading: Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: AppTheme.primaryTint,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: const Icon(
-                    Icons.view_carousel_rounded,
-                    color: AppTheme.primary,
+                leading: SvgPicture.string(
+                  flashcardIcon,
+                  width: 40,
+                  height: 40,
+                  colorFilter: const ColorFilter.mode(
+                    AppTheme.primary,
+                    BlendMode.srcIn,
                   ),
                 ),
                 title: Text(

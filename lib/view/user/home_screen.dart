@@ -27,110 +27,110 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-      backgroundColor: AppTheme.grey1,
-      body: StreamBuilder(
-        stream:
-            FirebaseFirestore.instance
-                .collection("Users")
-                .where('email', isEqualTo: widget.loggedInUser.email)
-                .snapshots(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
+    backgroundColor: AppTheme.grey1,
+    body: StreamBuilder(
+      stream:
+          FirebaseFirestore.instance
+              .collection("Users")
+              .where('email', isEqualTo: widget.loggedInUser.email)
+              .snapshots(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
 
-          final fetchedDocs = snapshot.data!.docs;
-          final currentUser = fetchedDocs[0].data();
-          if (currentUser.isEmpty) {
-            return const Center(child: Text("No user found."));
-          }
+        final fetchedDocs = snapshot.data!.docs;
+        final currentUser = fetchedDocs[0].data();
+        if (currentUser.isEmpty) {
+          return const Center(child: Text("No user found."));
+        }
 
-          return CustomScrollView(
-            slivers: [
-              SliverAppBar(
-                expandedHeight: 225,
-                pinned: true,
-                floating: true,
-                centerTitle: false,
-                backgroundColor: AppTheme.primary,
-                elevation: 0,
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(20),
-                    bottomRight: Radius.circular(20),
-                  ),
+        return CustomScrollView(
+          slivers: [
+            SliverAppBar(
+              expandedHeight: 225,
+              pinned: true,
+              floating: true,
+              centerTitle: false,
+              backgroundColor: AppTheme.primary,
+              elevation: 0,
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(20),
+                  bottomRight: Radius.circular(20),
                 ),
-                flexibleSpace: FlexibleSpaceBar(
-                  background: SafeArea(
-                    child: Column(
-                      children: [
-                        const SizedBox(height: kToolbarHeight),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Good ${greeting()}, ${widget.loggedInUser.firstName}",
-                                style: const TextStyle(
-                                  fontSize: 28,
-                                  fontWeight: FontWeight.bold,
-                                  color: AppTheme.white,
-                                ),
+              ),
+              flexibleSpace: FlexibleSpaceBar(
+                background: SafeArea(
+                  child: Column(
+                    children: [
+                      const SizedBox(height: kToolbarHeight),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Good ${greeting()}, ${widget.loggedInUser.firstName}",
+                              style: const TextStyle(
+                                fontSize: 28,
+                                fontWeight: FontWeight.bold,
+                                color: AppTheme.white,
                               ),
-                              const SizedBox(height: 8),
-                              Text(
-                                "Let's test your knowledge today",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: AppTheme.white.withOpacity(0.8),
-                                ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              "Let's test your knowledge today",
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: AppTheme.white.withOpacity(0.8),
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              const SliverPadding(
-                padding: EdgeInsets.only(left: 16, top: 20),
-                sliver: SliverToBoxAdapter(
-                  child: Text(
-                    "Recent Quizzes",
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ),
-              currentUser['quizzesTaken'].isNotEmpty
-                  ? SliverToBoxAdapter(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: ListView.builder(
-                        padding: EdgeInsets.zero,
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: currentUser['quizzesTaken'].length,
-                        itemBuilder: (context, index) {
-                          final quiz = currentUser['quizzesTaken'][index];
-                          return _buildRecentQuizCard(quiz, index);
-                        },
                       ),
-                    ),
-                  )
-                  : const SliverPadding(
-                    padding: EdgeInsets.all(16),
-                    sliver: SliverToBoxAdapter(
-                      child: Center(child: Text("No recent quizzes yet!")),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            const SliverPadding(
+              padding: EdgeInsets.only(left: 16, top: 20),
+              sliver: SliverToBoxAdapter(
+                child: Text(
+                  "Recent Quizzes",
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+            currentUser['quizzesTaken'].isNotEmpty
+                ? SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: ListView.builder(
+                      padding: EdgeInsets.zero,
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: currentUser['quizzesTaken'].length,
+                      itemBuilder: (context, index) {
+                        final quiz = currentUser['quizzesTaken'][index];
+                        return _buildRecentQuizCard(quiz, index);
+                      },
                     ),
                   ),
-            ],
-          );
-        },
-      ),
-    );
+                )
+                : const SliverPadding(
+                  padding: EdgeInsets.all(16),
+                  sliver: SliverToBoxAdapter(
+                    child: Center(child: Text("No recent quizzes yet!")),
+                  ),
+                ),
+          ],
+        );
+      },
+    ),
+  );
 
   Widget _buildRecentQuizCard(Map<String, dynamic> recentQuiz, int index) {
     Color getScoreColor(double score) {
@@ -139,7 +139,8 @@ class _HomeScreenState extends State<HomeScreen> {
       return AppTheme.red;
     }
 
-    String formatDate(DateTime date) => '${date.day}/${date.month}/${date.year}';
+    String formatDate(DateTime date) =>
+        '${date.day}/${date.month}/${date.year}';
 
     final scorePercentage = (recentQuiz['quizScore'] * 100).round();
     return StreamBuilder(
@@ -158,9 +159,10 @@ class _HomeScreenState extends State<HomeScreen> {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
               ),
-              child: InkWell(
-                borderRadius: BorderRadius.circular(16),
-                onTap: () {},
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                ),
                 child: Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(16),
@@ -212,9 +214,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                         circularStrokeCap: CircularStrokeCap.round,
                         progressColor: getScoreColor(recentQuiz['quizScore']),
-                        backgroundColor: getScoreColor(
-                          recentQuiz['quizScore'],
-                        ),
+                        backgroundColor: getScoreColor(recentQuiz['quizScore']),
                       ),
                     ],
                   ),
@@ -222,7 +222,11 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             )
             .animate(delay: Duration(milliseconds: 100 * index))
-            .slideY(begin: 0.5, end: 0, duration: const Duration(milliseconds: 300))
+            .slideY(
+              begin: 0.5,
+              end: 0,
+              duration: const Duration(milliseconds: 300),
+            )
             .fadeIn();
       },
     );

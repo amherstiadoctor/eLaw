@@ -282,7 +282,10 @@ class _FriendslistScreenState extends State<FriendslistScreen> {
                   searchIcon,
                   height: 30,
                   width: 30,
-                  color: AppTheme.primaryShade,
+                  colorFilter: const ColorFilter.mode(
+                    AppTheme.primary,
+                    BlendMode.srcIn,
+                  ),
                 ),
                 Container(
                   padding: const EdgeInsets.only(left: 5),

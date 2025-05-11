@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:sp_code/config/svg_images.dart';
 import 'package:sp_code/model/difficulty.dart';
 import 'package:sp_code/model/quiz.dart';
 import 'package:sp_code/config/theme.dart';
@@ -85,10 +87,14 @@ class _DifficultyScreenState extends State<DifficultyScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(
-                        Icons.quiz_outlined,
-                        size: 64,
-                        color: AppTheme.text2,
+                      SvgPicture.string(
+                        quizIcon,
+                        width: 80,
+                        height: 80,
+                        colorFilter: const ColorFilter.mode(
+                          AppTheme.grey3,
+                          BlendMode.srcIn,
+                        ),
                       ),
                       const SizedBox(height: 16),
                       const Text(
@@ -139,10 +145,10 @@ class _DifficultyScreenState extends State<DifficultyScreen> {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const Icon(
-                                Icons.category_rounded,
-                                size: 64,
-                                color: AppTheme.white,
+                              SvgPicture.string(
+                                quizInfoIcon,
+                                width: 80,
+                                height: 80,
                               ),
                               const SizedBox(height: 16),
                               Text(
@@ -208,16 +214,13 @@ class _DifficultyScreenState extends State<DifficultyScreen> {
                 padding: const EdgeInsets.all(16),
                 child: Row(
                   children: [
-                    Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: AppTheme.primary.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: const Icon(
-                        Icons.quiz_rounded,
-                        color: AppTheme.primary,
-                        size: 32,
+                    SvgPicture.string(
+                      quizIcon,
+                      width: 40,
+                      height: 40,
+                      colorFilter: const ColorFilter.mode(
+                        AppTheme.primary,
+                        BlendMode.srcIn,
                       ),
                     ),
                     const SizedBox(width: 16),

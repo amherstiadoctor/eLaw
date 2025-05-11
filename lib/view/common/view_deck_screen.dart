@@ -20,47 +20,51 @@ class _ViewDeckScreenState extends State<ViewDeckScreen> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-      backgroundColor: AppTheme.primaryTint,
-      body: Column(
-        children: [
-          Header(
-            title: widget.deck.title,
-            hasBackButton: true,
-            color: AppTheme.white,
-          ),
-          Padding(
-            padding: const EdgeInsets.only(top: 50),
-            child: CarouselSlider(
-              carouselController: _carouselController,
-              items:
-                  widget.deck.cards.map<Widget>((i) => Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 2),
-                      child: FlipCard(isView: true, cardInfo: i),
-                    )).toList(),
-              options: CarouselOptions(
-                viewportFraction: 1,
-                padEnds: false,
-                onPageChanged: (index, reason) {
-                  setState(() {
-                    _currentCarouselPage = index;
-                  });
-                },
-                height: 500,
-                enableInfiniteScroll: false,
-              ),
+    backgroundColor: AppTheme.primary,
+    body: Column(
+      children: [
+        Header(
+          title: widget.deck.title,
+          hasBackButton: true,
+          color: AppTheme.white,
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: 50),
+          child: CarouselSlider(
+            carouselController: _carouselController,
+            items:
+                widget.deck.cards
+                    .map<Widget>(
+                      (i) => Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 2),
+                        child: FlipCard(isView: true, cardInfo: i),
+                      ),
+                    )
+                    .toList(),
+            options: CarouselOptions(
+              viewportFraction: 1,
+              padEnds: false,
+              onPageChanged: (index, reason) {
+                setState(() {
+                  _currentCarouselPage = index;
+                });
+              },
+              height: 500,
+              enableInfiniteScroll: false,
             ),
           ),
-          const SizedBox(height: 10),
-          Visibility(
-            visible: widget.deck.cards.isNotEmpty,
-            child: Center(
-              child: Text(
-                "${_currentCarouselPage + 1}/${widget.deck.cards.length}",
-                style: const TextStyle(fontSize: 24, color: AppTheme.white),
-              ),
+        ),
+        const SizedBox(height: 10),
+        Visibility(
+          visible: widget.deck.cards.isNotEmpty,
+          child: Center(
+            child: Text(
+              "${_currentCarouselPage + 1}/${widget.deck.cards.length}",
+              style: const TextStyle(fontSize: 24, color: AppTheme.white),
             ),
           ),
-        ],
-      ),
-    );
+        ),
+      ],
+    ),
+  );
 }
