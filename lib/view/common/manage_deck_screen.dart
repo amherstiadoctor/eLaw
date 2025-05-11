@@ -28,16 +28,17 @@ class ManageDeckScreen extends StatefulWidget {
 
 class FlashcardFromItem {
   FlashcardFromItem({
-    required this.flashcardTitleController,
+    required this.id,
     required this.frontInfoController,
     required this.backInfoController,
+    required this.nextReviewDate,
   });
-  final TextEditingController flashcardTitleController;
+  final String id;
   final TextEditingController frontInfoController;
   final TextEditingController backInfoController;
+  final DateTime nextReviewDate;
 
   void dispose() {
-    flashcardTitleController.dispose();
     frontInfoController.dispose();
     backInfoController.dispose();
   }
@@ -78,35 +79,58 @@ class _ManageDeckScreenState extends State<ManageDeckScreen> {
         widget.deck!.cards
             .map(
               (card) => FlashcardFromItem(
-                flashcardTitleController: TextEditingController(
-                  text: card.title,
-                ),
+                id: card.id,
                 frontInfoController: TextEditingController(
                   text: card.frontInfo,
                 ),
                 backInfoController: TextEditingController(text: card.backInfo),
+                nextReviewDate: card.nextReviewDate,
               ),
             )
             .toList();
   }
 
   void _addFlashcard() {
+    final cardRef =
+        FirebaseFirestore.instance
+            .collection('flashcardDecks')
+            .doc(widget.deck?.id)
+            .collection('cards')
+            .doc();
     setState(() {
       _flashcardItems.add(
         FlashcardFromItem(
-          flashcardTitleController: TextEditingController(),
+          id: cardRef.id,
           frontInfoController: TextEditingController(),
           backInfoController: TextEditingController(),
+          nextReviewDate: DateTime.now(),
         ),
       );
     });
   }
 
-  void _removeFlashcard(int index) {
-    setState(() {
-      _flashcardItems[index].dispose();
-      _flashcardItems.removeAt(index);
-    });
+  Future<void> _removeFlashcard(int index, String cardId) async {
+    try {
+      setState(() {
+        _flashcardItems[index].dispose();
+        _flashcardItems.removeAt(index);
+
+        _currentCarouselPage == 0
+            ? _currentCarouselPage
+            : _currentCarouselPage--;
+      });
+
+      if (widget.isEdit) {
+        await FirebaseFirestore.instance
+            .collection('flashcardDecks')
+            .doc(widget.deck!.id)
+            .collection('cards')
+            .doc(cardId)
+            .delete();
+      }
+    } catch (e) {
+      print("Error deleting flashcard: $e");
+    }
   }
 
   Future<void> _saveDeck(Map<String, dynamic> currentUser) async {
@@ -124,9 +148,10 @@ class _ManageDeckScreenState extends State<ManageDeckScreen> {
             _flashcardItems
                 .map(
                   (item) => Flashcard(
-                    title: item.flashcardTitleController.text.trim(),
+                    id: item.id,
                     frontInfo: item.frontInfoController.text.trim(),
                     backInfo: item.backInfoController.text.trim(),
+                    nextReviewDate: item.nextReviewDate,
                   ),
                 )
                 .toList();
@@ -152,9 +177,10 @@ class _ManageDeckScreenState extends State<ManageDeckScreen> {
             _flashcardItems
                 .map(
                   (item) => Flashcard(
-                    title: item.flashcardTitleController.text.trim(),
+                    id: item.id,
                     frontInfo: item.frontInfoController.text.trim(),
                     backInfo: item.backInfoController.text.trim(),
+                    nextReviewDate: item.nextReviewDate,
                   ),
                 )
                 .toList();
@@ -265,7 +291,10 @@ class _ManageDeckScreenState extends State<ManageDeckScreen> {
                               children: [
                                 IconButton(
                                   onPressed: () {
-                                    _removeFlashcard(_currentCarouselPage);
+                                    _removeFlashcard(
+                                      _currentCarouselPage,
+                                      _flashcardItems[_currentCarouselPage].id,
+                                    );
                                   },
                                   icon: const Icon(
                                     Icons.delete,
