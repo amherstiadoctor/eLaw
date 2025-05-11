@@ -167,6 +167,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
 
   Future<void> _removeFriend({
     required Map<String, dynamic> currentUser,
+    required DocumentSnapshot currentFriend,
   }) async {
     final confirm = await showDialog<bool>(
       context: context,
@@ -196,8 +197,13 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
 
     if (confirm == true) {
       currentUser['friends'].remove(widget.friendId);
+      currentFriend['friends'].remove(widget.currentUser['id']);
       await _firestore.collection("Users").doc(currentUser['id']).update({
         'friends': currentUser['friends'],
+      });
+
+      await _firestore.collection("Users").doc(widget.friendId).update({
+        'friends': currentFriend['friends'],
       });
 
       if (!mounted) return;
@@ -241,7 +247,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
           return const Center(child: Text("No user found."));
         }
 
-        final currentUser = snapshot.data as DocumentSnapshot;
+        final currentFriend = snapshot.data as DocumentSnapshot;
 
         return SingleChildScrollView(
           child: Stack(
@@ -300,7 +306,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                             ),
                             const SizedBox(height: 16),
                             Text(
-                              "${currentUser["firstName"]} ${currentUser["lastName"]}",
+                              "${currentFriend["firstName"]} ${currentFriend["lastName"]}",
                               style: const TextStyle(
                                 fontSize: 24,
                                 fontWeight: FontWeight.bold,
@@ -309,7 +315,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                             ),
                             const SizedBox(height: 8),
                             Text(
-                              currentUser["email"],
+                              currentFriend["email"],
                               style: const TextStyle(
                                 fontSize: 14,
                                 color: AppTheme.text2,
@@ -327,7 +333,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                               icon: Icons.quiz_outlined,
                               title: 'Completed Quizzes',
                               value:
-                                  currentUser["quizzesCompleted"].length
+                                  currentFriend["quizzesCompleted"].length
                                       .toString(),
                               color: AppTheme.primary,
                             ),
@@ -335,14 +341,14 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                             _buildActionCard(
                               icon: Icons.favorite_outline_outlined,
                               title: 'Points',
-                              value: currentUser["totalPoints"].toString(),
+                              value: currentFriend["totalPoints"].toString(),
                               color: AppTheme.secondary,
                             ),
                             const SizedBox(width: 12),
                             _buildActionCard(
                               icon: Icons.group_outlined,
                               title: 'Friends',
-                              value: currentUser["friends"].length.toString(),
+                              value: currentFriend["friends"].length.toString(),
                               color: AppTheme.tertiary,
                             ),
                           ],
@@ -370,7 +376,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                 }
                                 var alreadySent = false;
                                 for (Map<String, dynamic> item in requests) {
-                                  if (item['receiverId'] == widget.friendId) {
+                                  if (item['receiverId'] == widget.friendId &&
+                                      item['status'] == 'pending') {
                                     alreadySent = true;
                                   }
                                 }
@@ -392,7 +399,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                     : _buildSection(
                                       title: 'Actions',
                                       items: [
-                                        currentUser['friends'].contains(
+                                        widget.currentUser['friends'].contains(
                                                   widget.friendId,
                                                 ) ||
                                                 alreadySent
@@ -406,7 +413,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                               },
                                               color: AppTheme.primary,
                                             ),
-                                        currentUser['friends'].contains(
+                                        widget.currentUser['friends'].contains(
                                               widget.friendId,
                                             )
                                             ? _buildMenuItem(
@@ -420,6 +427,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                                                 _removeFriend(
                                                   currentUser:
                                                       widget.currentUser,
+                                                  currentFriend: currentFriend,
                                                 );
                                               },
                                               color: AppTheme.red,
