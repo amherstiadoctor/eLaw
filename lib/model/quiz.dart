@@ -1,13 +1,6 @@
 import 'package:sp_code/model/question.dart';
 
 class Quiz {
-  final String id;
-  final String title;
-  final String difficultyId;
-  final int timeLimit;
-  final List<Question> questions;
-  final DateTime? createdAt;
-  final DateTime? updatedAt;
 
   Quiz({
     required this.id,
@@ -19,8 +12,7 @@ class Quiz {
     this.updatedAt,
   });
 
-  factory Quiz.fromMap(String id, Map<String, dynamic> map) {
-    return Quiz(
+  factory Quiz.fromMap(String id, Map<String, dynamic> map) => Quiz(
       id: id,
       title: map['title'] ?? "",
       difficultyId: map['difficultyId'] ?? "",
@@ -32,10 +24,15 @@ class Quiz {
       createdAt: map['createdAt']?.toDate(),
       updatedAt: map['updatedAt']?.toDate(),
     );
-  }
+  final String id;
+  final String title;
+  final String difficultyId;
+  final int timeLimit;
+  final List<Question> questions;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
 
-  Map<String, dynamic> toMap({bool isUpdate = false}) {
-    return {
+  Map<String, dynamic> toMap({bool isUpdate = false}) => {
       'title': title,
       'difficultyId': difficultyId,
       'timeLimit': timeLimit,
@@ -43,7 +40,6 @@ class Quiz {
       if (isUpdate) 'updatedAt': DateTime.now(),
       'createdAt': createdAt,
     };
-  }
 
   Quiz copyWith({
     String? title,
@@ -51,8 +47,7 @@ class Quiz {
     int? timeLimit,
     List<Question>? questions,
     DateTime? createdAt,
-  }) {
-    return Quiz(
+  }) => Quiz(
       id: id,
       title: title ?? this.title,
       difficultyId: difficultyId ?? this.difficultyId,
@@ -60,5 +55,4 @@ class Quiz {
       questions: questions ?? this.questions,
       createdAt: createdAt,
     );
-  }
 }

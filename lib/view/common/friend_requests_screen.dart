@@ -6,35 +6,32 @@ import 'package:sp_code/utils/widgets/friend_request_tabs.dart';
 import 'package:sp_code/utils/widgets/header.dart';
 
 class FriendRequestsScreen extends StatefulWidget {
-  final Map<String, dynamic> currentUser;
   const FriendRequestsScreen({super.key, required this.currentUser});
+  final Map<String, dynamic> currentUser;
 
   @override
   State<FriendRequestsScreen> createState() => _FriendRequestsScreenState();
 }
 
 class _FriendRequestsScreenState extends State<FriendRequestsScreen> {
-  Stream<List<Map<String, dynamic>>> getFriendRequestsData() {
-    return FirebaseFirestore.instance
+  Stream<List<Map<String, dynamic>>> getFriendRequestsData() => FirebaseFirestore.instance
         .collection('friendRequests')
         .where('senderId', isEqualTo: widget.currentUser['id'])
         .snapshots()
         .map((snapshot) => snapshot.docs.map((doc) => doc.data()).toList());
-  }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
+  Widget build(BuildContext context) => Scaffold(
       backgroundColor: AppTheme.primary,
       body: Stack(
         children: [
-          Header(
+          const Header(
             title: "Friend Requests",
             hasBackButton: true,
             color: AppTheme.white,
           ),
           Container(
-            padding: EdgeInsets.only(top: 10),
+            padding: const EdgeInsets.only(top: 10),
             child: Padding(
               padding: const EdgeInsets.fromLTRB(10, 100, 10, 0),
               child: Container(
@@ -54,5 +51,4 @@ class _FriendRequestsScreenState extends State<FriendRequestsScreen> {
         ],
       ),
     );
-  }
 }

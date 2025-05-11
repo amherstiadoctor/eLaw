@@ -11,21 +11,18 @@ class LeaderboardScreen extends StatefulWidget {
 }
 
 class _LeaderboardScreenState extends State<LeaderboardScreen> {
-  Stream<List<Map<String, dynamic>>> getLeaderboardData() {
-    return FirebaseFirestore.instance
+  Stream<List<Map<String, dynamic>>> getLeaderboardData() => FirebaseFirestore.instance
         .collection("Users")
         .orderBy('totalPoints', descending: true)
         .snapshots()
         .map((snapshot) => snapshot.docs.map((doc) => doc.data()).toList());
-  }
 
   Widget _buildUserItem({
     required Map<String, dynamic> user,
     required Color color,
     required int index,
-  }) {
-    return Container(
-          margin: EdgeInsets.only(bottom: 5),
+  }) => Container(
+          margin: const EdgeInsets.only(bottom: 5),
           decoration: BoxDecoration(
             color: AppTheme.white,
             borderRadius: BorderRadius.circular(16),
@@ -33,25 +30,25 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
               BoxShadow(
                 color: Colors.black12.withOpacity(0.1),
                 blurRadius: 10,
-                offset: Offset(0, 5),
+                offset: const Offset(0, 5),
               ),
             ],
           ),
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
             child: Row(
               children: [
                 Text(
                   (index + 4).toString(),
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
                     color: AppTheme.text2,
                   ),
                 ),
-                SizedBox(width: 8),
+                const SizedBox(width: 8),
                 Container(
-                  padding: EdgeInsets.all(10),
+                  padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(25),
                     color: color.withOpacity(0.1),
@@ -62,11 +59,11 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                     size: 16,
                   ),
                 ),
-                SizedBox(width: 16),
+                const SizedBox(width: 16),
                 Expanded(
                   child: Text(
                     "${user['firstName']} ${user['lastName']}",
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
                       color: AppTheme.text,
@@ -75,7 +72,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                 ),
                 Text(
                   user['totalPoints'].toString(),
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.w500,
                     color: AppTheme.text2,
@@ -86,17 +83,15 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
           ),
         )
         .animate(delay: Duration(milliseconds: 100 * index))
-        .slideY(begin: 0.5, end: 0, duration: Duration(milliseconds: 300))
+        .slideY(begin: 0.5, end: 0, duration: const Duration(milliseconds: 300))
         .fadeIn();
-  }
 
   Widget _buildTopUser(
     Map<String, dynamic> user,
     int rank,
     BuildContext context,
-  ) {
-    return Container(
-      margin: EdgeInsets.symmetric(vertical: 8),
+  ) => Container(
+      margin: const EdgeInsets.symmetric(vertical: 8),
       child: Column(
         children: [
           Icon(
@@ -118,43 +113,41 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                     ? 80
                     : 60,
           ),
-          SizedBox(height: 5),
+          const SizedBox(height: 5),
           Text(
             user['totalPoints'].toString(),
-            style: TextStyle(fontSize: 28, color: AppTheme.white),
+            style: const TextStyle(fontSize: 28, color: AppTheme.white),
           ),
           Text(
             // "${user['firstName']} ${user['lastName']}",
             user['firstName'],
-            style: TextStyle(fontSize: 12, color: AppTheme.white),
+            style: const TextStyle(fontSize: 12, color: AppTheme.white),
           ),
           Text(
             // "${user['firstName']} ${user['lastName']}",
             user['lastName'],
-            style: TextStyle(fontSize: 12, color: AppTheme.white),
+            style: const TextStyle(fontSize: 12, color: AppTheme.white),
           ),
         ],
       ),
     ).animate().scale(
-      delay: Duration(milliseconds: 200),
+      delay: const Duration(milliseconds: 200),
       curve: Curves.elasticOut,
     );
-  }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
+  Widget build(BuildContext context) => Scaffold(
       backgroundColor: AppTheme.grey1,
       body: StreamBuilder(
         stream: getLeaderboardData(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
 
           final users = snapshot.data;
           if (users!.isEmpty) {
-            return Center(child: Text("No users found."));
+            return const Center(child: Text("No users found."));
           }
 
           final topThree = users.take(3).toList();
@@ -169,13 +162,13 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                 centerTitle: true,
                 backgroundColor: AppTheme.primary,
                 elevation: 0,
-                shape: RoundedRectangleBorder(
+                shape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.only(
                     bottomLeft: Radius.circular(20),
                     bottomRight: Radius.circular(20),
                   ),
                 ),
-                title: Text(
+                title: const Text(
                   "Leaderboard",
                   style: TextStyle(
                     fontSize: 24,
@@ -185,7 +178,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                 ),
                 flexibleSpace: FlexibleSpaceBar(
                   background: Container(
-                    margin: EdgeInsets.only(top: 90),
+                    margin: const EdgeInsets.only(top: 90),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
@@ -199,10 +192,10 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
               ),
               SliverToBoxAdapter(
                 child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16),
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: ListView.builder(
                     shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
+                    physics: const NeverScrollableScrollPhysics(),
                     itemCount: remainingUsers.length,
                     itemBuilder: (context, index) {
                       final remainingUser = remainingUsers[index];
@@ -220,5 +213,4 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
         },
       ),
     );
-  }
 }

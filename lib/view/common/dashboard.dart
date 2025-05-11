@@ -36,7 +36,7 @@ class _DashboardState extends State<Dashboard> {
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> widgetOptions = <Widget>[
+    final List<Widget> widgetOptions = <Widget>[
       StudyScreen(loggedInUser: widget.loggedInUser),
       const LeaderboardScreen(),
       _role == "user"

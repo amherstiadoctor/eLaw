@@ -11,8 +11,8 @@ import 'package:sp_code/view/common/friend_requests_screen.dart';
 import 'package:sp_code/view/common/splash_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
-  final UserEntity loggedInUser;
   ProfileScreen({super.key, required this.loggedInUser});
+  final UserEntity loggedInUser;
 
   final AuthService _authService = FirebaseAuthService(
     authService: FirebaseAuth.instance,
@@ -29,12 +29,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
     required String title,
     required String value,
     required Color color,
-  }) {
-    return Expanded(
+  }) => Expanded(
       child:
           Container(
             height: 125,
-            padding: EdgeInsets.all(12),
+            padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
               color: AppTheme.white,
               borderRadius: BorderRadius.circular(16),
@@ -42,14 +41,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 BoxShadow(
                   color: Colors.black12.withOpacity(0.1),
                   blurRadius: 10,
-                  offset: Offset(0, 5),
+                  offset: const Offset(0, 5),
                 ),
               ],
             ),
             child: Column(
               children: [
                 Icon(icon, color: color),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
                 Text(
                   value,
                   style: TextStyle(
@@ -58,27 +57,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     color: color,
                   ),
                 ),
-                SizedBox(height: 4),
+                const SizedBox(height: 4),
                 Text(
                   title,
-                  style: TextStyle(fontSize: 12, color: AppTheme.text2),
+                  style: const TextStyle(fontSize: 12, color: AppTheme.text2),
                   textAlign: TextAlign.center,
                 ),
               ],
             ),
-          ).animate(delay: Duration(milliseconds: 100)).fadeIn(),
+          ).animate(delay: const Duration(milliseconds: 100)).fadeIn(),
     );
-  }
 
-  Widget _buildSection({required String title, required List<Widget> items}) {
-    return Column(
+  Widget _buildSection({required String title, required List<Widget> items}) => Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: EdgeInsets.only(left: 4, bottom: 12),
+          padding: const EdgeInsets.only(left: 4, bottom: 12),
           child: Text(
             title,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
               color: AppTheme.text,
@@ -93,15 +90,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
               BoxShadow(
                 color: AppTheme.black.withOpacity(0.1),
                 blurRadius: 20,
-                offset: Offset(0, 10),
+                offset: const Offset(0, 10),
               ),
             ],
           ),
           child: Column(children: items),
-        ).animate(delay: Duration(milliseconds: 100)).fadeIn(),
+        ).animate(delay: const Duration(milliseconds: 100)).fadeIn(),
       ],
     );
-  }
 
   Widget _buildMenuItem({
     required IconData icon,
@@ -110,16 +106,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
     required VoidCallback onTap,
     required Color color,
     bool isDestructive = false,
-  }) {
-    return InkWell(
+  }) => InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(16),
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         child: Row(
           children: [
             Container(
-              padding: EdgeInsets.all(10),
+              padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(25),
                 color:
@@ -133,7 +128,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 size: 24,
               ),
             ),
-            SizedBox(width: 16),
+            const SizedBox(width: 16),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -148,7 +143,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   Text(
                     subtitle,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
                       color: AppTheme.text2,
@@ -157,20 +152,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ],
               ),
             ),
-            Icon(Icons.chevron_right, color: AppTheme.text2, size: 20),
+            const Icon(Icons.chevron_right, color: AppTheme.text2, size: 20),
           ],
         ),
       ),
     );
-  }
 
   handleSignOut() async {
     await widget._authService.onSignOut();
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
+  Widget build(BuildContext context) => Scaffold(
       backgroundColor: AppTheme.grey1,
       body: StreamBuilder<QuerySnapshot>(
         stream:
@@ -178,15 +171,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 .collection("Users")
                 .where('email', isEqualTo: widget.loggedInUser.email)
                 .snapshots(),
-        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+        builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
 
           final fetchedDocs = snapshot.data!.docs;
           final currentUser = fetchedDocs[0].data() as Map<String, dynamic>;
           if (currentUser.isEmpty) {
-            return Center(child: Text("No user found."));
+            return const Center(child: Text("No user found."));
           }
 
           return SingleChildScrollView(
@@ -194,7 +187,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               children: [
                 Container(
                   height: MediaQuery.of(context).size.height * 0.3,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     gradient: LinearGradient(
                       colors: [AppTheme.primary, AppTheme.primaryTint],
                       end: Alignment.bottomRight,
@@ -205,7 +198,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       bottomRight: Radius.circular(35),
                     ),
                   ),
-                  child: Stack(
+                  child: const Stack(
                     children: [Header(title: "Profile", color: AppTheme.white)],
                   ),
                 ),
@@ -218,8 +211,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       children: [
                         Container(
                           width: MediaQuery.of(context).size.width / 1.5,
-                          margin: EdgeInsets.symmetric(horizontal: 24),
-                          padding: EdgeInsets.symmetric(vertical: 16),
+                          margin: const EdgeInsets.symmetric(horizontal: 24),
+                          padding: const EdgeInsets.symmetric(vertical: 16),
                           decoration: BoxDecoration(
                             color: AppTheme.white,
                             borderRadius: BorderRadius.circular(20),
@@ -227,40 +220,40 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               BoxShadow(
                                 color: AppTheme.black.withOpacity(0.1),
                                 blurRadius: 20,
-                                offset: Offset(0, 10),
+                                offset: const Offset(0, 10),
                               ),
                             ],
                           ),
                           child: Column(
                             children: [
-                              Icon(
+                              const Icon(
                                 Icons.account_circle_outlined,
                                 color: AppTheme.primary,
                                 size: 100,
                               ),
-                              SizedBox(height: 16),
+                              const SizedBox(height: 16),
                               Text(
                                 "${currentUser["firstName"]} ${currentUser["lastName"]}",
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontSize: 24,
                                   fontWeight: FontWeight.bold,
                                   color: AppTheme.text,
                                 ),
                               ),
-                              SizedBox(height: 8),
+                              const SizedBox(height: 8),
                               Text(
                                 currentUser["email"],
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontSize: 14,
                                   color: AppTheme.text2,
                                 ),
                               ),
                             ],
                           ),
-                        ).animate(delay: Duration(milliseconds: 100)).fadeIn(),
-                        SizedBox(height: 24),
+                        ).animate(delay: const Duration(milliseconds: 100)).fadeIn(),
+                        const SizedBox(height: 24),
                         Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 24),
+                          padding: const EdgeInsets.symmetric(horizontal: 24),
                           child: Row(
                             children: [
                               _buildActionCard(
@@ -271,14 +264,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         .toString(),
                                 color: AppTheme.primary,
                               ),
-                              SizedBox(width: 12),
+                              const SizedBox(width: 12),
                               _buildActionCard(
                                 icon: Icons.favorite_outline_outlined,
                                 title: 'Points',
                                 value: currentUser["totalPoints"].toString(),
                                 color: AppTheme.secondary,
                               ),
-                              SizedBox(width: 12),
+                              const SizedBox(width: 12),
                               _buildActionCard(
                                 icon: Icons.group_outlined,
                                 title: 'Friends',
@@ -289,7 +282,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                         ),
                         Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 24),
+                          padding: const EdgeInsets.symmetric(horizontal: 24),
                           child: Column(
                             children: [
                               _buildSection(
@@ -321,7 +314,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         MaterialPageRoute(
                                           builder: (context) => SplashScreen(),
                                         ),
-                                        (Route<dynamic> route) => false,
+                                        (route) => false,
                                       );
                                     },
                                     color: AppTheme.red,
@@ -331,7 +324,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ],
                           ),
                         ),
-                        SizedBox(height: 150),
+                        const SizedBox(height: 150),
                       ],
                     ),
                   ),
@@ -342,5 +335,4 @@ class _ProfileScreenState extends State<ProfileScreen> {
         },
       ),
     );
-  }
 }

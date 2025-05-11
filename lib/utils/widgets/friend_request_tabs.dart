@@ -10,8 +10,8 @@ import 'package:sp_code/utils/widgets/circle_tab_indicator.dart';
 import 'package:sp_code/view/common/user_profile_screen.dart';
 
 class FriendRequestTabs extends StatefulWidget {
-  final Map<String, dynamic> currentUser;
   const FriendRequestTabs({super.key, required this.currentUser});
+  final Map<String, dynamic> currentUser;
 
   @override
   State<FriendRequestTabs> createState() => _FriendRequestTabsState();
@@ -23,23 +23,19 @@ class _FriendRequestTabsState extends State<FriendRequestTabs>
   TabController? _tabController;
   int _selectedIndex = 0;
 
-  Stream<List<Map<String, dynamic>>> getSentFriendRequestsData() {
-    return FirebaseFirestore.instance
+  Stream<List<Map<String, dynamic>>> getSentFriendRequestsData() => FirebaseFirestore.instance
         .collection('friendRequests')
         .where('senderId', isEqualTo: widget.currentUser['id'])
         .where('status', isEqualTo: "pending")
         .snapshots()
         .map((snapshot) => snapshot.docs.map((doc) => doc.data()).toList());
-  }
 
-  Stream<List<Map<String, dynamic>>> getReceivedFriendRequestsData() {
-    return FirebaseFirestore.instance
+  Stream<List<Map<String, dynamic>>> getReceivedFriendRequestsData() => FirebaseFirestore.instance
         .collection('friendRequests')
         .where('receiverId', isEqualTo: widget.currentUser['id'])
         .where('status', isEqualTo: "pending")
         .snapshots()
         .map((snapshot) => snapshot.docs.map((doc) => doc.data()).toList());
-  }
 
   Future<void> _handleRequestAction(
     String action,
@@ -52,8 +48,8 @@ class _FriendRequestTabsState extends State<FriendRequestTabs>
         context: context,
         builder:
             (context) => AlertDialog(
-              title: Text("Cancel Friend Request"),
-              content: Text(
+              title: const Text("Cancel Friend Request"),
+              content: const Text(
                 "Are you sure you want to cancel this friend request?",
               ),
               actions: [
@@ -61,13 +57,13 @@ class _FriendRequestTabsState extends State<FriendRequestTabs>
                   onPressed: () {
                     Navigator.pop(context, false);
                   },
-                  child: Text("No"),
+                  child: const Text("No"),
                 ),
                 TextButton(
                   onPressed: () {
                     Navigator.pop(context, true);
                   },
-                  child: Text("Yes", style: TextStyle(color: AppTheme.red)),
+                  child: const Text("Yes", style: TextStyle(color: AppTheme.red)),
                 ),
               ],
             ),
@@ -86,8 +82,8 @@ class _FriendRequestTabsState extends State<FriendRequestTabs>
         context: context,
         builder:
             (context) => AlertDialog(
-              title: Text("Accept Friend Request"),
-              content: Text(
+              title: const Text("Accept Friend Request"),
+              content: const Text(
                 "Are you sure you want to accept this friend request?",
               ),
               actions: [
@@ -95,19 +91,19 @@ class _FriendRequestTabsState extends State<FriendRequestTabs>
                   onPressed: () {
                     Navigator.pop(context, false);
                   },
-                  child: Text("No"),
+                  child: const Text("No"),
                 ),
                 TextButton(
                   onPressed: () {
                     Navigator.pop(context, true);
                   },
-                  child: Text("Yes", style: TextStyle(color: AppTheme.red)),
+                  child: const Text("Yes", style: TextStyle(color: AppTheme.red)),
                 ),
               ],
             ),
       );
 
-      FriendRequest updateRequest = FriendRequest(
+      final FriendRequest updateRequest = FriendRequest(
         id: friendRequest['id'],
         receiverId: friendRequest['receiverId'],
         senderId: friendRequest['senderId'],
@@ -121,10 +117,10 @@ class _FriendRequestTabsState extends State<FriendRequestTabs>
             .doc(updateRequest.id)
             .update(updateRequest.toMap(isUpdate: true));
 
-        var currentUserFriends = widget.currentUser['friends'];
+        final currentUserFriends = widget.currentUser['friends'];
         currentUserFriends.add(updateRequest.senderId);
 
-        var foundUserFriends = foundUser['friends'];
+        final foundUserFriends = foundUser['friends'];
         foundUserFriends.add(updateRequest.receiverId);
 
         await FirebaseFirestore.instance
@@ -145,8 +141,7 @@ class _FriendRequestTabsState extends State<FriendRequestTabs>
     required int index,
     required Map<String, dynamic> friendRequest,
     required bool isReceived,
-  }) {
-    return StreamBuilder(
+  }) => StreamBuilder(
       stream:
           isReceived
               ? FirebaseFirestore.instance
@@ -159,46 +154,46 @@ class _FriendRequestTabsState extends State<FriendRequestTabs>
                   .snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
-          return Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
         }
 
-        var foundUser = snapshot.data as DocumentSnapshot;
+        final foundUser = snapshot.data as DocumentSnapshot;
 
         return Card(
-              margin: EdgeInsets.only(bottom: 12),
+              margin: const EdgeInsets.only(bottom: 12),
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(color: AppTheme.primary),
                 ),
                 child: ListTile(
-                  contentPadding: EdgeInsets.all(16),
+                  contentPadding: const EdgeInsets.all(16),
                   leading: Container(
-                    padding: EdgeInsets.all(12),
+                    padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
                       color: AppTheme.primary.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: Icon(
+                    child: const Icon(
                       Icons.account_circle_outlined,
                       color: AppTheme.primary,
                     ),
                   ),
                   title: Text(
                     "${foundUser['firstName']} ${foundUser['lastName']}",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                   ),
                   subtitle: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SizedBox(height: 8),
+                      const SizedBox(height: 8),
                       Row(
                         children: [
                           Text(
                             friendRequest['status'] == "pending"
                                 ? "Friend request pending"
                                 : "",
-                            style: TextStyle(fontSize: 12),
+                            style: const TextStyle(fontSize: 12),
                           ),
                         ],
                       ),
@@ -208,7 +203,7 @@ class _FriendRequestTabsState extends State<FriendRequestTabs>
                     itemBuilder:
                         (context) => [
                           isReceived
-                              ? PopupMenuItem(
+                              ? const PopupMenuItem(
                                 value: "accept",
                                 child: ListTile(
                                   contentPadding: EdgeInsets.zero,
@@ -224,9 +219,9 @@ class _FriendRequestTabsState extends State<FriendRequestTabs>
                             value: "delete",
                             child: ListTile(
                               contentPadding: EdgeInsets.zero,
-                              leading: Icon(Icons.delete, color: AppTheme.red),
+                              leading: const Icon(Icons.delete, color: AppTheme.red),
                               title:
-                                  isReceived ? Text("Reject") : Text("Cancel"),
+                                  isReceived ? const Text("Reject") : const Text("Cancel"),
                             ),
                           ),
                         ],
@@ -258,11 +253,10 @@ class _FriendRequestTabsState extends State<FriendRequestTabs>
               ),
             )
             .animate(delay: Duration(milliseconds: 100 * index))
-            .slideY(begin: 0.5, end: 0, duration: Duration(milliseconds: 300))
+            .slideY(begin: 0.5, end: 0, duration: const Duration(milliseconds: 300))
             .fadeIn();
       },
     );
-  }
 
   @override
   void initState() {
@@ -277,8 +271,7 @@ class _FriendRequestTabsState extends State<FriendRequestTabs>
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Column(
+  Widget build(BuildContext context) => Column(
       children: [
         TabBar(
           controller: _tabController,
@@ -297,7 +290,7 @@ class _FriendRequestTabsState extends State<FriendRequestTabs>
             controller: _tabController,
             children: [
               isLoading
-                  ? Center(
+                  ? const Center(
                     child: SizedBox(
                       height: 50,
                       child: CircularProgressIndicator(),
@@ -307,17 +300,17 @@ class _FriendRequestTabsState extends State<FriendRequestTabs>
                     stream: getReceivedFriendRequestsData(),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Center(child: CircularProgressIndicator());
+                        return const Center(child: CircularProgressIndicator());
                       }
                       final requests = snapshot.data;
                       if (requests!.isEmpty) {
-                        return Center(child: Text("No requests found"));
+                        return const Center(child: Text("No requests found"));
                       }
                       return Column(
                         children: [
                           SingleChildScrollView(
                             child: Padding(
-                              padding: EdgeInsets.only(
+                              padding: const EdgeInsets.only(
                                 right: 16,
                                 left: 16,
                                 top: 16,
@@ -342,7 +335,7 @@ class _FriendRequestTabsState extends State<FriendRequestTabs>
                     },
                   ),
               isLoading
-                  ? Center(
+                  ? const Center(
                     child: SizedBox(
                       height: 50,
                       child: CircularProgressIndicator(),
@@ -352,17 +345,17 @@ class _FriendRequestTabsState extends State<FriendRequestTabs>
                     stream: getSentFriendRequestsData(),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Center(child: CircularProgressIndicator());
+                        return const Center(child: CircularProgressIndicator());
                       }
                       final requests = snapshot.data;
                       if (requests!.isEmpty) {
-                        return Center(child: Text("No requests found"));
+                        return const Center(child: Text("No requests found"));
                       }
                       return Column(
                         children: [
                           SingleChildScrollView(
                             child: Padding(
-                              padding: EdgeInsets.only(
+                              padding: const EdgeInsets.only(
                                 right: 16,
                                 left: 16,
                                 top: 16,
@@ -391,5 +384,4 @@ class _FriendRequestTabsState extends State<FriendRequestTabs>
         ),
       ],
     );
-  }
 }

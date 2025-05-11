@@ -6,8 +6,8 @@ import 'package:sp_code/config/theme.dart';
 import 'package:sp_code/model/user_entity.dart';
 
 class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key, required this.loggedInUser});
   final UserEntity loggedInUser;
-  HomeScreen({super.key, required this.loggedInUser});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -15,7 +15,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   String greeting() {
-    var hour = DateTime.now().hour;
+    final hour = DateTime.now().hour;
     if (hour < 12) {
       return 'Morning';
     }
@@ -26,8 +26,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
+  Widget build(BuildContext context) => Scaffold(
       backgroundColor: AppTheme.grey1,
       body: StreamBuilder(
         stream:
@@ -37,13 +36,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
 
           final fetchedDocs = snapshot.data!.docs;
           final currentUser = fetchedDocs[0].data();
           if (currentUser.isEmpty) {
-            return Center(child: Text("No user found."));
+            return const Center(child: Text("No user found."));
           }
 
           return CustomScrollView(
@@ -55,7 +54,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 centerTitle: false,
                 backgroundColor: AppTheme.primary,
                 elevation: 0,
-                shape: RoundedRectangleBorder(
+                shape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.only(
                     bottomLeft: Radius.circular(20),
                     bottomRight: Radius.circular(20),
@@ -65,21 +64,21 @@ class _HomeScreenState extends State<HomeScreen> {
                   background: SafeArea(
                     child: Column(
                       children: [
-                        SizedBox(height: kToolbarHeight),
+                        const SizedBox(height: kToolbarHeight),
                         Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 16),
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
                                 "Good ${greeting()}, ${widget.loggedInUser.firstName}",
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontSize: 28,
                                   fontWeight: FontWeight.bold,
                                   color: AppTheme.white,
                                 ),
                               ),
-                              SizedBox(height: 8),
+                              const SizedBox(height: 8),
                               Text(
                                 "Let's test your knowledge today",
                                 style: TextStyle(
@@ -96,8 +95,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
               ),
-              SliverPadding(
-                padding: const EdgeInsets.only(left: 16, top: 20),
+              const SliverPadding(
+                padding: EdgeInsets.only(left: 16, top: 20),
                 sliver: SliverToBoxAdapter(
                   child: Text(
                     "Recent Quizzes",
@@ -108,11 +107,11 @@ class _HomeScreenState extends State<HomeScreen> {
               currentUser['quizzesTaken'].isNotEmpty
                   ? SliverToBoxAdapter(
                     child: Padding(
-                      padding: EdgeInsets.all(16),
+                      padding: const EdgeInsets.all(16),
                       child: ListView.builder(
                         padding: EdgeInsets.zero,
                         shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
+                        physics: const NeverScrollableScrollPhysics(),
                         itemCount: currentUser['quizzesTaken'].length,
                         itemBuilder: (context, index) {
                           final quiz = currentUser['quizzesTaken'][index];
@@ -121,7 +120,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                   )
-                  : SliverPadding(
+                  : const SliverPadding(
                     padding: EdgeInsets.all(16),
                     sliver: SliverToBoxAdapter(
                       child: Center(child: Text("No recent quizzes yet!")),
@@ -132,18 +131,15 @@ class _HomeScreenState extends State<HomeScreen> {
         },
       ),
     );
-  }
 
   Widget _buildRecentQuizCard(Map<String, dynamic> recentQuiz, int index) {
-    Color _getScoreColor(double score) {
+    Color getScoreColor(double score) {
       if (score >= 0.9) return AppTheme.green;
       if (score >= 0.5) return AppTheme.secondaryShade;
       return AppTheme.red;
     }
 
-    String _formatDate(DateTime date) {
-      return '${date.day}/${date.month}/${date.year}';
-    }
+    String formatDate(DateTime date) => '${date.day}/${date.month}/${date.year}';
 
     final scorePercentage = (recentQuiz['quizScore'] * 100).round();
     return StreamBuilder(
@@ -154,7 +150,7 @@ class _HomeScreenState extends State<HomeScreen> {
               .snapshots(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator());
         }
         final fetchedQuiz = snapshot.data as DocumentSnapshot;
         return Card(
@@ -170,7 +166,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(color: AppTheme.primary),
                   ),
-                  padding: EdgeInsets.all(16),
+                  padding: const EdgeInsets.all(16),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -179,15 +175,15 @@ class _HomeScreenState extends State<HomeScreen> {
                         children: [
                           Text(
                             fetchedQuiz['title'],
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
                               color: AppTheme.text,
                             ),
                           ),
                           Text(
-                            "Last Taken on ${_formatDate(recentQuiz['takenAt'].toDate())}",
-                            style: TextStyle(
+                            "Last Taken on ${formatDate(recentQuiz['takenAt'].toDate())}",
+                            style: const TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.bold,
                               color: AppTheme.text2,
@@ -205,18 +201,18 @@ class _HomeScreenState extends State<HomeScreen> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(
-                              '${scorePercentage}%',
+                              '$scorePercentage%',
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
-                                color: _getScoreColor(recentQuiz['quizScore']),
+                                color: getScoreColor(recentQuiz['quizScore']),
                               ),
                             ),
                           ],
                         ),
                         circularStrokeCap: CircularStrokeCap.round,
-                        progressColor: _getScoreColor(recentQuiz['quizScore']),
-                        backgroundColor: _getScoreColor(
+                        progressColor: getScoreColor(recentQuiz['quizScore']),
+                        backgroundColor: getScoreColor(
                           recentQuiz['quizScore'],
                         ),
                       ),
@@ -226,7 +222,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             )
             .animate(delay: Duration(milliseconds: 100 * index))
-            .slideY(begin: 0.5, end: 0, duration: Duration(milliseconds: 300))
+            .slideY(begin: 0.5, end: 0, duration: const Duration(milliseconds: 300))
             .fadeIn();
       },
     );

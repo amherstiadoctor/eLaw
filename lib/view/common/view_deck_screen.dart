@@ -6,8 +6,8 @@ import 'package:sp_code/utils/widgets/flip_card.dart';
 import 'package:sp_code/utils/widgets/header.dart';
 
 class ViewDeckScreen extends StatefulWidget {
-  final FlashcardDeck deck;
   const ViewDeckScreen({super.key, required this.deck});
+  final FlashcardDeck deck;
 
   @override
   State<ViewDeckScreen> createState() => _ViewDeckScreenState();
@@ -19,8 +19,7 @@ class _ViewDeckScreenState extends State<ViewDeckScreen> {
   var _currentCarouselPage = 0;
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
+  Widget build(BuildContext context) => Scaffold(
       backgroundColor: AppTheme.primaryTint,
       body: Column(
         children: [
@@ -34,12 +33,10 @@ class _ViewDeckScreenState extends State<ViewDeckScreen> {
             child: CarouselSlider(
               carouselController: _carouselController,
               items:
-                  widget.deck.cards.map<Widget>((i) {
-                    return Container(
-                      margin: EdgeInsets.symmetric(horizontal: 2),
+                  widget.deck.cards.map<Widget>((i) => Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 2),
                       child: FlipCard(isView: true, cardInfo: i),
-                    );
-                  }).toList(),
+                    )).toList(),
               options: CarouselOptions(
                 viewportFraction: 1,
                 padEnds: false,
@@ -53,18 +50,17 @@ class _ViewDeckScreenState extends State<ViewDeckScreen> {
               ),
             ),
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           Visibility(
             visible: widget.deck.cards.isNotEmpty,
             child: Center(
               child: Text(
                 "${_currentCarouselPage + 1}/${widget.deck.cards.length}",
-                style: TextStyle(fontSize: 24, color: AppTheme.white),
+                style: const TextStyle(fontSize: 24, color: AppTheme.white),
               ),
             ),
           ),
         ],
       ),
     );
-  }
 }

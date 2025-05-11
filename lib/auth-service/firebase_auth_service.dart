@@ -112,7 +112,7 @@ class FirebaseAuthService implements AuthService {
       idToken: googleAuth?.idToken,
     );
 
-    var result = await _firebaseAuth.signInWithCredential(credential);
+    final result = await _firebaseAuth.signInWithCredential(credential);
 
     return result;
   }
@@ -121,9 +121,7 @@ class FirebaseAuthService implements AuthService {
   Future<UserEntity> googleRoles({
     required auth.User user,
     required bool register,
-  }) async {
-    return _mapFirebaseUser(user, register);
-  }
+  }) async => _mapFirebaseUser(user, register);
 
   @override
   Future<void> onSignOut() async {

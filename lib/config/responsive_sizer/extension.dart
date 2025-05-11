@@ -1,4 +1,4 @@
-part of responsive;
+part of 'responsive_sizer.dart';
 
 extension ResponsiveExt on num {
   //calculates thge heigh depending on the device's width size

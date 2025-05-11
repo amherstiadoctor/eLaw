@@ -4,14 +4,6 @@ import 'package:sp_code/model/flashcard.dart';
 
 //ignore: must_be_immutable
 class FlipCard extends StatefulWidget {
-  TextEditingController? flashcardTitleController;
-  TextEditingController? frontInfoController;
-  TextEditingController? backInfoController;
-
-  Flashcard? cardInfo;
-
-  bool isView;
-  bool isEdit;
 
   FlipCard({
     super.key,
@@ -22,6 +14,14 @@ class FlipCard extends StatefulWidget {
     this.isView = false,
     this.isEdit = false,
   });
+  TextEditingController? flashcardTitleController;
+  TextEditingController? frontInfoController;
+  TextEditingController? backInfoController;
+
+  Flashcard? cardInfo;
+
+  bool isView;
+  bool isEdit;
 
   @override
   State<FlipCard> createState() => _FlipCardState();
@@ -38,7 +38,7 @@ class _FlipCardState extends State<FlipCard>
     // TODO: implement initState
     super.initState();
     _controller = AnimationController(
-      duration: Duration(milliseconds: 600),
+      duration: const Duration(milliseconds: 600),
       vsync: this,
     );
     _animation = Tween<double>(
@@ -67,14 +67,12 @@ class _FlipCardState extends State<FlipCard>
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Center(
+  Widget build(BuildContext context) => Center(
       child: GestureDetector(
         onTap: _toggleCard,
         child: AnimatedBuilder(
           animation: _animation,
-          builder: (context, child) {
-            return Transform(
+          builder: (context, child) => Transform(
               transform: Matrix4.rotationY(_animation.value * 3.14159),
               alignment: Alignment.center,
               child:
@@ -93,21 +91,18 @@ class _FlipCardState extends State<FlipCard>
                           widget.cardInfo?.backInfo,
                         ),
                       ),
-            );
-          },
+            ),
         ),
       ),
     );
-  }
 }
 
 Widget _buildFrontCard(
   TextEditingController? controller,
   bool isView,
   String? info,
-) {
-  return Container(
-    padding: EdgeInsets.symmetric(horizontal: 16),
+) => Container(
+    padding: const EdgeInsets.symmetric(horizontal: 16),
     width: 300,
     height: 500,
     decoration: BoxDecoration(
@@ -120,7 +115,7 @@ Widget _buildFrontCard(
         isView
             ? Text(
               info ?? "Front",
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
                 color: AppTheme.text,
@@ -131,12 +126,12 @@ Widget _buildFrontCard(
               controller: controller,
               decoration: InputDecoration(
                 enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: AppTheme.primary, width: 0.0),
+                  borderSide: const BorderSide(color: AppTheme.primary, width: 0.0),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 labelText: "Front Info",
                 hintText: "Enter front info",
-                errorBorder: OutlineInputBorder(
+                errorBorder: const OutlineInputBorder(
                   borderSide: BorderSide(color: AppTheme.red),
                 ),
               ),
@@ -145,15 +140,13 @@ Widget _buildFrontCard(
               textInputAction: TextInputAction.next,
             ),
   );
-}
 
 Widget _buildBackCard(
   TextEditingController? controller,
   bool isView,
   String? info,
-) {
-  return Container(
-    padding: EdgeInsets.symmetric(horizontal: 16),
+) => Container(
+    padding: const EdgeInsets.symmetric(horizontal: 16),
     width: 300,
     height: 500,
     decoration: BoxDecoration(
@@ -166,7 +159,7 @@ Widget _buildBackCard(
         isView
             ? Text(
               info ?? "Back",
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
                 color: AppTheme.text,
@@ -177,13 +170,13 @@ Widget _buildBackCard(
               controller: controller,
               decoration: InputDecoration(
                 enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: AppTheme.primary, width: 0.0),
+                  borderSide: const BorderSide(color: AppTheme.primary, width: 0.0),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 labelText: "Back Info",
                 hintText: "Back front info",
 
-                errorBorder: OutlineInputBorder(
+                errorBorder: const OutlineInputBorder(
                   borderSide: BorderSide(color: AppTheme.red),
                 ),
               ),
@@ -192,4 +185,3 @@ Widget _buildBackCard(
               textInputAction: TextInputAction.next,
             ),
   );
-}

@@ -1,10 +1,4 @@
 class FriendRequest {
-  final String id;
-  final String receiverId;
-  final String senderId;
-  final String status;
-  final DateTime? createdAt;
-  final DateTime? updatedAt;
 
   FriendRequest({
     required this.id,
@@ -15,8 +9,7 @@ class FriendRequest {
     this.updatedAt,
   });
 
-  factory FriendRequest.fromMap(String id, Map<String, dynamic> map) {
-    return FriendRequest(
+  factory FriendRequest.fromMap(String id, Map<String, dynamic> map) => FriendRequest(
       id: id,
       receiverId: map['receiverId'] ?? "",
       senderId: map['senderId'] ?? "",
@@ -24,13 +17,17 @@ class FriendRequest {
       createdAt: map['createdAt']?.toDate(),
       updatedAt: map['updatedAt']?.toDate(),
     );
-  }
+  final String id;
+  final String receiverId;
+  final String senderId;
+  final String status;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
 
   Map<String, dynamic> toMap({
     bool isUpdate = false,
     String updateStatus = "",
-  }) {
-    return {
+  }) => {
       'id': id,
       'receiverId': receiverId,
       'senderId': senderId,
@@ -38,15 +35,12 @@ class FriendRequest {
       'createdAt': createdAt,
       if (isUpdate) 'updatedAt': DateTime.now(),
     };
-  }
 
-  FriendRequest copyWith({String? status}) {
-    return FriendRequest(
+  FriendRequest copyWith({String? status}) => FriendRequest(
       id: id,
       receiverId: receiverId,
       senderId: senderId,
       status: status ?? this.status,
       createdAt: createdAt,
     );
-  }
 }

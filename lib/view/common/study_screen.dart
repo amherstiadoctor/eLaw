@@ -7,8 +7,8 @@ import 'package:sp_code/utils/widgets/header.dart';
 import 'package:sp_code/utils/widgets/study_tabs.dart';
 
 class StudyScreen extends StatefulWidget {
-  final UserEntity loggedInUser;
   const StudyScreen({super.key, required this.loggedInUser});
+  final UserEntity loggedInUser;
 
   @override
   State<StudyScreen> createState() => _StudyScreenState();
@@ -17,8 +17,7 @@ class StudyScreen extends StatefulWidget {
 class _StudyScreenState extends State<StudyScreen> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
+  Widget build(BuildContext context) => Scaffold(
       backgroundColor: AppTheme.primary,
       body: StreamBuilder<QuerySnapshot>(
         stream:
@@ -26,20 +25,20 @@ class _StudyScreenState extends State<StudyScreen> {
                 .collection("Users")
                 .where('email', isEqualTo: widget.loggedInUser.email)
                 .snapshots(),
-        builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+        builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
 
           final fetchedDocs = snapshot.data!.docs;
           final currentUser = fetchedDocs[0].data() as Map<String, dynamic>;
           if (currentUser.isEmpty) {
-            return Center(child: Text("No user found."));
+            return const Center(child: Text("No user found."));
           }
 
           return Stack(
             children: [
-              Header(
+              const Header(
                 title: "Study",
                 hasBackButton: false,
                 color: AppTheme.grey1,
@@ -64,5 +63,4 @@ class _StudyScreenState extends State<StudyScreen> {
         },
       ),
     );
-  }
 }

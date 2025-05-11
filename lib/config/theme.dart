@@ -22,12 +22,11 @@ class AppTheme {
   static const Color red = Color(0xffE57373);
   static const Color green = Color(0xff72bf6a);
 
-  static ThemeData get theme{
-    return ThemeData(
+  static ThemeData get theme=> ThemeData(
       primaryColor: primary,
       scaffoldBackgroundColor: white,
       textTheme: GoogleFonts.poppinsTextTheme(),
-      appBarTheme: AppBarTheme(
+      appBarTheme: const AppBarTheme(
         backgroundColor: white,
         foregroundColor: text,
         elevation: 0,
@@ -47,7 +46,7 @@ class AppTheme {
         style: ElevatedButton.styleFrom(
           backgroundColor: primary,
           foregroundColor: white,
-          padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
           ),
@@ -66,10 +65,9 @@ class AppTheme {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: primary),
+          borderSide: const BorderSide(color: primary),
         ),
-        contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       ),
     );
-  }
 }

@@ -1,10 +1,6 @@
 import 'package:sp_code/model/flashcard.dart';
 
 class FlashcardDeck {
-  final String id;
-  final String title;
-  final List<Flashcard> cards;
-  final String creatorId;
 
   FlashcardDeck({
     required this.id,
@@ -13,8 +9,7 @@ class FlashcardDeck {
     required this.creatorId,
   });
 
-  factory FlashcardDeck.fromMap(String id, Map<String, dynamic> map) {
-    return FlashcardDeck(
+  factory FlashcardDeck.fromMap(String id, Map<String, dynamic> map) => FlashcardDeck(
       id: id,
       title: map['title'] ?? "",
       cards:
@@ -23,22 +18,21 @@ class FlashcardDeck {
               .toList(),
       creatorId: map['creatorId'] ?? "",
     );
-  }
+  final String id;
+  final String title;
+  final List<Flashcard> cards;
+  final String creatorId;
 
-  Map<String, dynamic> toMap({bool isUpdate = false}) {
-    return {
+  Map<String, dynamic> toMap({bool isUpdate = false}) => {
       'title': title,
       'cards': cards.map((e) => e.toMap()).toList(),
       'creatorId': creatorId,
     };
-  }
 
-  FlashcardDeck copyWith({String? title, List<Flashcard>? cards}) {
-    return FlashcardDeck(
+  FlashcardDeck copyWith({String? title, List<Flashcard>? cards}) => FlashcardDeck(
       id: id,
       title: title ?? this.title,
       cards: cards ?? this.cards,
       creatorId: creatorId,
     );
-  }
 }

@@ -43,20 +43,22 @@ class _UserSignInScreenState extends State<UserSignInScreen> {
               password: passwordInput,
             )
             .then((value) {
-              UserEntity loggedInUser = getUser.getLoggedInUser(value);
+              final UserEntity loggedInUser = GetUser.getLoggedInUser(value);
               if (value.role == "user") {
+                if (!mounted) return;
                 Navigator.of(context).pushAndRemoveUntil(
                   MaterialPageRoute(
                     builder: (context) => Dashboard(loggedInUser: loggedInUser),
                   ),
-                  (Route<dynamic> route) => false,
+                  (route) => false,
                 );
               } else {
+                if (!mounted) return;
                 Navigator.of(context).pushAndRemoveUntil(
                   MaterialPageRoute(
                     builder: (context) => Dashboard(loggedInUser: loggedInUser),
                   ),
-                  (Route<dynamic> route) => false,
+                  (route) => false,
                 );
               }
             });
@@ -74,20 +76,22 @@ class _UserSignInScreenState extends State<UserSignInScreen> {
         await widget._authService
             .googleRoles(user: value.user!, register: false)
             .then((result) {
-              UserEntity loggedInUser = getUser.getLoggedInUser(result);
+              final UserEntity loggedInUser = GetUser.getLoggedInUser(result);
               if (result.role == 'user') {
+                if (!mounted) return;
                 Navigator.of(context).pushAndRemoveUntil(
                   MaterialPageRoute(
                     builder: (context) => Dashboard(loggedInUser: loggedInUser),
                   ),
-                  (Route<dynamic> route) => false,
+                  (route) => false,
                 );
               } else {
+                if (!mounted) return;
                 Navigator.of(context).pushAndRemoveUntil(
                   MaterialPageRoute(
                     builder: (context) => Dashboard(loggedInUser: loggedInUser),
                   ),
-                  (Route<dynamic> route) => false,
+                  (route) => false,
                 );
               }
             });
@@ -100,88 +104,84 @@ class _UserSignInScreenState extends State<UserSignInScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      body: Stack(
-        children: [
-          Header(title: "Sign Into Account"),
-          Center(
-            child: Container(
-              padding: EdgeInsets.only(top: 100.responsiveH),
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    SvgPicture.string(signInIcon, height: 150, width: 150),
-                    const SizedBox(height: 15),
-                    Text(
-                      "Sign In",
-                      style: TextStyle(
-                        fontSize: 40,
-                        fontWeight: FontWeight.w700,
-                        color: AppTheme.black,
-                      ),
+  Widget build(BuildContext context) => Scaffold(
+    resizeToAvoidBottomInset: false,
+    body: Stack(
+      children: [
+        const Header(title: "Sign Into Account"),
+        Center(
+          child: Container(
+            padding: EdgeInsets.only(top: 100.responsiveH),
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  SvgPicture.string(signInIcon, height: 150, width: 150),
+                  const SizedBox(height: 15),
+                  const Text(
+                    "Sign In",
+                    style: TextStyle(
+                      fontSize: 40,
+                      fontWeight: FontWeight.w700,
+                      color: AppTheme.black,
                     ),
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(
-                        20,
-                        0,
-                        20,
-                        MediaQuery.of(context).viewInsets.bottom,
-                      ),
-                      child: Column(
-                        children: [
-                          Input(
-                            label: "Email",
-                            placeholder: "Enter your email",
-                            onTextChange: (value) {
-                              emailInput = value;
-                            },
-                          ),
-                          Input(
-                            label: "Password",
-                            placeholder: "Enter your password",
-                            isPasswordField: true,
-                            onTextChange: (value) {
-                              passwordInput = value;
-                            },
-                          ),
-                          const SizedBox(height: 20),
-                          LargeButton(text: "Sign In", onClick: handleSignIn),
-                          const OrDivider(),
-                          GestureDetector(
-                            onTap: () {
-                              handleGoogleSignIn();
-                            },
-                            child: Container(
-                              margin: const EdgeInsets.symmetric(
-                                horizontal: 10,
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(
+                      20,
+                      0,
+                      20,
+                      MediaQuery.of(context).viewInsets.bottom,
+                    ),
+                    child: Column(
+                      children: [
+                        Input(
+                          label: "Email",
+                          placeholder: "Enter your email",
+                          onTextChange: (value) {
+                            emailInput = value;
+                          },
+                        ),
+                        Input(
+                          label: "Password",
+                          placeholder: "Enter your password",
+                          isPasswordField: true,
+                          onTextChange: (value) {
+                            passwordInput = value;
+                          },
+                        ),
+                        const SizedBox(height: 20),
+                        LargeButton(text: "Sign In", onClick: handleSignIn),
+                        const OrDivider(),
+                        GestureDetector(
+                          onTap: () {
+                            handleGoogleSignIn();
+                          },
+                          child: Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 10),
+                            padding: const EdgeInsets.all(20),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                width: 2,
+                                color: AppTheme.primary,
                               ),
-                              padding: const EdgeInsets.all(20),
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  width: 2,
-                                  color: AppTheme.primary,
-                                ),
-                                shape: BoxShape.circle,
-                              ),
-                              child: SvgPicture.string(
-                                googleIcon,
-                                height: 20,
-                                width: 20,
-                              ),
+                              shape: BoxShape.circle,
+                            ),
+                            child: SvgPicture.string(
+                              googleIcon,
+                              height: 20,
+                              width: 20,
                             ),
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ),
-        ],
-      ),
-    );
-  }
+        ),
+      ],
+    ),
+  );
 }

@@ -1,7 +1,4 @@
 class Flashcard {
-  final String title;
-  final String frontInfo;
-  final String backInfo;
 
   Flashcard({
     required this.title,
@@ -9,23 +6,20 @@ class Flashcard {
     required this.backInfo,
   });
 
-  factory Flashcard.fromMap(Map<String, dynamic> map) {
-    return Flashcard(
+  factory Flashcard.fromMap(Map<String, dynamic> map) => Flashcard(
       title: map['title'] ?? "",
       frontInfo: map['frontInfo'] ?? "",
       backInfo: map['backInfo'] ?? "",
     );
-  }
+  final String title;
+  final String frontInfo;
+  final String backInfo;
 
-  Map<String, dynamic> toMap({bool isUpdate = false}) {
-    return {'title': title, 'frontInfo': frontInfo, 'backInfo': backInfo};
-  }
+  Map<String, dynamic> toMap({bool isUpdate = false}) => {'title': title, 'frontInfo': frontInfo, 'backInfo': backInfo};
 
-  Flashcard copyWith({String? title, String? frontInfo, String? backInfo}) {
-    return Flashcard(
+  Flashcard copyWith({String? title, String? frontInfo, String? backInfo}) => Flashcard(
       title: title ?? this.title,
       frontInfo: frontInfo ?? this.frontInfo,
       backInfo: backInfo ?? this.backInfo,
     );
-  }
 }

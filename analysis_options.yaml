@@ -23,6 +23,26 @@ linter:
   rules:
     # avoid_print: false  # Uncomment to disable the `avoid_print` rule
     # prefer_single_quotes: true  # Uncomment to enable the `prefer_single_quotes` rule
+    use_super_parameters: true
+    prefer_final_locals: true
+    prefer_const_constructors: true
+    prefer_const_literals_to_create_immutables: true
+    avoid_print: true
+    always_use_package_imports: true
+    unnecessary_this: true
+    sort_constructors_first: true
+    avoid_types_on_closure_parameters: true
+    avoid_returning_null: true
+    cascade_invocations: true
+    avoid_unnecessary_containers: true
+    prefer_expression_function_bodies: true
+    use_build_context_synchronously: true
 
+analyzer:
+  errors:
+    unused_import: error
+    dead_code: warning
+    missing_required_param: error
+    missing_return: error
 # Additional information about this file can be found at
 # https://dart.dev/guides/language/analysis-options

@@ -16,11 +16,10 @@ class ManageDifficultiesScreen extends StatefulWidget {
 class _ManageDifficultiesScreenState extends State<ManageDifficultiesScreen> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
+  Widget build(BuildContext context) => Scaffold(
       appBar: AppBar(
         backgroundColor: AppTheme.white,
-        title: Text(
+        title: const Text(
           'Manage Difficulties',
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
@@ -29,10 +28,10 @@ class _ManageDifficultiesScreenState extends State<ManageDifficultiesScreen> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => AddDifficultyScreen()),
+                MaterialPageRoute(builder: (context) => const AddDifficultyScreen()),
               );
             },
-            icon: Icon(Icons.add_circle_outline),
+            icon: const Icon(Icons.add_circle_outline),
             color: AppTheme.primary,
           ),
         ],
@@ -40,15 +39,15 @@ class _ManageDifficultiesScreenState extends State<ManageDifficultiesScreen> {
       body: StreamBuilder<QuerySnapshot>(
         stream:
             _firestore.collection("difficulties").orderBy('name').snapshots(),
-        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+        builder: (context, snapshot) {
           if (snapshot.hasError) {
             return Center(child: Text("Error: ${snapshot.error}"));
           }
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
           if (!snapshot.hasData) {
-            return Center(child: Text("No difficulties found"));
+            return const Center(child: Text("No difficulties found"));
           }
 
           final difficulties =
@@ -66,27 +65,27 @@ class _ManageDifficultiesScreenState extends State<ManageDifficultiesScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(
+                  const Icon(
                     Icons.category_outlined,
                     size: 64,
                     color: AppTheme.text2,
                   ),
-                  SizedBox(height: 16),
-                  Text(
+                  const SizedBox(height: 16),
+                  const Text(
                     "No difficulties found",
                     style: TextStyle(color: AppTheme.text2, fontSize: 18),
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   ElevatedButton(
                     onPressed: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => AddDifficultyScreen(),
+                          builder: (context) => const AddDifficultyScreen(),
                         ),
                       );
                     },
-                    child: Text("Add Difficulty"),
+                    child: const Text("Add Difficulty"),
                   ),
                 ],
               ),
@@ -94,32 +93,32 @@ class _ManageDifficultiesScreenState extends State<ManageDifficultiesScreen> {
           }
           return ListView.builder(
             itemCount: difficulties.length,
-            itemBuilder: (BuildContext context, int index) {
+            itemBuilder: (context, index) {
               final Difficulty difficulty = difficulties[index];
               return Card(
-                margin: EdgeInsets.only(bottom: 12),
+                margin: const EdgeInsets.only(bottom: 12),
                 child: ListTile(
-                  contentPadding: EdgeInsets.all(16),
+                  contentPadding: const EdgeInsets.all(16),
                   leading: Container(
-                    padding: EdgeInsets.all(12),
+                    padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
                       color: AppTheme.primary.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: Icon(
+                    child: const Icon(
                       Icons.category_outlined,
                       color: AppTheme.primary,
                     ),
                   ),
                   title: Text(
                     difficulty.name,
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                   ),
                   subtitle: Text(difficulty.description),
                   trailing: PopupMenuButton(
                     itemBuilder:
                         (context) => [
-                          PopupMenuItem(
+                          const PopupMenuItem(
                             value: "edit",
                             child: ListTile(
                               leading: Icon(
@@ -130,7 +129,7 @@ class _ManageDifficultiesScreenState extends State<ManageDifficultiesScreen> {
                               contentPadding: EdgeInsets.zero,
                             ),
                           ),
-                          PopupMenuItem(
+                          const PopupMenuItem(
                             value: "delete",
                             child: ListTile(
                               leading: Icon(Icons.edit, color: AppTheme.red),
@@ -162,7 +161,6 @@ class _ManageDifficultiesScreenState extends State<ManageDifficultiesScreen> {
         },
       ),
     );
-  }
 
   Future<void> _handleDifficultyAction(
     BuildContext context,
@@ -181,20 +179,20 @@ class _ManageDifficultiesScreenState extends State<ManageDifficultiesScreen> {
         context: context,
         builder:
             (context) => AlertDialog(
-              title: Text("Delete Difficulty"),
-              content: Text("Are you sure you want to delete this difficulty?"),
+              title: const Text("Delete Difficulty"),
+              content: const Text("Are you sure you want to delete this difficulty?"),
               actions: [
                 TextButton(
                   onPressed: () {
                     Navigator.pop(context, false);
                   },
-                  child: Text("Cancel"),
+                  child: const Text("Cancel"),
                 ),
                 TextButton(
                   onPressed: () {
                     Navigator.pop(context, true);
                   },
-                  child: Text("Delete", style: TextStyle(color: AppTheme.red)),
+                  child: const Text("Delete", style: TextStyle(color: AppTheme.red)),
                 ),
               ],
             ),

@@ -3,31 +3,31 @@ import 'package:flutter/material.dart';
 import 'package:sp_code/model/question.dart';
 import 'package:sp_code/model/quiz.dart';
 import 'package:sp_code/config/theme.dart';
+import 'package:sp_code/utils/get_message.dart';
 
 class EditQuizScreen extends StatefulWidget {
-  final Quiz quiz;
   const EditQuizScreen({super.key, required this.quiz});
+  final Quiz quiz;
 
   @override
   State<EditQuizScreen> createState() => _EditQuizScreenState();
 }
 
 class QuestionFromItem {
-  final TextEditingController questionController;
-  final List<TextEditingController> optionsController;
-  int correctOptionIndex;
-
   QuestionFromItem({
     required this.questionController,
     required this.optionsController,
     required this.correctOptionIndex,
   });
+  final TextEditingController questionController;
+  final List<TextEditingController> optionsController;
+  int correctOptionIndex;
 
   void dispose() {
     questionController.dispose();
-    optionsController.forEach((element) {
+    for (var element in optionsController) {
       element.dispose();
-    });
+    }
   }
 }
 
@@ -64,16 +64,18 @@ class _EditQuizScreenState extends State<EditQuizScreen> {
     );
 
     _questionsItems =
-        widget.quiz.questions.map((question) {
-          return QuestionFromItem(
-            questionController: TextEditingController(text: question.text),
-            optionsController:
-                question.options
-                    .map((option) => TextEditingController(text: option))
-                    .toList(),
-            correctOptionIndex: question.correctOptionIndex,
-          );
-        }).toList();
+        widget.quiz.questions
+            .map(
+              (question) => QuestionFromItem(
+                questionController: TextEditingController(text: question.text),
+                optionsController:
+                    question.options
+                        .map((option) => TextEditingController(text: option))
+                        .toList(),
+                correctOptionIndex: question.correctOptionIndex,
+              ),
+            )
+            .toList();
   }
 
   void _addQuestion() {
@@ -95,7 +97,7 @@ class _EditQuizScreenState extends State<EditQuizScreen> {
         _questionsItems.removeAt(index);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Quiz must have at least one question")),
+          const SnackBar(content: Text("Quiz must have at least one question")),
         );
       }
     });
@@ -135,20 +137,13 @@ class _EditQuizScreenState extends State<EditQuizScreen> {
           .doc(widget.quiz.id)
           .update(updateQuiz.toMap(isUpdate: true));
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            "Quiz updated successfully",
-            style: TextStyle(color: AppTheme.white),
-          ),
-          backgroundColor: AppTheme.green,
-        ),
-      );
+      GetMessage.getGoodToastMessage("Quiz updated successfully");
 
+      if (!mounted) return;
       Navigator.pop(context);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text(
             "Failed to update quiz",
             style: TextStyle(color: AppTheme.white),
@@ -164,244 +159,252 @@ class _EditQuizScreenState extends State<EditQuizScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: AppTheme.white,
-        title: Text("Edit Quiz", style: TextStyle(fontWeight: FontWeight.bold)),
-        actions: [
-          IconButton(
-            onPressed: _isLoading ? null : _updateQuiz,
-            icon: Icon(Icons.save, color: AppTheme.primary),
-          ),
-        ],
+  Widget build(BuildContext context) => Scaffold(
+    appBar: AppBar(
+      backgroundColor: AppTheme.white,
+      title: const Text(
+        "Edit Quiz",
+        style: TextStyle(fontWeight: FontWeight.bold),
       ),
-      body: Form(
-        key: _formKey,
-        child: ListView(
-          padding: EdgeInsets.all(20),
-          children: [
-            Text(
-              "Quiz Details",
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: AppTheme.text,
-              ),
+      actions: [
+        IconButton(
+          onPressed: _isLoading ? null : _updateQuiz,
+          icon: const Icon(Icons.save, color: AppTheme.primary),
+        ),
+      ],
+    ),
+    body: Form(
+      key: _formKey,
+      child: ListView(
+        padding: const EdgeInsets.all(20),
+        children: [
+          const Text(
+            "Quiz Details",
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: AppTheme.text,
             ),
-            SizedBox(height: 20),
-            TextFormField(
-              controller: _titleController,
-              decoration: InputDecoration(
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: AppTheme.primary, width: 0.0),
-                  borderRadius: BorderRadius.circular(12),
+          ),
+          const SizedBox(height: 20),
+          TextFormField(
+            controller: _titleController,
+            decoration: InputDecoration(
+              enabledBorder: OutlineInputBorder(
+                borderSide: const BorderSide(
+                  color: AppTheme.primary,
+                  width: 0.0,
                 ),
-                labelText: "Quiz Title",
-                hintText: "Enter a quiz title",
-                prefixIcon: Icon(Icons.title, color: AppTheme.primary),
+                borderRadius: BorderRadius.circular(12),
               ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return "Please enter quiz title";
-                }
-                return null;
-              },
+              labelText: "Quiz Title",
+              hintText: "Enter a quiz title",
+              prefixIcon: const Icon(Icons.title, color: AppTheme.primary),
             ),
-            SizedBox(height: 20),
-            TextFormField(
-              controller: _timeLimitController,
-              decoration: InputDecoration(
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: AppTheme.primary, width: 0.0),
-                  borderRadius: BorderRadius.circular(12),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return "Please enter quiz title";
+              }
+              return null;
+            },
+          ),
+          const SizedBox(height: 20),
+          TextFormField(
+            controller: _timeLimitController,
+            decoration: InputDecoration(
+              enabledBorder: OutlineInputBorder(
+                borderSide: const BorderSide(
+                  color: AppTheme.primary,
+                  width: 0.0,
                 ),
-                labelText: "Time Limit (in minutes)",
-                hintText: "Enter time limit",
-                prefixIcon: Icon(Icons.timer, color: AppTheme.primary),
+                borderRadius: BorderRadius.circular(12),
               ),
-              keyboardType: TextInputType.number,
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return "Please enter time limit";
-                }
-                final number = int.tryParse(value);
-                if (number == null || number <= 0) {
-                  return "Please enter a valid time limit";
-                }
-                return null;
-              },
+              labelText: "Time Limit (in minutes)",
+              hintText: "Enter time limit",
+              prefixIcon: const Icon(Icons.timer, color: AppTheme.primary),
             ),
-            SizedBox(height: 16),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      "Questions",
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: AppTheme.text,
-                      ),
+            keyboardType: TextInputType.number,
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return "Please enter time limit";
+              }
+              final number = int.tryParse(value);
+              if (number == null || number <= 0) {
+                return "Please enter a valid time limit";
+              }
+              return null;
+            },
+          ),
+          const SizedBox(height: 16),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    "Questions",
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: AppTheme.text,
                     ),
-                    ElevatedButton.icon(
-                      onPressed: _addQuestion,
-                      label: Text("Add Question"),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppTheme.primary,
-                        foregroundColor: AppTheme.white,
-                      ),
+                  ),
+                  ElevatedButton.icon(
+                    onPressed: _addQuestion,
+                    label: const Text("Add Question"),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppTheme.primary,
+                      foregroundColor: AppTheme.white,
                     ),
-                  ],
-                ),
-                SizedBox(height: 16),
-                ..._questionsItems.asMap().entries.map((entry) {
-                  final index = entry.key;
-                  final QuestionFromItem question = entry.value;
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              ..._questionsItems.asMap().entries.map((entry) {
+                final index = entry.key;
+                final QuestionFromItem question = entry.value;
 
-                  return Card(
-                    margin: EdgeInsets.only(bottom: 16),
-                    child: Padding(
-                      padding: EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                "Question ${index + 1}",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: AppTheme.primary,
-                                ),
-                              ),
-                              if (_questionsItems.isNotEmpty)
-                                IconButton(
-                                  onPressed: () {
-                                    _removeQuestion(index);
-                                  },
-                                  icon: Icon(Icons.delete, color: AppTheme.red),
-                                ),
-                            ],
-                          ),
-                          SizedBox(height: 16),
-                          TextFormField(
-                            controller: question.questionController,
-                            decoration: InputDecoration(
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: AppTheme.primary,
-                                  width: 0.0,
-                                ),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              labelText: "Question",
-                              hintText: "Enter question",
-                              prefixIcon: Icon(
-                                Icons.question_answer,
+                return Card(
+                  margin: const EdgeInsets.only(bottom: 16),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "Question ${index + 1}",
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
                                 color: AppTheme.primary,
                               ),
                             ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return "Please enter question";
-                              }
-                              return null;
-                            },
+                            if (_questionsItems.isNotEmpty)
+                              IconButton(
+                                onPressed: () {
+                                  _removeQuestion(index);
+                                },
+                                icon: const Icon(
+                                  Icons.delete,
+                                  color: AppTheme.red,
+                                ),
+                              ),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+                        TextFormField(
+                          controller: question.questionController,
+                          decoration: InputDecoration(
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(
+                                color: AppTheme.primary,
+                                width: 0.0,
+                              ),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            labelText: "Question",
+                            hintText: "Enter question",
+                            prefixIcon: const Icon(
+                              Icons.question_answer,
+                              color: AppTheme.primary,
+                            ),
                           ),
-                          SizedBox(height: 16),
-                          ...question.optionsController.asMap().entries.map((
-                            entry,
-                          ) {
-                            final optionIndex = entry.key;
-                            final controller = entry.value;
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return "Please enter question";
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 16),
+                        ...question.optionsController.asMap().entries.map((
+                          entry,
+                        ) {
+                          final optionIndex = entry.key;
+                          final controller = entry.value;
 
-                            return Padding(
-                              padding: EdgeInsets.only(bottom: 8),
-                              child: Row(
-                                children: [
-                                  Radio<int>(
-                                    activeColor: AppTheme.primary,
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 8),
+                            child: Row(
+                              children: [
+                                Radio<int>(
+                                  activeColor: AppTheme.primary,
 
-                                    value: optionIndex,
-                                    groupValue: question.correctOptionIndex,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        question.correctOptionIndex = value!;
-                                      });
+                                  value: optionIndex,
+                                  groupValue: question.correctOptionIndex,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      question.correctOptionIndex = value!;
+                                    });
+                                  },
+                                ),
+                                Expanded(
+                                  child: TextFormField(
+                                    controller: controller,
+                                    decoration: InputDecoration(
+                                      enabledBorder: OutlineInputBorder(
+                                        borderSide: const BorderSide(
+                                          color: AppTheme.primary,
+                                          width: 0.0,
+                                        ),
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      labelText: "Option ${optionIndex + 1}",
+                                      hintText: "Enter option",
+                                    ),
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return "Please enter option";
+                                      }
+                                      return null;
                                     },
                                   ),
-                                  Expanded(
-                                    child: TextFormField(
-                                      controller: controller,
-                                      decoration: InputDecoration(
-                                        enabledBorder: OutlineInputBorder(
-                                          borderSide: BorderSide(
-                                            color: AppTheme.primary,
-                                            width: 0.0,
-                                          ),
-                                          borderRadius: BorderRadius.circular(
-                                            12,
-                                          ),
-                                        ),
-                                        labelText: "Option ${optionIndex + 1}",
-                                        hintText: "Enter option",
-                                      ),
-                                      validator: (value) {
-                                        if (value == null || value.isEmpty) {
-                                          return "Please enter option";
-                                        }
-                                        return null;
-                                      },
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          }),
-                        ],
-                      ),
-                    ),
-                  );
-                }),
-                SizedBox(height: 32),
-                Center(
-                  child: SizedBox(
-                    height: 50,
-                    child: ElevatedButton(
-                      onPressed: _isLoading ? null : _updateQuiz,
-                      child:
-                          _isLoading
-                              ? SizedBox(
-                                height: 20,
-                                width: 20,
-                                child: CircularProgressIndicator(
-                                  valueColor: AlwaysStoppedAnimation<Color>(
-                                    AppTheme.white,
-                                  ),
-                                  strokeWidth: 2,
                                 ),
-                              )
-                              : Text(
-                                "Update Quiz",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
+                              ],
+                            ),
+                          );
+                        }),
+                      ],
                     ),
                   ),
+                );
+              }),
+              const SizedBox(height: 32),
+              Center(
+                child: SizedBox(
+                  height: 50,
+                  child: ElevatedButton(
+                    onPressed: _isLoading ? null : _updateQuiz,
+                    child:
+                        _isLoading
+                            ? const SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  AppTheme.white,
+                                ),
+                                strokeWidth: 2,
+                              ),
+                            )
+                            : const Text(
+                              "Update Quiz",
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                  ),
                 ),
-              ],
-            ),
-          ],
-        ),
+              ),
+            ],
+          ),
+        ],
       ),
-    );
-  }
+    ),
+  );
 }

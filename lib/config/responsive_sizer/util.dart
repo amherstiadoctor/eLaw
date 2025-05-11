@@ -1,4 +1,4 @@
-part of responsive;
+part of 'responsive_sizer.dart';
 
 const _iphone13ProWidth = 390;
 const _iphone13ProHeight = 844;

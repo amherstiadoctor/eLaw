@@ -1,8 +1,7 @@
 import 'package:sp_code/model/user_entity.dart';
 
-class getUser {
-  static getLoggedInUser(UserEntity userValue) {
-    return UserEntity(
+class GetUser {
+  static getLoggedInUser(UserEntity userValue) => UserEntity(
       id: userValue.role,
       firstName: userValue.firstName,
       lastName: userValue.lastName,
@@ -13,5 +12,4 @@ class getUser {
       totalPoints: userValue.totalPoints,
       friends: userValue.friends,
     );
-  }
 }

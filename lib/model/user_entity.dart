@@ -2,6 +2,37 @@ import 'package:equatable/equatable.dart';
 import 'package:sp_code/model/taken_quiz.dart';
 
 class UserEntity extends Equatable {
+
+  factory UserEntity.fromJson(Map<String, dynamic> json) => UserEntity(
+    id: json['id'] ?? "",
+    firstName: json['firstName'] ?? "",
+    lastName: json['lastName'] ?? "",
+    email: json['email'] ?? "",
+    role: json['role'] ?? "",
+    quizzesTaken:
+        ((json['quizzesTaken'] ?? []) as List)
+            .map((e) => TakenQuiz.fromMap(e))
+            .toList(),
+    quizzesCompleted:
+        ((json['quizzesCompleted'] ?? []) as List)
+            .map((e) => e.toString())
+            .toList(),
+    totalPoints: json['totalPoints'] ?? 0,
+    friends:
+        ((json['friends'] ?? []) as List).map((e) => e.toString()).toList(),
+  );
+
+  factory UserEntity.empty() => const UserEntity(
+    id: "",
+    firstName: "",
+    lastName: "",
+    email: "",
+    role: "",
+    quizzesTaken: [],
+    quizzesCompleted: [],
+    totalPoints: 0,
+    friends: [],
+  );
   const UserEntity({
     required this.id,
     required this.firstName,
@@ -24,25 +55,6 @@ class UserEntity extends Equatable {
   final int totalPoints;
   final List<String> friends;
 
-  factory UserEntity.fromJson(Map<String, dynamic> json) => UserEntity(
-    id: json['id'] ?? "",
-    firstName: json['firstName'] ?? "",
-    lastName: json['lastName'] ?? "",
-    email: json['email'] ?? "",
-    role: json['role'] ?? "",
-    quizzesTaken:
-        ((json['quizzesTaken'] ?? []) as List)
-            .map((e) => TakenQuiz.fromMap(e))
-            .toList(),
-    quizzesCompleted:
-        ((json['quizzesCompleted'] ?? []) as List)
-            .map((e) => e.toString())
-            .toList(),
-    totalPoints: json['totalPoints'] ?? 0,
-    friends:
-        ((json['friends'] ?? []) as List).map((e) => e.toString()).toList(),
-  );
-
   Map<String, dynamic> toJson() => <String, dynamic>{
     'id': id,
     'firstName': firstName,
@@ -54,18 +66,6 @@ class UserEntity extends Equatable {
     'totalPoints': totalPoints,
     'friends': friends,
   };
-
-  factory UserEntity.empty() => UserEntity(
-    id: "",
-    firstName: "",
-    lastName: "",
-    email: "",
-    role: "",
-    quizzesTaken: [],
-    quizzesCompleted: [],
-    totalPoints: 0,
-    friends: [],
-  );
 
   @override
   List<Object?> get props => [
@@ -84,8 +84,7 @@ class UserEntity extends Equatable {
     List<TakenQuiz>? quizzesTaken,
     int? totalPoints,
     List<String>? friends,
-  }) {
-    return UserEntity(
+  }) => UserEntity(
       id: id,
       firstName: firstName,
       lastName: lastName,
@@ -96,5 +95,4 @@ class UserEntity extends Equatable {
       totalPoints: totalPoints ?? this.totalPoints,
       friends: friends ?? this.friends,
     );
-  }
 }

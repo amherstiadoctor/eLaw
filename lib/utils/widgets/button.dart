@@ -74,7 +74,6 @@ Map<String, dynamic> getStyleMap(
 
 class _Button extends StatelessWidget {
   const _Button({
-    Key? key,
     this.status = 'active',
     required this.text,
     required this.size,
@@ -84,7 +83,7 @@ class _Button extends StatelessWidget {
     this.icon,
     this.background,
     this.isEmptyBackground = false,
-  }) : super(key: key);
+  });
   final String status;
   final String text;
   final Widget? icon;
@@ -263,7 +262,7 @@ class _Button extends StatelessWidget {
 
 class SmallButton extends StatelessWidget {
   const SmallButton({
-    Key? key,
+    super.key,
     this.status = 'active',
     required this.text,
     this.onClick,
@@ -271,7 +270,7 @@ class SmallButton extends StatelessWidget {
     this.color,
     this.background,
     this.isEmptyBackground = false,
-  }) : super(key: key);
+  });
 
   final String status;
   final String text;
@@ -282,8 +281,7 @@ class SmallButton extends StatelessWidget {
   final bool isEmptyBackground;
 
   @override
-  Widget build(BuildContext context) {
-    return _Button(
+  Widget build(BuildContext context) => _Button(
       status: status,
       text: text,
       icon: icon,
@@ -293,12 +291,11 @@ class SmallButton extends StatelessWidget {
       isEmptyBackground: isEmptyBackground,
       size: 'small',
     );
-  }
 }
 
 class MediumButton extends StatelessWidget {
   const MediumButton({
-    Key? key,
+    super.key,
     this.status = 'active',
     required this.text,
     this.width = 278,
@@ -307,7 +304,7 @@ class MediumButton extends StatelessWidget {
     this.color,
     this.background,
     this.isEmptyBackground = false,
-  }) : super(key: key);
+  });
 
   final String status;
   final String text;
@@ -319,8 +316,7 @@ class MediumButton extends StatelessWidget {
   final Color? background;
 
   @override
-  Widget build(BuildContext context) {
-    return _Button(
+  Widget build(BuildContext context) => _Button(
       status: status,
       text: text,
       icon: icon,
@@ -331,12 +327,11 @@ class MediumButton extends StatelessWidget {
       isEmptyBackground: isEmptyBackground,
       size: 'medium',
     );
-  }
 }
 
 class LargeButton extends StatelessWidget {
   const LargeButton({
-    Key? key,
+    super.key,
     this.status = 'active',
     required this.text,
     this.onClick,
@@ -344,7 +339,7 @@ class LargeButton extends StatelessWidget {
     this.color,
     this.background,
     this.isEmptyBackground = false,
-  }) : super(key: key);
+  });
 
   final String status;
   final String text;
@@ -355,8 +350,7 @@ class LargeButton extends StatelessWidget {
   final bool isEmptyBackground;
 
   @override
-  Widget build(BuildContext context) {
-    return _Button(
+  Widget build(BuildContext context) => _Button(
       status: status,
       text: text,
       icon: icon,
@@ -366,5 +360,4 @@ class LargeButton extends StatelessWidget {
       isEmptyBackground: isEmptyBackground,
       size: 'large',
     );
-  }
 }

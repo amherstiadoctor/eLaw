@@ -17,9 +17,9 @@ import 'package:sp_code/view/common/view_deck_screen.dart';
 import 'package:sp_code/view/user/difficulty_screen.dart';
 
 class StudyTabs extends StatefulWidget {
-  final Map<String, dynamic> currentUser;
 
   StudyTabs({super.key, required this.currentUser});
+  final Map<String, dynamic> currentUser;
   final AuthService _authService = FirebaseAuthService(
     authService: FirebaseAuth.instance,
   );
@@ -73,8 +73,7 @@ class _StudyTabsState extends State<StudyTabs>
   Widget _buildDifficultyItem({
     required Difficulty difficulty,
     required int index,
-  }) {
-    return Card(
+  }) => Card(
           elevation: 0,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
@@ -98,21 +97,21 @@ class _StudyTabsState extends State<StudyTabs>
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(color: AppTheme.primary),
               ),
-              padding: EdgeInsets.all(16),
+              padding: const EdgeInsets.all(16),
               child: Row(
                 children: [
                   Container(
-                    padding: EdgeInsets.all(16),
+                    padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
                       color: AppTheme.primary.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: Icon(Icons.quiz, size: 28, color: AppTheme.primary),
+                    child: const Icon(Icons.quiz, size: 28, color: AppTheme.primary),
                   ),
-                  SizedBox(width: 10),
+                  const SizedBox(width: 10),
                   Text(
                     difficulty.name,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                       color: AppTheme.text,
@@ -124,39 +123,37 @@ class _StudyTabsState extends State<StudyTabs>
           ),
         )
         .animate(delay: Duration(milliseconds: 100 * index))
-        .slideY(begin: 0.5, end: 0, duration: Duration(milliseconds: 300))
+        .slideY(begin: 0.5, end: 0, duration: const Duration(milliseconds: 300))
         .fadeIn();
-  }
 
-  _buildDeckItem({required FlashcardDeck deck, required int index}) {
-    return Card(
-          margin: EdgeInsets.only(bottom: 12),
+  _buildDeckItem({required FlashcardDeck deck, required int index}) => Card(
+          margin: const EdgeInsets.only(bottom: 12),
           child: Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(16),
               border: Border.all(color: AppTheme.primary),
             ),
             child: ListTile(
-              contentPadding: EdgeInsets.all(16),
+              contentPadding: const EdgeInsets.all(16),
               leading: Container(
-                padding: EdgeInsets.all(12),
+                padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   color: AppTheme.primary.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(
+                child: const Icon(
                   Icons.view_carousel_rounded,
                   color: AppTheme.primary,
                 ),
               ),
               title: Text(
                 deck.title,
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               ),
               subtitle: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Row(
                     children: [
                       Text(
@@ -165,7 +162,7 @@ class _StudyTabsState extends State<StudyTabs>
                             : deck.cards.isEmpty
                             ? "No Flashcards"
                             : "${deck.cards.length} Flashcard",
-                        style: TextStyle(fontSize: 12),
+                        style: const TextStyle(fontSize: 12),
                       ),
                     ],
                   ),
@@ -174,7 +171,7 @@ class _StudyTabsState extends State<StudyTabs>
               trailing: PopupMenuButton(
                 itemBuilder:
                     (context) => [
-                      PopupMenuItem(
+                      const PopupMenuItem(
                         value: "edit",
                         child: ListTile(
                           contentPadding: EdgeInsets.zero,
@@ -182,7 +179,7 @@ class _StudyTabsState extends State<StudyTabs>
                           title: Text("Edit"),
                         ),
                       ),
-                      PopupMenuItem(
+                      const PopupMenuItem(
                         value: "delete",
                         child: ListTile(
                           contentPadding: EdgeInsets.zero,
@@ -205,9 +202,8 @@ class _StudyTabsState extends State<StudyTabs>
           ),
         )
         .animate(delay: Duration(milliseconds: 100 * index))
-        .slideY(begin: 0.5, end: 0, duration: Duration(milliseconds: 300))
+        .slideY(begin: 0.5, end: 0, duration: const Duration(milliseconds: 300))
         .fadeIn();
-  }
 
   Future<void> _handleDeckAction(
     BuildContext context,
@@ -231,20 +227,20 @@ class _StudyTabsState extends State<StudyTabs>
         context: context,
         builder:
             (context) => AlertDialog(
-              title: Text("Delete Flashcard Deck"),
-              content: Text("Are you sure you want to delete this deck?"),
+              title: const Text("Delete Flashcard Deck"),
+              content: const Text("Are you sure you want to delete this deck?"),
               actions: [
                 TextButton(
                   onPressed: () {
                     Navigator.pop(context, false);
                   },
-                  child: Text("Cancel"),
+                  child: const Text("Cancel"),
                 ),
                 TextButton(
                   onPressed: () {
                     Navigator.pop(context, true);
                   },
-                  child: Text("Delete", style: TextStyle(color: AppTheme.red)),
+                  child: const Text("Delete", style: TextStyle(color: AppTheme.red)),
                 ),
               ],
             ),
@@ -262,8 +258,7 @@ class _StudyTabsState extends State<StudyTabs>
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Column(
+  Widget build(BuildContext context) => Column(
       children: [
         TabBar(
           controller: _tabController,
@@ -282,7 +277,7 @@ class _StudyTabsState extends State<StudyTabs>
             controller: _tabController,
             children: [
               isLoading
-                  ? Center(
+                  ? const Center(
                     child: SizedBox(
                       height: 50,
                       child: CircularProgressIndicator(),
@@ -291,11 +286,11 @@ class _StudyTabsState extends State<StudyTabs>
                   : _filteredDifficulties.isNotEmpty
                   ? SingleChildScrollView(
                     child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 16),
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
                       child: ListView.builder(
                         padding: EdgeInsets.zero,
                         shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
+                        physics: const NeverScrollableScrollPhysics(),
                         itemCount: _filteredDifficulties.length,
                         itemBuilder: (context, index) {
                           final difficulty = _filteredDifficulties[index];
@@ -307,9 +302,9 @@ class _StudyTabsState extends State<StudyTabs>
                       ),
                     ),
                   )
-                  : Center(child: Text("No Difficulties Found")),
+                  : const Center(child: Text("No Difficulties Found")),
               isLoading
-                  ? Center(
+                  ? const Center(
                     child: SizedBox(
                       height: 50,
                       child: CircularProgressIndicator(),
@@ -326,14 +321,14 @@ class _StudyTabsState extends State<StudyTabs>
                             .snapshots(),
                     builder: (context, snapshot) {
                       if (snapshot.hasError) {
-                        return Text("Error");
+                        return const Text("Error");
                       }
 
                       if (!snapshot.hasData) {
                         return Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text("No Flashcards Found"),
+                            const Text("No Flashcards Found"),
                             ElevatedButton(
                               onPressed: () {
                                 Navigator.push(
@@ -346,7 +341,7 @@ class _StudyTabsState extends State<StudyTabs>
                                   ),
                                 );
                               },
-                              child: Text("Add flashcard deck"),
+                              child: const Text("Add flashcard deck"),
                             ),
                           ],
                         );
@@ -376,11 +371,11 @@ class _StudyTabsState extends State<StudyTabs>
                                 ),
                               );
                             },
-                            child: Text("Add flashcard deck"),
+                            child: const Text("Add flashcard deck"),
                           ),
                           SingleChildScrollView(
                             child: Padding(
-                              padding: EdgeInsets.only(
+                              padding: const EdgeInsets.only(
                                 right: 16,
                                 left: 16,
                                 top: 16,
@@ -408,5 +403,4 @@ class _StudyTabsState extends State<StudyTabs>
         ),
       ],
     );
-  }
 }

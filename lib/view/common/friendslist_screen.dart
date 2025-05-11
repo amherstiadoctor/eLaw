@@ -11,8 +11,8 @@ import 'package:sp_code/utils/widgets/header.dart';
 import 'package:sp_code/view/common/user_profile_screen.dart';
 
 class FriendslistScreen extends StatefulWidget {
-  final UserEntity loggedInUser;
   const FriendslistScreen({super.key, required this.loggedInUser});
+  final UserEntity loggedInUser;
 
   @override
   State<FriendslistScreen> createState() => _FriendslistScreenState();
@@ -24,8 +24,7 @@ class _FriendslistScreenState extends State<FriendslistScreen> {
     required String friendId,
     required int index,
     required Map<String, dynamic> currentUser,
-  }) {
-    return StreamBuilder<DocumentSnapshot>(
+  }) => StreamBuilder<DocumentSnapshot>(
       stream:
           FirebaseFirestore.instance
               .collection("Users")
@@ -33,44 +32,44 @@ class _FriendslistScreenState extends State<FriendslistScreen> {
               .snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
-          return Text("User Not Found");
+          return const Text("User Not Found");
         }
 
-        var friend = snapshot.data as DocumentSnapshot;
+        final friend = snapshot.data as DocumentSnapshot;
 
         return Card(
-              margin: EdgeInsets.only(bottom: 12),
+              margin: const EdgeInsets.only(bottom: 12),
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(color: AppTheme.primary),
                 ),
                 child: ListTile(
-                  contentPadding: EdgeInsets.all(16),
+                  contentPadding: const EdgeInsets.all(16),
                   leading: Container(
-                    padding: EdgeInsets.all(12),
+                    padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
                       color: AppTheme.primary.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: Icon(
+                    child: const Icon(
                       Icons.account_circle_outlined,
                       color: AppTheme.primary,
                     ),
                   ),
                   title: Text(
                     "${friend['firstName']} ${friend['lastName']}",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
                   ),
                   subtitle: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SizedBox(height: 8),
+                      const SizedBox(height: 8),
                       Row(
                         children: [
                           Text(
                             "Points: ${friend['totalPoints'].toString()}",
-                            style: TextStyle(fontSize: 16),
+                            style: const TextStyle(fontSize: 16),
                           ),
                         ],
                       ),
@@ -92,18 +91,16 @@ class _FriendslistScreenState extends State<FriendslistScreen> {
               ),
             )
             .animate(delay: Duration(milliseconds: 100 * index))
-            .slideY(begin: 0.5, end: 0, duration: Duration(milliseconds: 300))
+            .slideY(begin: 0.5, end: 0, duration: const Duration(milliseconds: 300))
             .fadeIn();
       },
     );
-  }
 
   _buildSearchItem({
     required String friendId,
     required int index,
     required Map<String, dynamic> currentUser,
-  }) {
-    return StreamBuilder<DocumentSnapshot>(
+  }) => StreamBuilder<DocumentSnapshot>(
       stream:
           FirebaseFirestore.instance
               .collection("Users")
@@ -114,33 +111,33 @@ class _FriendslistScreenState extends State<FriendslistScreen> {
           return Container();
         }
 
-        var friend = snapshot.data as DocumentSnapshot;
+        final friend = snapshot.data as DocumentSnapshot;
 
         return currentUser['id'] == friendId
-            ? Center(child: CircularProgressIndicator())
+            ? const Center(child: CircularProgressIndicator())
             : Card(
-                  margin: EdgeInsets.only(bottom: 12),
+                  margin: const EdgeInsets.only(bottom: 12),
                   child: Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(color: AppTheme.primary),
                     ),
                     child: ListTile(
-                      contentPadding: EdgeInsets.all(16),
+                      contentPadding: const EdgeInsets.all(16),
                       leading: Container(
-                        padding: EdgeInsets.all(12),
+                        padding: const EdgeInsets.all(12),
                         decoration: BoxDecoration(
                           color: AppTheme.primary.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        child: Icon(
+                        child: const Icon(
                           Icons.account_circle_outlined,
                           color: AppTheme.primary,
                         ),
                       ),
                       title: Text(
                         "${friend['firstName']} ${friend['lastName']}",
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 18,
                         ),
@@ -148,12 +145,12 @@ class _FriendslistScreenState extends State<FriendslistScreen> {
                       subtitle: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          SizedBox(height: 8),
+                          const SizedBox(height: 8),
                           Row(
                             children: [
                               Text(
                                 friend['email'],
-                                style: TextStyle(fontSize: 16),
+                                style: const TextStyle(fontSize: 16),
                               ),
                             ],
                           ),
@@ -178,20 +175,18 @@ class _FriendslistScreenState extends State<FriendslistScreen> {
                 .slideY(
                   begin: 0.5,
                   end: 0,
-                  duration: Duration(milliseconds: 300),
+                  duration: const Duration(milliseconds: 300),
                 )
                 .fadeIn();
       },
     );
-  }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
+  Widget build(BuildContext context) => Scaffold(
       backgroundColor: AppTheme.primary,
       body: Stack(
         children: [
-          Header(title: "Friends List", color: AppTheme.white),
+          const Header(title: "Friends List", color: AppTheme.white),
           Padding(
             padding: EdgeInsets.fromLTRB(20, 110.responsiveW, 20, 0),
             child: Container(
@@ -211,10 +206,10 @@ class _FriendslistScreenState extends State<FriendslistScreen> {
                     color: AppTheme.primaryShade,
                   ),
                   Container(
-                    padding: EdgeInsets.only(left: 5),
+                    padding: const EdgeInsets.only(left: 5),
                     width: 250.responsiveW,
                     child: Input(
-                      contentPadding: EdgeInsets.symmetric(
+                      contentPadding: const EdgeInsets.symmetric(
                         horizontal: 12,
                         vertical: 2,
                       ),
@@ -251,7 +246,7 @@ class _FriendslistScreenState extends State<FriendslistScreen> {
                         .snapshots(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Center(child: CircularProgressIndicator());
+                    return const Center(child: CircularProgressIndicator());
                   }
 
                   final fetchedDocs = snapshot.data!.docs;
@@ -259,7 +254,7 @@ class _FriendslistScreenState extends State<FriendslistScreen> {
                       fetchedDocs[0].data() as Map<String, dynamic>;
                   final friendsList = currentUser['friends'];
                   if (friendsList.isEmpty && searchUser == "") {
-                    return Center(child: Text("No friends yet!"));
+                    return const Center(child: Text("No friends yet!"));
                   }
 
                   return searchUser == ""
@@ -274,13 +269,11 @@ class _FriendslistScreenState extends State<FriendslistScreen> {
                             padding: EdgeInsets.zero,
                             shrinkWrap: true,
                             itemCount: friendsList.length,
-                            itemBuilder: (context, index) {
-                              return _buildFriendItem(
+                            itemBuilder: (context, index) => _buildFriendItem(
                                 friendId: friendsList[index],
                                 index: index,
                                 currentUser: currentUser,
-                              );
-                            },
+                              ),
                           ),
                         ),
                       )
@@ -297,11 +290,11 @@ class _FriendslistScreenState extends State<FriendslistScreen> {
                                     .collection('Users')
                                     .orderBy('email')
                                     .startAt([searchUser])
-                                    .endAt([searchUser + "\uf8ff"])
+                                    .endAt(["$searchUser\uf8ff"])
                                     .snapshots(),
                             builder: (context, snapshot) {
                               if (snapshot.hasError) {
-                                return Center(
+                                return const Center(
                                   child: Text("Something went wrong"),
                                 );
                               }
@@ -312,7 +305,7 @@ class _FriendslistScreenState extends State<FriendslistScreen> {
                               }
 
                               if (snapshot.data!.docs.isEmpty) {
-                                return Center(
+                                return const Center(
                                   child: Text("No User found with that email"),
                                 );
                               }
@@ -322,7 +315,7 @@ class _FriendslistScreenState extends State<FriendslistScreen> {
                                 shrinkWrap: true,
                                 itemCount: snapshot.data!.docs.length,
                                 itemBuilder: (context, index) {
-                                  var listItem = snapshot.data!.docs[index];
+                                  final listItem = snapshot.data!.docs[index];
                                   return _buildSearchItem(
                                     friendId: listItem['id'],
                                     index: index,
@@ -341,5 +334,4 @@ class _FriendslistScreenState extends State<FriendslistScreen> {
         ],
       ),
     );
-  }
 }

@@ -3,7 +3,7 @@ import 'package:sp_code/config/responsive_sizer/responsive_sizer.dart';
 import 'package:sp_code/config/theme.dart';
 
 class Header extends StatefulWidget {
-  Header({
+  const Header({
     super.key,
     required this.title,
     this.color,
@@ -21,8 +21,7 @@ class Header extends StatefulWidget {
 
 class _HeaderState extends State<Header> {
   @override
-  Widget build(BuildContext context) {
-    return Padding(
+  Widget build(BuildContext context) => Padding(
       padding: const EdgeInsets.only(top: 50, left: 10, right: 10),
       child: Container(
         color: Colors.transparent,
@@ -51,11 +50,10 @@ class _HeaderState extends State<Header> {
               ),
             ),
             widget.has3rdIcon!
-                ? Icon(Icons.settings_rounded, color: AppTheme.white, size: 40)
+                ? const Icon(Icons.settings_rounded, color: AppTheme.white, size: 40)
                 : Container(width: 30.responsiveW),
           ],
         ),
       ),
     );
-  }
 }

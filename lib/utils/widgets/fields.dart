@@ -8,7 +8,7 @@ const inputKeysMap = {InputKeys.input: Key("input_field")};
 
 class Input extends StatefulWidget {
   const Input({
-    Key? key,
+    super.key,
     this.label = 'Input Label',
     this.placeholder = 'Input your answer',
     this.onTextChange,
@@ -20,7 +20,7 @@ class Input extends StatefulWidget {
     this.contentPadding,
     this.initText,
     this.fillColor,
-  }) : super(key: key);
+  });
   final EdgeInsets? contentPadding;
   final String label;
   final String placeholder;
@@ -51,13 +51,13 @@ class _InputState extends State<Input> {
 
   @override
   Widget build(BuildContext context) {
-    final labelStyle = TextStyle(
+    final labelStyle = const TextStyle(
       fontSize: 12,
       height: 16 / 12,
       fontWeight: FontWeight.w400,
       color: AppTheme.primary,
     );
-    final placeholderStyle = TextStyle(
+    final placeholderStyle = const TextStyle(
       fontSize: 16,
       height: 20 / 16,
       fontWeight: FontWeight.w400,
@@ -65,7 +65,7 @@ class _InputState extends State<Input> {
     );
     final errorMessageStyle =
         widget.errorStyle ??
-        TextStyle(
+        const TextStyle(
           fontSize: 12,
           height: 16 / 12,
           fontWeight: FontWeight.w400,
@@ -126,8 +126,8 @@ class _InputState extends State<Input> {
                             },
                             child:
                                 _isObscure
-                                    ? Icon(Icons.visibility_rounded)
-                                    : Icon(Icons.visibility_off_rounded),
+                                    ? const Icon(Icons.visibility_rounded)
+                                    : const Icon(Icons.visibility_off_rounded),
                           )
                           : null,
                 ),

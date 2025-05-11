@@ -4,8 +4,8 @@ import 'package:sp_code/model/difficulty.dart';
 import 'package:sp_code/config/theme.dart';
 
 class AddDifficultyScreen extends StatefulWidget {
-  final Difficulty? difficulty;
   const AddDifficultyScreen({super.key, this.difficulty});
+  final Difficulty? difficulty;
 
   @override
   State<AddDifficultyScreen> createState() => _AddDifficultyScreenState();
@@ -57,8 +57,10 @@ class _AddDifficultyScreenState extends State<AddDifficultyScreen> {
             .doc(widget.difficulty!.id)
             .update(updatedDifficulty.toMap());
 
+        if (!mounted) return;
+
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Difficulty updated successfully")),
+          const SnackBar(content: Text("Difficulty updated successfully")),
         );
       } else {
         final docDifficulties = FirebaseFirestore.instance
@@ -74,8 +76,10 @@ class _AddDifficultyScreenState extends State<AddDifficultyScreen> {
           ).toMap(),
         );
 
+        if (!mounted) return;
+
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Difficulty added successfully")),
+          const SnackBar(content: Text("Difficulty added successfully")),
         );
       }
       Navigator.pop(context);
@@ -96,20 +100,22 @@ class _AddDifficultyScreenState extends State<AddDifficultyScreen> {
             context: context,
             builder:
                 (context) => AlertDialog(
-                  title: Text("Discard Changes"),
-                  content: Text("Are you sure you want to discard changes?"),
+                  title: const Text("Discard Changes"),
+                  content: const Text(
+                    "Are you sure you want to discard changes?",
+                  ),
                   actions: [
                     TextButton(
                       onPressed: () {
                         Navigator.pop(context, false);
                       },
-                      child: Text("Cancel"),
+                      child: const Text("Cancel"),
                     ),
                     TextButton(
                       onPressed: () {
                         Navigator.pop(context, true);
                       },
-                      child: Text(
+                      child: const Text(
                         "Discard",
                         style: TextStyle(color: AppTheme.red),
                       ),
@@ -124,121 +130,119 @@ class _AddDifficultyScreenState extends State<AddDifficultyScreen> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: _onWillPop,
-      child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: AppTheme.white,
-          title: Text(
-            widget.difficulty != null ? "Edit Difficulty" : "Add Difficulty",
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
+  Widget build(BuildContext context) => WillPopScope(
+    onWillPop: _onWillPop,
+    child: Scaffold(
+      appBar: AppBar(
+        backgroundColor: AppTheme.white,
+        title: Text(
+          widget.difficulty != null ? "Edit Difficulty" : "Add Difficulty",
+          style: const TextStyle(fontWeight: FontWeight.bold),
         ),
-        body: SingleChildScrollView(
-          child: Padding(
-            padding: EdgeInsets.all(20),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Difficulty Details",
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: AppTheme.text,
-                    ),
+      ),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  "Difficulty Details",
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: AppTheme.text,
                   ),
-                  SizedBox(height: 8),
-                  Text(
-                    "Create a new difficulty for organizing your quizzes",
-                    style: TextStyle(fontSize: 14, color: AppTheme.text2),
-                  ),
-                  SizedBox(height: 24),
-                  TextFormField(
-                    controller: _nameController,
-                    decoration: InputDecoration(
-                      contentPadding: EdgeInsets.symmetric(vertical: 20),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: AppTheme.primary,
-                          width: 0.0,
-                        ),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      labelText: "Difficulty Name",
-                      hintText: "Enter difficulty name",
-                      prefixIcon: Icon(
-                        Icons.category_rounded,
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  "Create a new difficulty for organizing your quizzes",
+                  style: TextStyle(fontSize: 14, color: AppTheme.text2),
+                ),
+                const SizedBox(height: 24),
+                TextFormField(
+                  controller: _nameController,
+                  decoration: InputDecoration(
+                    contentPadding: const EdgeInsets.symmetric(vertical: 20),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(
                         color: AppTheme.primary,
+                        width: 0.0,
                       ),
+                      borderRadius: BorderRadius.circular(12),
                     ),
-                    validator:
-                        (value) =>
-                            value!.isEmpty ? "Enter difficulty name" : null,
-                    textInputAction: TextInputAction.next,
+                    labelText: "Difficulty Name",
+                    hintText: "Enter difficulty name",
+                    prefixIcon: const Icon(
+                      Icons.category_rounded,
+                      color: AppTheme.primary,
+                    ),
                   ),
-                  SizedBox(height: 20),
-                  TextFormField(
-                    controller: _descriptionController,
-                    decoration: InputDecoration(
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: AppTheme.primary,
-                          width: 0.0,
-                        ),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      labelText: "Description",
-                      hintText: "Enter description",
-                      prefixIcon: Icon(
-                        Icons.description_rounded,
+                  validator:
+                      (value) =>
+                          value!.isEmpty ? "Enter difficulty name" : null,
+                  textInputAction: TextInputAction.next,
+                ),
+                const SizedBox(height: 20),
+                TextFormField(
+                  controller: _descriptionController,
+                  decoration: InputDecoration(
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(
                         color: AppTheme.primary,
+                        width: 0.0,
                       ),
-                      alignLabelWithHint: true,
+                      borderRadius: BorderRadius.circular(12),
                     ),
-                    maxLines: 3,
-                    validator:
-                        (value) => value!.isEmpty ? "Enter description" : null,
-                    textInputAction: TextInputAction.next,
+                    labelText: "Description",
+                    hintText: "Enter description",
+                    prefixIcon: const Icon(
+                      Icons.description_rounded,
+                      color: AppTheme.primary,
+                    ),
+                    alignLabelWithHint: true,
                   ),
-                  SizedBox(height: 32),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 50,
-                    child: ElevatedButton(
-                      onPressed: _isLoading ? null : _saveDifficulty,
-                      child:
-                          _isLoading
-                              ? SizedBox(
-                                height: 20,
-                                width: 20,
-                                child: CircularProgressIndicator(
-                                  valueColor: AlwaysStoppedAnimation<Color>(
-                                    AppTheme.white,
-                                  ),
-                                  strokeWidth: 2,
+                  maxLines: 3,
+                  validator:
+                      (value) => value!.isEmpty ? "Enter description" : null,
+                  textInputAction: TextInputAction.next,
+                ),
+                const SizedBox(height: 32),
+                SizedBox(
+                  width: double.infinity,
+                  height: 50,
+                  child: ElevatedButton(
+                    onPressed: _isLoading ? null : _saveDifficulty,
+                    child:
+                        _isLoading
+                            ? const SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  AppTheme.white,
                                 ),
-                              )
-                              : Text(
-                                widget.difficulty != null
-                                    ? "Update Difficulty"
-                                    : "Add Difficulty",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                ),
+                                strokeWidth: 2,
                               ),
-                    ),
+                            )
+                            : Text(
+                              widget.difficulty != null
+                                  ? "Update Difficulty"
+                                  : "Add Difficulty",
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
 }
