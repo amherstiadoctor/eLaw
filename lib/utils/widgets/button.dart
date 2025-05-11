@@ -174,7 +174,7 @@ class _Button extends StatelessWidget {
                     children: [
                       Text(
                         text,
-                        textScaleFactor: 1.responsiveW,
+                        textScaler: TextScaler.linear(1.responsiveW),
                         style:
                             getStyleMap(
                               status,
@@ -239,7 +239,7 @@ class _Button extends StatelessWidget {
                     children: [
                       Text(
                         text,
-                        textScaleFactor: 1.responsiveW,
+                        textScaler: TextScaler.linear(1.responsiveW),
                         style:
                             getStyleMap(
                               status,
@@ -282,15 +282,15 @@ class SmallButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => _Button(
-      status: status,
-      text: text,
-      icon: icon,
-      onClick: onClick,
-      background: background,
-      color: color,
-      isEmptyBackground: isEmptyBackground,
-      size: 'small',
-    );
+    status: status,
+    text: text,
+    icon: icon,
+    onClick: onClick,
+    background: background,
+    color: color,
+    isEmptyBackground: isEmptyBackground,
+    size: 'small',
+  );
 }
 
 class MediumButton extends StatelessWidget {
@@ -317,16 +317,16 @@ class MediumButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => _Button(
-      status: status,
-      text: text,
-      icon: icon,
-      width: width.responsiveW,
-      onClick: onClick,
-      background: background,
-      color: color,
-      isEmptyBackground: isEmptyBackground,
-      size: 'medium',
-    );
+    status: status,
+    text: text,
+    icon: icon,
+    width: width.responsiveW,
+    onClick: onClick,
+    background: background,
+    color: color,
+    isEmptyBackground: isEmptyBackground,
+    size: 'medium',
+  );
 }
 
 class LargeButton extends StatelessWidget {
@@ -351,13 +351,13 @@ class LargeButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => _Button(
-      status: status,
-      text: text,
-      icon: icon,
-      onClick: onClick,
-      background: background,
-      color: color,
-      isEmptyBackground: isEmptyBackground,
-      size: 'large',
-    );
+    status: status,
+    text: text,
+    icon: icon,
+    onClick: onClick,
+    background: background,
+    color: color,
+    isEmptyBackground: isEmptyBackground,
+    size: 'large',
+  );
 }

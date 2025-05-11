@@ -23,19 +23,21 @@ class _FriendRequestTabsState extends State<FriendRequestTabs>
   TabController? _tabController;
   int _selectedIndex = 0;
 
-  Stream<List<Map<String, dynamic>>> getSentFriendRequestsData() => FirebaseFirestore.instance
-        .collection('friendRequests')
-        .where('senderId', isEqualTo: widget.currentUser['id'])
-        .where('status', isEqualTo: "pending")
-        .snapshots()
-        .map((snapshot) => snapshot.docs.map((doc) => doc.data()).toList());
+  Stream<List<Map<String, dynamic>>> getSentFriendRequestsData() =>
+      FirebaseFirestore.instance
+          .collection('friendRequests')
+          .where('senderId', isEqualTo: widget.currentUser['id'])
+          .where('status', isEqualTo: "pending")
+          .snapshots()
+          .map((snapshot) => snapshot.docs.map((doc) => doc.data()).toList());
 
-  Stream<List<Map<String, dynamic>>> getReceivedFriendRequestsData() => FirebaseFirestore.instance
-        .collection('friendRequests')
-        .where('receiverId', isEqualTo: widget.currentUser['id'])
-        .where('status', isEqualTo: "pending")
-        .snapshots()
-        .map((snapshot) => snapshot.docs.map((doc) => doc.data()).toList());
+  Stream<List<Map<String, dynamic>>> getReceivedFriendRequestsData() =>
+      FirebaseFirestore.instance
+          .collection('friendRequests')
+          .where('receiverId', isEqualTo: widget.currentUser['id'])
+          .where('status', isEqualTo: "pending")
+          .snapshots()
+          .map((snapshot) => snapshot.docs.map((doc) => doc.data()).toList());
 
   Future<void> _handleRequestAction(
     String action,
@@ -63,7 +65,10 @@ class _FriendRequestTabsState extends State<FriendRequestTabs>
                   onPressed: () {
                     Navigator.pop(context, true);
                   },
-                  child: const Text("Yes", style: TextStyle(color: AppTheme.red)),
+                  child: const Text(
+                    "Yes",
+                    style: TextStyle(color: AppTheme.red),
+                  ),
                 ),
               ],
             ),
@@ -97,7 +102,10 @@ class _FriendRequestTabsState extends State<FriendRequestTabs>
                   onPressed: () {
                     Navigator.pop(context, true);
                   },
-                  child: const Text("Yes", style: TextStyle(color: AppTheme.red)),
+                  child: const Text(
+                    "Yes",
+                    style: TextStyle(color: AppTheme.red),
+                  ),
                 ),
               ],
             ),
@@ -142,121 +150,133 @@ class _FriendRequestTabsState extends State<FriendRequestTabs>
     required Map<String, dynamic> friendRequest,
     required bool isReceived,
   }) => StreamBuilder(
-      stream:
-          isReceived
-              ? FirebaseFirestore.instance
-                  .collection("Users")
-                  .doc(friendRequest['senderId'])
-                  .snapshots()
-              : FirebaseFirestore.instance
-                  .collection("Users")
-                  .doc(friendRequest['receiverId'])
-                  .snapshots(),
-      builder: (context, snapshot) {
-        if (!snapshot.hasData) {
-          return const Center(child: CircularProgressIndicator());
-        }
+    stream:
+        isReceived
+            ? FirebaseFirestore.instance
+                .collection("Users")
+                .doc(friendRequest['senderId'])
+                .snapshots()
+            : FirebaseFirestore.instance
+                .collection("Users")
+                .doc(friendRequest['receiverId'])
+                .snapshots(),
+    builder: (context, snapshot) {
+      if (!snapshot.hasData) {
+        return const Center(child: CircularProgressIndicator());
+      }
 
-        final foundUser = snapshot.data as DocumentSnapshot;
+      final foundUser = snapshot.data as DocumentSnapshot;
 
-        return Card(
-              margin: const EdgeInsets.only(bottom: 12),
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: AppTheme.primary),
-                ),
-                child: ListTile(
-                  contentPadding: const EdgeInsets.all(16),
-                  leading: Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: AppTheme.primary.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: const Icon(
-                      Icons.account_circle_outlined,
-                      color: AppTheme.primary,
-                    ),
-                  ),
-                  title: Text(
-                    "${foundUser['firstName']} ${foundUser['lastName']}",
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                  ),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 8),
-                      Row(
-                        children: [
-                          Text(
-                            friendRequest['status'] == "pending"
-                                ? "Friend request pending"
-                                : "",
-                            style: const TextStyle(fontSize: 12),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  trailing: PopupMenuButton(
-                    itemBuilder:
-                        (context) => [
-                          isReceived
-                              ? const PopupMenuItem(
-                                value: "accept",
-                                child: ListTile(
-                                  contentPadding: EdgeInsets.zero,
-                                  leading: Icon(
-                                    Icons.check_circle_outline,
-                                    color: AppTheme.green,
-                                  ),
-                                  title: Text("Accept"),
-                                ),
-                              )
-                              : PopupMenuItem(child: Container()),
-                          PopupMenuItem(
-                            value: "delete",
-                            child: ListTile(
-                              contentPadding: EdgeInsets.zero,
-                              leading: const Icon(Icons.delete, color: AppTheme.red),
-                              title:
-                                  isReceived ? const Text("Reject") : const Text("Cancel"),
-                            ),
-                          ),
-                        ],
-                    onSelected:
-                        (value) => _handleRequestAction(
-                          value,
-                          friendRequest,
-                          context,
-                          foundUser,
-                        ),
-                  ),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder:
-                            (context) => UserProfileScreen(
-                              friendId:
-                                  isReceived
-                                      ? friendRequest['senderId']
-                                      : friendRequest['receiverId'],
-                              currentUser: widget.currentUser,
-                              isReceived: isReceived,
-                            ),
-                      ),
-                    );
-                  },
-                ),
+      return Card(
+            margin: const EdgeInsets.only(bottom: 12),
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: AppTheme.primary),
               ),
-            )
-            .animate(delay: Duration(milliseconds: 100 * index))
-            .slideY(begin: 0.5, end: 0, duration: const Duration(milliseconds: 300))
-            .fadeIn();
-      },
-    );
+              child: ListTile(
+                contentPadding: const EdgeInsets.all(16),
+                leading: Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: AppTheme.primaryTint,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(
+                    Icons.account_circle_outlined,
+                    color: AppTheme.primary,
+                  ),
+                ),
+                title: Text(
+                  "${foundUser['firstName']} ${foundUser['lastName']}",
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Text(
+                          friendRequest['status'] == "pending"
+                              ? "Friend request pending"
+                              : "",
+                          style: const TextStyle(fontSize: 12),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                trailing: PopupMenuButton(
+                  itemBuilder:
+                      (context) => [
+                        isReceived
+                            ? const PopupMenuItem(
+                              value: "accept",
+                              child: ListTile(
+                                contentPadding: EdgeInsets.zero,
+                                leading: Icon(
+                                  Icons.check_circle_outline,
+                                  color: AppTheme.green,
+                                ),
+                                title: Text("Accept"),
+                              ),
+                            )
+                            : PopupMenuItem(child: Container()),
+                        PopupMenuItem(
+                          value: "delete",
+                          child: ListTile(
+                            contentPadding: EdgeInsets.zero,
+                            leading: const Icon(
+                              Icons.delete,
+                              color: AppTheme.red,
+                            ),
+                            title:
+                                isReceived
+                                    ? const Text("Reject")
+                                    : const Text("Cancel"),
+                          ),
+                        ),
+                      ],
+                  onSelected:
+                      (value) => _handleRequestAction(
+                        value,
+                        friendRequest,
+                        context,
+                        foundUser,
+                      ),
+                ),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder:
+                          (context) => UserProfileScreen(
+                            friendId:
+                                isReceived
+                                    ? friendRequest['senderId']
+                                    : friendRequest['receiverId'],
+                            currentUser: widget.currentUser,
+                            isReceived: isReceived,
+                          ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          )
+          .animate(delay: Duration(milliseconds: 100 * index))
+          .slideY(
+            begin: 0.5,
+            end: 0,
+            duration: const Duration(milliseconds: 300),
+          )
+          .fadeIn();
+    },
+  );
 
   @override
   void initState() {
@@ -272,116 +292,116 @@ class _FriendRequestTabsState extends State<FriendRequestTabs>
 
   @override
   Widget build(BuildContext context) => Column(
-      children: [
-        TabBar(
+    children: [
+      TabBar(
+        controller: _tabController,
+        indicator: CircleTabIndicator(color: AppTheme.primary, radius: 3),
+        labelColor: AppTheme.primary,
+        unselectedLabelColor: AppTheme.grey3,
+        unselectedLabelStyle: const TextStyle(color: AppTheme.grey2),
+        tabs: const [Tab(text: "Received"), Tab(text: "Sent")],
+        dividerHeight: 0,
+      ),
+      const SizedBox(height: 10),
+      Container(
+        height: 600,
+        decoration: const BoxDecoration(color: AppTheme.grey1),
+        child: TabBarView(
           controller: _tabController,
-          indicator: CircleTabIndicator(color: AppTheme.primary, radius: 3),
-          labelColor: AppTheme.primary,
-          unselectedLabelColor: AppTheme.grey3,
-          unselectedLabelStyle: const TextStyle(color: AppTheme.grey2),
-          tabs: const [Tab(text: "Received"), Tab(text: "Sent")],
-          dividerHeight: 0,
-        ),
-        const SizedBox(height: 10),
-        Container(
-          height: 600,
-          decoration: const BoxDecoration(color: AppTheme.grey1),
-          child: TabBarView(
-            controller: _tabController,
-            children: [
-              isLoading
-                  ? const Center(
-                    child: SizedBox(
-                      height: 50,
-                      child: CircularProgressIndicator(),
-                    ),
-                  )
-                  : StreamBuilder(
-                    stream: getReceivedFriendRequestsData(),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(child: CircularProgressIndicator());
-                      }
-                      final requests = snapshot.data;
-                      if (requests!.isEmpty) {
-                        return const Center(child: Text("No requests found"));
-                      }
-                      return Column(
-                        children: [
-                          SingleChildScrollView(
-                            child: Padding(
-                              padding: const EdgeInsets.only(
-                                right: 16,
-                                left: 16,
-                                top: 16,
-                              ),
-                              child: ListView.builder(
-                                padding: EdgeInsets.zero,
-                                shrinkWrap: true,
-                                itemCount: requests.length,
-                                itemBuilder: (context, index) {
-                                  final friendRequest = requests[index];
-                                  return _buildRequestItem(
-                                    friendRequest: friendRequest,
-                                    index: index,
-                                    isReceived: true,
-                                  );
-                                },
-                              ),
+          children: [
+            isLoading
+                ? const Center(
+                  child: SizedBox(
+                    height: 50,
+                    child: CircularProgressIndicator(),
+                  ),
+                )
+                : StreamBuilder(
+                  stream: getReceivedFriendRequestsData(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    final requests = snapshot.data;
+                    if (requests!.isEmpty) {
+                      return const Center(child: Text("No requests found"));
+                    }
+                    return Column(
+                      children: [
+                        SingleChildScrollView(
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                              right: 16,
+                              left: 16,
+                              top: 16,
+                            ),
+                            child: ListView.builder(
+                              padding: EdgeInsets.zero,
+                              shrinkWrap: true,
+                              itemCount: requests.length,
+                              itemBuilder: (context, index) {
+                                final friendRequest = requests[index];
+                                return _buildRequestItem(
+                                  friendRequest: friendRequest,
+                                  index: index,
+                                  isReceived: true,
+                                );
+                              },
                             ),
                           ),
-                        ],
-                      );
-                    },
+                        ),
+                      ],
+                    );
+                  },
+                ),
+            isLoading
+                ? const Center(
+                  child: SizedBox(
+                    height: 50,
+                    child: CircularProgressIndicator(),
                   ),
-              isLoading
-                  ? const Center(
-                    child: SizedBox(
-                      height: 50,
-                      child: CircularProgressIndicator(),
-                    ),
-                  )
-                  : StreamBuilder(
-                    stream: getSentFriendRequestsData(),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(child: CircularProgressIndicator());
-                      }
-                      final requests = snapshot.data;
-                      if (requests!.isEmpty) {
-                        return const Center(child: Text("No requests found"));
-                      }
-                      return Column(
-                        children: [
-                          SingleChildScrollView(
-                            child: Padding(
-                              padding: const EdgeInsets.only(
-                                right: 16,
-                                left: 16,
-                                top: 16,
-                              ),
-                              child: ListView.builder(
-                                padding: EdgeInsets.zero,
-                                shrinkWrap: true,
-                                itemCount: requests.length,
-                                itemBuilder: (context, index) {
-                                  final friendRequest = requests[index];
-                                  return _buildRequestItem(
-                                    friendRequest: friendRequest,
-                                    index: index,
-                                    isReceived: false,
-                                  );
-                                },
-                              ),
+                )
+                : StreamBuilder(
+                  stream: getSentFriendRequestsData(),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    final requests = snapshot.data;
+                    if (requests!.isEmpty) {
+                      return const Center(child: Text("No requests found"));
+                    }
+                    return Column(
+                      children: [
+                        SingleChildScrollView(
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                              right: 16,
+                              left: 16,
+                              top: 16,
+                            ),
+                            child: ListView.builder(
+                              padding: EdgeInsets.zero,
+                              shrinkWrap: true,
+                              itemCount: requests.length,
+                              itemBuilder: (context, index) {
+                                final friendRequest = requests[index];
+                                return _buildRequestItem(
+                                  friendRequest: friendRequest,
+                                  index: index,
+                                  isReceived: false,
+                                );
+                              },
                             ),
                           ),
-                        ],
-                      );
-                    },
-                  ),
-            ],
-          ),
+                        ),
+                      ],
+                    );
+                  },
+                ),
+          ],
         ),
-      ],
-    );
+      ),
+    ],
+  );
 }

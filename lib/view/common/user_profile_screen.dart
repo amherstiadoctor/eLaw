@@ -7,7 +7,7 @@ import 'package:sp_code/utils/get_message.dart';
 import 'package:sp_code/utils/widgets/header.dart';
 
 class UserProfileScreen extends StatefulWidget {
-  UserProfileScreen({
+  const UserProfileScreen({
     super.key,
     required this.friendId,
     required this.currentUser,
@@ -15,7 +15,7 @@ class UserProfileScreen extends StatefulWidget {
   });
   final String friendId;
   final Map<String, dynamic> currentUser;
-  bool isReceived;
+  final bool isReceived;
 
   @override
   State<UserProfileScreen> createState() => _UserProfileScreenState();

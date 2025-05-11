@@ -74,7 +74,11 @@ class _InputState extends State<Input> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(widget.label, style: labelStyle, textScaleFactor: 1.responsiveW),
+        Text(
+          widget.label,
+          style: labelStyle,
+          textScaler: TextScaler.linear(1.responsiveW),
+        ),
         Row(
           children: [
             Expanded(
