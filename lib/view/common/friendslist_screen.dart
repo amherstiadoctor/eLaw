@@ -6,8 +6,8 @@ import 'package:sp_code/config/responsive_sizer/responsive_sizer.dart';
 import 'package:sp_code/config/svg_images.dart';
 import 'package:sp_code/config/theme.dart';
 import 'package:sp_code/model/user_entity.dart';
-// import 'package:sp_code/utils/widgets/fields.dart';
 import 'package:sp_code/utils/widgets/header.dart';
+import 'package:sp_code/view/common/friend_requests_screen.dart';
 import 'package:sp_code/view/common/user_profile_screen.dart';
 
 class FriendslistScreen extends StatefulWidget {
@@ -21,6 +21,25 @@ class FriendslistScreen extends StatefulWidget {
 class _FriendslistScreenState extends State<FriendslistScreen> {
   final TextEditingController _searchController = TextEditingController();
   var searchUser = "";
+  Map<String, dynamic> useThis = {};
+  Map<String, dynamic> useThat = {};
+
+  Future<void> fetchCurrentUserFromFirestore() async {
+    final snapshot =
+        await FirebaseFirestore.instance
+            .collection('Users')
+            .where('email', isEqualTo: widget.loggedInUser.email)
+            .limit(1)
+            .get();
+
+    if (snapshot.docs.isEmpty) return;
+
+    final data = snapshot.docs.first.data();
+    setState(() {
+      useThat = data;
+    });
+  }
+
   _buildFriendItem({
     required String friendId,
     required int index,
@@ -190,11 +209,63 @@ class _FriendslistScreenState extends State<FriendslistScreen> {
   );
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    fetchCurrentUserFromFirestore();
+  }
+
+  @override
   Widget build(BuildContext context) => Scaffold(
     backgroundColor: AppTheme.primary,
     body: Stack(
       children: [
-        const Header(title: "Friends List", color: AppTheme.white),
+        StreamBuilder(
+          stream: FirebaseFirestore.instance
+              .collection('friendRequests')
+              .where('receiverId', isEqualTo: useThis['id'])
+              .where('status', isEqualTo: "pending")
+              .snapshots()
+              .map(
+                (snapshot) => snapshot.docs.map((doc) => doc.data()).toList(),
+              ),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            final requests = snapshot.data;
+            if (requests!.isEmpty) {
+              return Header(
+                title: "Friends List",
+                color: AppTheme.white,
+                has3rdIcon: true,
+                onButtonPress: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder:
+                          (context) =>
+                              FriendRequestsScreen(currentUser: useThis),
+                    ),
+                  );
+                },
+              );
+            }
+            return Header(
+              title: "Friends List",
+              color: AppTheme.white,
+              has3rdIcon: true,
+              hasRequests: true,
+              onButtonPress: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder:
+                        (context) => FriendRequestsScreen(currentUser: useThis),
+                  ),
+                );
+              },
+            );
+          },
+        ),
         Padding(
           padding: EdgeInsets.fromLTRB(20, 110.responsiveW, 20, 0),
           child: Container(
@@ -245,9 +316,6 @@ class _FriendslistScreenState extends State<FriendslistScreen> {
                         fontWeight: FontWeight.w400,
                         color: AppTheme.grey3,
                       ),
-                      // suffixIconConstraints: BoxConstraints.tight(
-                      //   Size(30.responsiveW, 30.responsiveH),
-                      // ),
                       suffixIcon:
                           _searchController.text.isNotEmpty
                               ? IconButton(
@@ -298,6 +366,7 @@ class _FriendslistScreenState extends State<FriendslistScreen> {
                 final fetchedDocs = snapshot.data!.docs;
                 final currentUser =
                     fetchedDocs[0].data() as Map<String, dynamic>;
+                useThis = currentUser;
                 final friendsList = currentUser['friends'];
                 if (friendsList.isEmpty && searchUser == "") {
                   return const Center(child: Text("No friends yet!"));
