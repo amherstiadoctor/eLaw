@@ -4,7 +4,6 @@ import 'package:sp_code/model/flashcard.dart';
 
 //ignore: must_be_immutable
 class FlipCard extends StatefulWidget {
-
   FlipCard({
     super.key,
     this.flashcardTitleController,
@@ -68,11 +67,12 @@ class _FlipCardState extends State<FlipCard>
 
   @override
   Widget build(BuildContext context) => Center(
-      child: GestureDetector(
-        onTap: _toggleCard,
-        child: AnimatedBuilder(
-          animation: _animation,
-          builder: (context, child) => Transform(
+    child: GestureDetector(
+      onTap: _toggleCard,
+      child: AnimatedBuilder(
+        animation: _animation,
+        builder:
+            (context, child) => Transform(
               transform: Matrix4.rotationY(_animation.value * 3.14159),
               alignment: Alignment.center,
               child:
@@ -92,9 +92,9 @@ class _FlipCardState extends State<FlipCard>
                         ),
                       ),
             ),
-        ),
       ),
-    );
+    ),
+  );
 }
 
 Widget _buildFrontCard(
@@ -102,86 +102,92 @@ Widget _buildFrontCard(
   bool isView,
   String? info,
 ) => Container(
-    padding: const EdgeInsets.symmetric(horizontal: 16),
-    width: 300,
-    height: 500,
-    decoration: BoxDecoration(
-      color: AppTheme.white,
-      borderRadius: BorderRadius.circular(10),
-      border: Border.all(color: AppTheme.primaryShade),
-    ),
-    alignment: Alignment.center,
-    child:
-        isView
-            ? Text(
-              info ?? "Front",
-              style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: AppTheme.text,
-              ),
-              textAlign: TextAlign.center,
-            )
-            : TextFormField(
-              controller: controller,
-              decoration: InputDecoration(
-                enabledBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(color: AppTheme.primary, width: 0.0),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                labelText: "Front Info",
-                hintText: "Enter front info",
-                errorBorder: const OutlineInputBorder(
-                  borderSide: BorderSide(color: AppTheme.red),
-                ),
-              ),
-              maxLines: 10,
-              validator: (value) => value!.isEmpty ? "Enter info" : null,
-              textInputAction: TextInputAction.next,
+  padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
+  width: 300,
+  height: 500,
+  decoration: BoxDecoration(
+    color: AppTheme.white,
+    borderRadius: BorderRadius.circular(10),
+    border: Border.all(color: AppTheme.primaryShade),
+  ),
+  alignment: Alignment.topCenter,
+  child:
+      isView
+          ? Text(
+            info ?? "Front",
+            style: const TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: AppTheme.text,
             ),
-  );
+            textAlign: TextAlign.center,
+          )
+          : TextFormField(
+            controller: controller,
+            decoration: InputDecoration(
+              enabledBorder: OutlineInputBorder(
+                borderSide: const BorderSide(
+                  color: AppTheme.primary,
+                  width: 0.0,
+                ),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              labelText: "Front Info",
+              hintText: "Enter front info",
+              errorBorder: const OutlineInputBorder(
+                borderSide: BorderSide(color: AppTheme.red),
+              ),
+            ),
+            maxLines: 10,
+            validator: (value) => value!.isEmpty ? "Enter info" : null,
+            textInputAction: TextInputAction.next,
+          ),
+);
 
 Widget _buildBackCard(
   TextEditingController? controller,
   bool isView,
   String? info,
 ) => Container(
-    padding: const EdgeInsets.symmetric(horizontal: 16),
-    width: 300,
-    height: 500,
-    decoration: BoxDecoration(
-      color: AppTheme.white,
-      borderRadius: BorderRadius.circular(10),
-      border: Border.all(color: AppTheme.primaryShade),
-    ),
-    alignment: Alignment.center,
-    child:
-        isView
-            ? Text(
-              info ?? "Back",
-              style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: AppTheme.text,
-              ),
-              textAlign: TextAlign.center,
-            )
-            : TextFormField(
-              controller: controller,
-              decoration: InputDecoration(
-                enabledBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(color: AppTheme.primary, width: 0.0),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                labelText: "Back Info",
-                hintText: "Back front info",
-
-                errorBorder: const OutlineInputBorder(
-                  borderSide: BorderSide(color: AppTheme.red),
-                ),
-              ),
-              maxLines: 10,
-              validator: (value) => value!.isEmpty ? "Enter info" : null,
-              textInputAction: TextInputAction.next,
+  padding: const EdgeInsets.only(top: 16, left: 16, right: 16),
+  width: 300,
+  height: 500,
+  decoration: BoxDecoration(
+    color: AppTheme.white,
+    borderRadius: BorderRadius.circular(10),
+    border: Border.all(color: AppTheme.primaryShade),
+  ),
+  alignment: Alignment.topCenter,
+  child:
+      isView
+          ? Text(
+            info ?? "Back",
+            style: const TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: AppTheme.text,
             ),
-  );
+            textAlign: TextAlign.center,
+          )
+          : TextFormField(
+            controller: controller,
+            decoration: InputDecoration(
+              enabledBorder: OutlineInputBorder(
+                borderSide: const BorderSide(
+                  color: AppTheme.primary,
+                  width: 0.0,
+                ),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              labelText: "Back Info",
+              hintText: "Back front info",
+
+              errorBorder: const OutlineInputBorder(
+                borderSide: BorderSide(color: AppTheme.red),
+              ),
+            ),
+            maxLines: 10,
+            validator: (value) => value!.isEmpty ? "Enter info" : null,
+            textInputAction: TextInputAction.next,
+          ),
+);
