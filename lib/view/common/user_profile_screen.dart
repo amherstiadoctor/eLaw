@@ -167,7 +167,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
 
   Future<void> _removeFriend({
     required Map<String, dynamic> currentUser,
-    required DocumentSnapshot currentFriend,
+    required Map<String, dynamic> currentFriend,
   }) async {
     final confirm = await showDialog<bool>(
       context: context,
@@ -197,7 +197,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
 
     if (confirm == true) {
       currentUser['friends'].remove(widget.friendId);
-      currentFriend['friends'].remove(widget.currentUser['id']);
+      currentFriend['friends'].remove(currentUser['id']);
       await _firestore.collection("Users").doc(currentUser['id']).update({
         'friends': currentUser['friends'],
       });
@@ -246,8 +246,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         if (!snapshot.hasData) {
           return const Center(child: Text("No user found."));
         }
-
-        final currentFriend = snapshot.data as DocumentSnapshot;
+        final doc = snapshot.data!;
+        final currentFriend = doc.data() as Map<String, dynamic>;
 
         return SingleChildScrollView(
           child: Stack(

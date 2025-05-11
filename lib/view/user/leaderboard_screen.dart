@@ -276,183 +276,154 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                   color: AppTheme.white,
                 ),
               ),
-              flexibleSpace:
-                  topThree.isNotEmpty
-                      ? FlexibleSpaceBar(
-                        background: Container(
-                          margin: const EdgeInsets.only(top: 90),
+              flexibleSpace: FlexibleSpaceBar(
+                background: Container(
+                  margin: const EdgeInsets.only(top: 90),
 
-                          child: Column(
-                            children: [
-                              Container(
-                                width: 200.responsiveW,
+                  child: Column(
+                    children: [
+                      Container(
+                        width: 200.responsiveW,
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 5,
+                          horizontal: 5,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppTheme.secondaryTint,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: List.generate(tabs.length, (index) {
+                            final isSelected = index == selectedIndex;
+                            return GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  selectedIndex = index;
+                                });
+                              },
+                              child: Container(
                                 padding: const EdgeInsets.symmetric(
-                                  vertical: 5,
-                                  horizontal: 5,
+                                  horizontal: 20,
+                                  vertical: 8,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: AppTheme.secondaryTint,
+                                  color:
+                                      isSelected
+                                          ? AppTheme.secondaryShade
+                                          : Colors.transparent,
                                   borderRadius: BorderRadius.circular(20),
                                 ),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: List.generate(tabs.length, (index) {
-                                    final isSelected = index == selectedIndex;
-                                    return GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          selectedIndex = index;
-                                        });
-                                      },
-                                      child: Container(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 20,
-                                          vertical: 8,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color:
-                                              isSelected
-                                                  ? AppTheme.secondaryShade
-                                                  : Colors.transparent,
-                                          borderRadius: BorderRadius.circular(
-                                            20,
-                                          ),
-                                        ),
-                                        child: Text(
-                                          tabs[index],
-                                          style: TextStyle(
-                                            color:
-                                                isSelected
-                                                    ? AppTheme.white
-                                                    : Colors.brown[300],
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
-                                      ),
-                                    );
-                                  }),
+                                child: Text(
+                                  tabs[index],
+                                  style: TextStyle(
+                                    color:
+                                        isSelected
+                                            ? AppTheme.white
+                                            : Colors.brown[300],
+                                    fontWeight: FontWeight.w600,
+                                  ),
                                 ),
                               ),
-                              selectedIndex == 0
-                                  ? Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
-                                    children: [
-                                      _buildTopUser(topThree[1], 2, context),
-                                      _buildTopUser(topThree[0], 1, context),
-                                      _buildTopUser(topThree[2], 3, context),
-                                    ],
-                                  )
-                                  : topThreeFriends.length == 1
-                                  ? Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
-                                    children: [
-                                      _buildTopUser(
-                                        topThreeFriends[0],
-                                        1,
-                                        context,
-                                      ),
-                                    ],
-                                  )
-                                  : topThreeFriends.length == 2
-                                  ? Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
-                                    children: [
-                                      _buildTopUser(
-                                        topThreeFriends[1],
-                                        2,
-                                        context,
-                                      ),
-                                      _buildTopUser(
-                                        topThreeFriends[0],
-                                        1,
-                                        context,
-                                      ),
-                                    ],
-                                  )
-                                  : Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
-                                    children: [
-                                      _buildTopUser(
-                                        topThreeFriends[1],
-                                        2,
-                                        context,
-                                      ),
-                                      _buildTopUser(
-                                        topThreeFriends[0],
-                                        1,
-                                        context,
-                                      ),
-                                      _buildTopUser(
-                                        topThreeFriends[2],
-                                        3,
-                                        context,
-                                      ),
-                                    ],
-                                  ),
+                            );
+                          }),
+                        ),
+                      ),
+                      selectedIndex == 0 && topThree.length > 3
+                          ? Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              _buildTopUser(topThree[1], 2, context),
+                              _buildTopUser(topThree[0], 1, context),
+                              _buildTopUser(topThree[2], 3, context),
                             ],
-                          ),
-                        ),
-                      )
-                      : FlexibleSpaceBar(
-                        background: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: const Center(
-                            child: Text(
-                              "No Rankings Yet!\nGo Rack Up Your Points!",
-                              style: TextStyle(
-                                color: AppTheme.white,
-                                fontSize: 24,
-                              ),
-                              textAlign: TextAlign.center,
+                          )
+                          : selectedIndex == 0 && topThree.length < 3
+                          ? Container(
+                            padding: const EdgeInsets.only(
+                              top: 50,
+                              right: 16,
+                              left: 16,
                             ),
-                          ),
-                        ),
-                      ),
+                            child: const Center(
+                              child: Text(
+                                "No rankings yet!\nComplete quizzes to rack up your points!",
+                                style: TextStyle(
+                                  color: AppTheme.white,
+                                  fontSize: 24,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          )
+                          : selectedIndex == 1 && topThreeFriends.length == 1
+                          ? Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              _buildTopUser(topThreeFriends[0], 1, context),
+                            ],
+                          )
+                          : selectedIndex == 1 && topThreeFriends.length == 2
+                          ? Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              _buildTopUser(topThreeFriends[1], 2, context),
+                              _buildTopUser(topThreeFriends[0], 1, context),
+                            ],
+                          )
+                          : selectedIndex == 1 && topThreeFriends == 3
+                          ? Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              _buildTopUser(topThreeFriends[1], 2, context),
+                              _buildTopUser(topThreeFriends[0], 1, context),
+                              _buildTopUser(topThreeFriends[2], 3, context),
+                            ],
+                          )
+                          : Container(),
+                    ],
+                  ),
+                ),
+              ),
             ),
-            remainingUsers.isNotEmpty
-                ? selectedIndex == 1
-                    ? SliverToBoxAdapter(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: ListView.builder(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: remainingUsers.length,
-                          itemBuilder: (context, index) {
-                            final remainingUser = remainingUsers[index];
-                            return _buildUserItem(
-                              user: remainingUser,
-                              color: AppTheme.primary,
-                              index: index,
-                            );
-                          },
-                        ),
-                      ),
-                    )
-                    : userFriends.isNotEmpty
-                    ? SliverToBoxAdapter(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: ListView.builder(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount: remainingFriends.length,
-                          itemBuilder: (context, index) {
-                            final remainingFriend = remainingFriends[index];
-                            return _buildUserItem(
-                              user: remainingFriend,
-                              color: AppTheme.primary,
-                              index: index,
-                            );
-                          },
-                        ),
-                      ),
-                    )
-                    : const SliverToBoxAdapter()
+            remainingUsers.isNotEmpty && selectedIndex == 0
+                ? SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: remainingUsers.length,
+                      itemBuilder: (context, index) {
+                        final remainingUser = remainingUsers[index];
+                        return _buildUserItem(
+                          user: remainingUser,
+                          color: AppTheme.primary,
+                          index: index,
+                        );
+                      },
+                    ),
+                  ),
+                )
+                : userFriends.isNotEmpty
+                ? SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: remainingFriends.length,
+                      itemBuilder: (context, index) {
+                        final remainingFriend = remainingFriends[index];
+                        return _buildUserItem(
+                          user: remainingFriend,
+                          color: AppTheme.primary,
+                          index: index,
+                        );
+                      },
+                    ),
+                  ),
+                )
                 : const SliverToBoxAdapter(),
           ],
         );
