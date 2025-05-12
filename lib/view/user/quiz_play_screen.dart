@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+// import 'package:sp_code/config/responsive_sizer/responsive_sizer.dart';
 import 'package:sp_code/model/question.dart';
 import 'package:sp_code/model/quiz.dart';
 import 'package:sp_code/config/theme.dart';
@@ -424,68 +425,75 @@ class _QuizPlayScreenState extends State<QuizPlayScreen>
               ),
             ),
             const SizedBox(height: 24),
-            ...question.options.asMap().entries.map((entry) {
-              final optionIndex = entry.key;
-              final option = entry.value;
-              final isSelected = _selectedAnswers[index] == optionIndex;
-              final isCorrect =
-                  _selectedAnswers[index] == question.correctOptionIndex;
-
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8),
-                child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 300),
-                  decoration: BoxDecoration(
-                    color:
-                        isSelected
-                            ? isCorrect
-                                ? AppTheme.green.withOpacity(0.1)
-                                : AppTheme.red.withOpacity(0.1)
-                            : AppTheme.white,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color:
-                          isSelected
-                              ? isCorrect
-                                  ? AppTheme.green
-                                  : AppTheme.red
-                              : Colors.grey.shade300,
-                    ),
-                  ),
-                  child: ListTile(
-                    onTap:
-                        _selectedAnswers[index] == null
-                            ? () => _selectAnswer(optionIndex)
-                            : null,
-                    title: Text(
-                      option,
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
+            Flexible(
+              child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: question.options.length,
+                itemBuilder: (context, optionIndex) {
+                  final option = question.options[optionIndex];
+                  final isSelected = _selectedAnswers[index] == optionIndex;
+                  final isCorrect =
+                      _selectedAnswers[index] == question.correctOptionIndex;
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 300),
+                      decoration: BoxDecoration(
                         color:
                             isSelected
                                 ? isCorrect
-                                    ? AppTheme.green
-                                    : AppTheme.red
-                                : _selectedAnswers[index] != null
-                                ? Colors.grey.shade500
-                                : AppTheme.text,
+                                    ? AppTheme.green.withOpacity(0.1)
+                                    : AppTheme.red.withOpacity(0.1)
+                                : AppTheme.white,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(
+                          color:
+                              isSelected
+                                  ? isCorrect
+                                      ? AppTheme.green
+                                      : AppTheme.red
+                                  : Colors.grey.shade300,
+                        ),
+                      ),
+                      child: ListTile(
+                        onTap:
+                            _selectedAnswers[index] == null
+                                ? () => _selectAnswer(optionIndex)
+                                : null,
+                        title: Text(
+                          option,
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                            color:
+                                isSelected
+                                    ? isCorrect
+                                        ? AppTheme.green
+                                        : AppTheme.red
+                                    : _selectedAnswers[index] != null
+                                    ? Colors.grey.shade500
+                                    : AppTheme.text,
+                          ),
+                        ),
+                        trailing:
+                            isSelected
+                                ? isCorrect
+                                    ? const Icon(
+                                      Icons.check_circle_outline_rounded,
+                                      color: AppTheme.green,
+                                    )
+                                    : const Icon(
+                                      Icons.close,
+                                      color: AppTheme.red,
+                                    )
+                                : null,
                       ),
                     ),
-                    trailing:
-                        isSelected
-                            ? isCorrect
-                                ? const Icon(
-                                  Icons.check_circle_outline_rounded,
-                                  color: AppTheme.green,
-                                )
-                                : const Icon(Icons.close, color: AppTheme.red)
-                            : null,
-                  ),
-                ),
-              );
-            }),
-            const Spacer(),
+                  );
+                },
+              ),
+            ),
+            // const Spacer(),
             Visibility(
               visible: isOptionSelected,
               child: SizedBox(
