@@ -247,8 +247,11 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                 );
         }
 
-        final topThree = users.take(3).toList();
-        final remainingUsers = users.skip(3).toList();
+        final nonAdminUsers =
+            users.where((user) => user['role'] != 'admin').toList();
+
+        final topThree = nonAdminUsers.take(3).toList();
+        final remainingUsers = nonAdminUsers.skip(3).toList();
 
         final topThreeFriends = userFriends.take(3).toList();
         final remainingFriends = userFriends.skip(3).toList();

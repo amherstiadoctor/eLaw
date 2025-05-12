@@ -1,13 +1,21 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:sp_code/auth-service/auth.dart';
+import 'package:sp_code/auth-service/firebase_auth_service.dart';
 import 'package:sp_code/config/theme.dart';
 import 'package:sp_code/model/user_entity.dart';
 import 'package:sp_code/view/admin/manage_difficulties_screen.dart';
 import 'package:sp_code/view/admin/manage_quizzes_screen.dart';
+import 'package:sp_code/view/common/splash_screen.dart';
 
 class AdminHomeScreen extends StatefulWidget {
-  const AdminHomeScreen({super.key, required this.loggedInUser});
+  AdminHomeScreen({super.key, required this.loggedInUser});
   final UserEntity loggedInUser;
+
+  final AuthService _authService = FirebaseAuthService(
+    authService: FirebaseAuth.instance,
+  );
 
   @override
   State<AdminHomeScreen> createState() => _AdminHomeScreenState();
@@ -141,6 +149,10 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
       return 'Afternoon';
     }
     return 'Evening';
+  }
+
+  handleSignOut() async {
+    await widget._authService.onSignOut();
   }
 
   @override
@@ -465,6 +477,73 @@ class _AdminHomeScreenState extends State<AdminHomeScreen> {
                           ],
                         ),
                       ],
+                    ),
+                  ),
+                ),
+                Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: InkWell(
+                      onTap: () {
+                        handleSignOut();
+                        Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute(
+                            builder: (context) => SplashScreen(),
+                          ),
+                          (route) => false,
+                        );
+                      },
+                      borderRadius: BorderRadius.circular(16),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 16,
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(25),
+                              ),
+                              child: const Icon(
+                                Icons.logout_rounded,
+                                color: AppTheme.red,
+                                size: 24,
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                            const Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Sign Out",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                      color: AppTheme.red,
+                                    ),
+                                  ),
+                                  Text(
+                                    "Sign out of your account",
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                      color: AppTheme.text2,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const Icon(
+                              Icons.chevron_right,
+                              color: AppTheme.text2,
+                              size: 20,
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
                 ),

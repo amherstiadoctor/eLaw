@@ -13,6 +13,7 @@ import 'package:sp_code/utils/widgets/button.dart';
 import 'package:sp_code/utils/widgets/fields.dart';
 import 'package:sp_code/utils/widgets/header.dart';
 import 'package:sp_code/utils/widgets/or_divider.dart';
+import 'package:sp_code/view/admin/admin_home_screen.dart';
 import 'package:sp_code/view/common/dashboard.dart';
 
 class UserSignInScreen extends StatefulWidget {
@@ -89,7 +90,9 @@ class _UserSignInScreenState extends State<UserSignInScreen> {
                 if (!mounted) return;
                 Navigator.of(context).pushAndRemoveUntil(
                   MaterialPageRoute(
-                    builder: (context) => Dashboard(loggedInUser: loggedInUser),
+                    builder:
+                        (context) =>
+                            AdminHomeScreen(loggedInUser: loggedInUser),
                   ),
                   (route) => false,
                 );
