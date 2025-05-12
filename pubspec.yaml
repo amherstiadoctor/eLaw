@@ -49,6 +49,8 @@ dependencies:
   flutter_svg: ^2.1.0
   carousel_slider: ^5.0.0
   flutter_card_swiper: ^7.0.2
+  app_tutorial: ^1.0.6
+  shared_preferences: ^2.2.0
 
 dev_dependencies:
   flutter_test:

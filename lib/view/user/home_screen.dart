@@ -166,9 +166,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildDueFlashcardDeckItem(Map<String, dynamic> currentUser) {
     String formatDate(DateTime date) =>
-        date.hour < 12
-            ? '${date.day}/${date.month}/${date.year} ${date.hour}:${date.minute} AM'
-            : '${date.day}/${date.month}/${date.year} ${date.hour}:${date.minute} PM';
+        date.minute < 10
+            ? '${date.day}/${date.month}/${date.year} ${date.hour}:0${date.minute}'
+            : '${date.day}/${date.month}/${date.year} ${date.hour}:${date.minute}';
 
     return StreamBuilder<List<FlashcardDeck>>(
       stream: getDecks(currentUser),

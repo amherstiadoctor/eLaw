@@ -1,7 +1,9 @@
+import 'package:app_tutorial/app_tutorial.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_card_swiper/flutter_card_swiper.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sp_code/config/responsive_sizer/responsive_sizer.dart';
 import 'package:sp_code/config/svg_images.dart';
 import 'package:sp_code/config/theme.dart';
@@ -10,6 +12,7 @@ import 'package:sp_code/model/flashcard_deck.dart';
 import 'package:sp_code/utils/widgets/flip_card.dart';
 import 'package:sp_code/utils/widgets/header.dart';
 import 'package:intl/intl.dart';
+import 'package:sp_code/utils/widgets/tutorial_item_content.dart';
 
 class ViewDeckScreen extends StatefulWidget {
   const ViewDeckScreen({super.key, required this.deck});
@@ -31,9 +34,58 @@ class _ViewDeckScreenState extends State<ViewDeckScreen> {
   List<Flashcard> dueCards = [];
   int swiperKey = 0;
 
+  List<TutorialItem> items = [];
+
+  final cardKey = GlobalKey();
+
+  void initItems() {
+    items.addAll([
+      TutorialItem(
+        globalKey: cardKey,
+        color: Colors.black.withOpacity(0.6),
+        borderRadius: const Radius.circular(15.0),
+        shapeFocus: ShapeFocus.roundedSquare,
+        child: TutorialItemContent(
+          title: 'Review Flashcards',
+          content:
+              'Tap the card to flip it then if you got it right, swipe to the right. If not, swipe to the left',
+        ),
+      ),
+    ]);
+  }
+
+  Future<void> saveTutorialCompletedFlag() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('review_deck_tutorial_completed', true);
+  }
+
+  Future<bool> isTutorialCompleted() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('review_deck_tutorial_completed') ?? false;
+  }
+
+  void checkTutorialStatus() async {
+    final bool completed = await isTutorialCompleted();
+    if (!completed) {
+      initItems();
+      Future.delayed(const Duration(microseconds: 200)).then((value) {
+        Tutorial.showTutorial(
+          context,
+          items,
+          onTutorialComplete: () {
+            saveTutorialCompletedFlag();
+          },
+        );
+      });
+    } else {
+      saveTutorialCompletedFlag();
+    }
+  }
+
   @override
   void initState() {
     // TODO: implement initState
+    checkTutorialStatus();
     super.initState();
     allCards = widget.deck.cards;
     final futureCards =
@@ -129,6 +181,7 @@ class _ViewDeckScreenState extends State<ViewDeckScreen> {
           height: double.infinity,
           decoration: BoxDecoration(color: bgColor),
           child: Column(
+            key: cardKey,
             children: [
               dueCards.isNotEmpty
                   ? Flexible(

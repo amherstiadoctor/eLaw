@@ -1,5 +1,6 @@
 // ignore_for_file: must_be_immutable
 
+import 'package:app_tutorial/app_tutorial.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +11,8 @@ import 'package:sp_code/model/flashcard_deck.dart';
 import 'package:sp_code/utils/get_message.dart';
 import 'package:sp_code/utils/widgets/flip_card.dart';
 import 'package:sp_code/utils/widgets/header.dart';
+import 'package:sp_code/utils/widgets/tutorial_item_content.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ManageDeckScreen extends StatefulWidget {
   ManageDeckScreen({
@@ -54,12 +57,73 @@ class _ManageDeckScreenState extends State<ManageDeckScreen> {
       CarouselSliderController();
   var _currentCarouselPage = 0;
 
+  List<TutorialItem> items = [];
+
+  final buttonKey = GlobalKey();
+  final cardKey = GlobalKey();
+
+  void initItems() {
+    items.addAll([
+      TutorialItem(
+        globalKey: buttonKey,
+        color: Colors.black.withOpacity(0.6),
+        borderRadius: const Radius.circular(15.0),
+        shapeFocus: ShapeFocus.roundedSquare,
+        child: TutorialItemContent(
+          title: 'Add flashcard button',
+          content: 'Tap this button to add a flashcard',
+        ),
+      ),
+      TutorialItem(
+        globalKey: cardKey,
+        color: Colors.black.withOpacity(0.6),
+        borderRadius: const Radius.circular(15.0),
+        shapeFocus: ShapeFocus.roundedSquare,
+        child: TutorialItemContent(
+          title: 'Flashcard',
+          content: 'Tap the white area under the text box to flip the card',
+        ),
+      ),
+    ]);
+  }
+
+  Future<void> saveTutorialCompletedFlag() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('flashCard_tutorial_completed', true);
+  }
+
+  Future<bool> isTutorialCompleted() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('flashCard_tutorial_completed') ?? false;
+  }
+
+  void checkTutorialStatus() async {
+    final bool completed = await isTutorialCompleted();
+    if (!completed) {
+      initItems();
+      Future.delayed(const Duration(microseconds: 200)).then((value) {
+        Tutorial.showTutorial(
+          context,
+          items,
+          onTutorialComplete: () {
+            saveTutorialCompletedFlag();
+          },
+        );
+      });
+    } else {
+      saveTutorialCompletedFlag();
+    }
+  }
+
   @override
   void initState() {
     // TODO: implement initState
+    checkTutorialStatus();
     super.initState();
     if (widget.isEdit) {
       _initData();
+    } else {
+      _addFlashcard();
     }
   }
 
@@ -262,6 +326,7 @@ class _ManageDeckScreenState extends State<ManageDeckScreen> {
                     ),
                     const SizedBox(height: 16),
                     Column(
+                      key: cardKey,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
@@ -276,6 +341,7 @@ class _ManageDeckScreenState extends State<ManageDeckScreen> {
                               ),
                             ),
                             ElevatedButton.icon(
+                              key: buttonKey,
                               onPressed: _addFlashcard,
                               label: const Text("Add Flashcard"),
                               style: ElevatedButton.styleFrom(

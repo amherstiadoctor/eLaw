@@ -113,14 +113,16 @@ Widget _buildFrontCard(
   alignment: Alignment.topCenter,
   child:
       isView
-          ? Text(
-            info ?? "Front",
-            style: const TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: AppTheme.text,
+          ? Center(
+            child: Text(
+              info ?? "Front",
+              style: const TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: AppTheme.text,
+              ),
+              textAlign: TextAlign.center,
             ),
-            textAlign: TextAlign.center,
           )
           : TextFormField(
             controller: controller,
@@ -160,14 +162,16 @@ Widget _buildBackCard(
   alignment: Alignment.topCenter,
   child:
       isView
-          ? Text(
-            info ?? "Back",
-            style: const TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: AppTheme.text,
+          ? Center(
+            child: Text(
+              info ?? "Back",
+              style: const TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: AppTheme.text,
+              ),
+              textAlign: TextAlign.center,
             ),
-            textAlign: TextAlign.center,
           )
           : TextFormField(
             controller: controller,
