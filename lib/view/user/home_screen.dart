@@ -1,10 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:sp_code/config/theme.dart';
 import 'package:sp_code/model/flashcard_deck.dart';
 import 'package:sp_code/model/quiz.dart';
+import 'package:sp_code/model/taken_quiz.dart';
 import 'package:sp_code/model/user_entity.dart';
 import 'package:sp_code/view/common/view_deck_screen.dart';
 import 'package:sp_code/view/user/quiz_play_screen.dart';
@@ -49,6 +51,23 @@ class _HomeScreenState extends State<HomeScreen> {
         if (currentUser.isEmpty) {
           return const Center(child: Text("No user found."));
         }
+
+        var thatList = currentUser['quizzesTaken'];
+
+        List thisList =
+            thatList
+                .map((item) => TakenQuiz.fromMap(item as Map<String, dynamic>))
+                .toList();
+
+        // Explicitly cast to List<TakenQuiz>
+        final List<TakenQuiz> quizzes =
+            List<TakenQuiz>.from(
+                thisList,
+              ).where((q) => q.takenAt != null).toList()
+              ..sort((a, b) => b.takenAt!.compareTo(a.takenAt!));
+
+        // Take top 3
+        final sortedQuizzes = quizzes.take(3).toList();
 
         return CustomScrollView(
           slivers: [
@@ -100,50 +119,68 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ),
-            const SliverPadding(
-              padding: EdgeInsets.only(left: 16, top: 20),
-              sliver: SliverToBoxAdapter(
-                child: Text(
-                  "Recent Quizzes",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-              ),
-            ),
-            currentUser['quizzesTaken'].isNotEmpty
-                ? SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: ListView.builder(
-                      padding: EdgeInsets.zero,
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: currentUser['quizzesTaken'].length,
-                      itemBuilder: (context, index) {
-                        final quiz = currentUser['quizzesTaken'][index];
-                        return _buildRecentQuizCard(quiz, index, currentUser);
-                      },
-                    ),
-                  ),
-                )
-                : const SliverPadding(
-                  padding: EdgeInsets.all(16),
-                  sliver: SliverToBoxAdapter(
-                    child: Center(child: Text("No recent quizzes yet!")),
-                  ),
-                ),
-            const SliverPadding(
-              padding: EdgeInsets.only(left: 16, top: 20),
-              sliver: SliverToBoxAdapter(
-                child: Text(
-                  "Review Flashcards",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-              ),
-            ),
             SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: _buildDueFlashcardDeckItem(currentUser),
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.only(left: 16, top: 20),
+
+                      child: Text(
+                        "Recent Quizzes",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    sortedQuizzes.isNotEmpty
+                        ? Container(
+                          child: Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: ListView.builder(
+                              padding: EdgeInsets.zero,
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemCount: sortedQuizzes.length,
+                              itemBuilder: (context, index) {
+                                final quiz = sortedQuizzes[index];
+                                return _buildRecentQuizCard(
+                                  quiz.toMap(),
+                                  index,
+                                  currentUser,
+                                );
+                              },
+                            ),
+                          ),
+                        )
+                        : Padding(
+                          padding: EdgeInsets.all(16),
+                          child: Container(
+                            child: Center(
+                              child: Text("No recent quizzes yet!"),
+                            ),
+                          ),
+                        ),
+                    const Padding(
+                      padding: EdgeInsets.only(left: 16, top: 20),
+                      child: Text(
+                        "Review Flashcards",
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    Container(
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: _buildDueFlashcardDeckItem(currentUser),
+                      ),
+                    ),
+                    SizedBox(height: 90),
+                  ],
+                ),
               ),
             ),
           ],
@@ -340,7 +377,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                                 ),
                                 Text(
-                                  "Last Taken on ${formatDate(recentQuiz['takenAt'].toDate())}",
+                                  "Last Taken on ${formatDate(recentQuiz['takenAt'])}",
                                   style: const TextStyle(
                                     fontSize: 12,
                                     fontWeight: FontWeight.bold,
