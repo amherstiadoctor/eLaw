@@ -31,66 +31,70 @@ class _QuizResultScreenState extends State<QuizResultScreen> {
     IconData icon,
     Color color,
   ) => Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppTheme.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: color.withOpacity(0.1),
-            blurRadius: 10,
-            spreadRadius: 2,
-          ),
-        ],
-      ),
-      child: Column(
-        children: [
-          Icon(icon, color: color, size: 32),
-          const SizedBox(height: 8),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: color,
-            ),
-          ),
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-              color: AppTheme.text2,
-            ),
-          ),
-        ],
-      ),
-    ).animate().scale(
-      duration: const Duration(milliseconds: 400),
-      delay: const Duration(milliseconds: 300),
-    );
-
-  Widget _buildAnswerRow(String label, String answer, Color answerColor) => Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(fontWeight: FontWeight.w500, color: AppTheme.text2),
+    padding: const EdgeInsets.all(16),
+    decoration: BoxDecoration(
+      color: AppTheme.white,
+      borderRadius: BorderRadius.circular(20),
+      boxShadow: [
+        BoxShadow(
+          color: color.withOpacity(0.1),
+          blurRadius: 10,
+          spreadRadius: 2,
         ),
-        const SizedBox(height: 4),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          decoration: BoxDecoration(
-            color: answerColor.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(8),
+      ],
+    ),
+    child: Column(
+      children: [
+        Icon(icon, color: color, size: 32),
+        const SizedBox(height: 8),
+        Text(
+          value,
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: color,
           ),
-          child: Text(
-            answer,
-            style: TextStyle(color: answerColor, fontWeight: FontWeight.w500),
+        ),
+        Text(
+          title,
+          style: const TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
+            color: AppTheme.text2,
           ),
         ),
       ],
-    );
+    ),
+  ).animate().scale(
+    duration: const Duration(milliseconds: 400),
+    delay: const Duration(milliseconds: 300),
+  );
+
+  Widget _buildAnswerRow(String label, String answer, Color answerColor) =>
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: const TextStyle(
+              fontWeight: FontWeight.w500,
+              color: AppTheme.text2,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            decoration: BoxDecoration(
+              color: answerColor.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Text(
+              answer,
+              style: TextStyle(color: answerColor, fontWeight: FontWeight.w500),
+            ),
+          ),
+        ],
+      );
 
   IconData _getPerformanceIcon(double score) {
     if (score >= 0.9) return Icons.emoji_events;
@@ -203,7 +207,10 @@ class _QuizResultScreenState extends State<QuizResultScreen> {
                   const SizedBox(height: 20),
                   Container(
                     margin: const EdgeInsets.only(bottom: 30),
-                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 24,
+                      vertical: 12,
+                    ),
                     decoration: BoxDecoration(
                       color: AppTheme.white,
                       borderRadius: BorderRadius.circular(30),
@@ -364,7 +371,7 @@ class _QuizResultScreenState extends State<QuizResultScreen> {
                                       color: AppTheme.text,
                                       fontSize: 18,
                                     ),
-                                    maxLines: 4,
+                                    maxLines: 10,
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                   const SizedBox(height: 20),
