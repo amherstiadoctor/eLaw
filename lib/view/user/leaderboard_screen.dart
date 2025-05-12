@@ -329,7 +329,7 @@ class _LeaderboardScreenState extends State<LeaderboardScreen> {
                           }),
                         ),
                       ),
-                      selectedIndex == 0 && topThree.length > 3
+                      selectedIndex == 0 && topThree.length == 3
                           ? Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
